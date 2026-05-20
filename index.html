@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Опрос сегмента A</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #16181d;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #ef3124;
+      --accent-dark: #d82016;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .survey {
+      width: 100%;
+      max-width: 560px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 16px 40px rgba(17, 24, 39, 0.08);
+      padding: 28px;
+    }
+
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      font-size: 13px;
+      line-height: 1;
+      color: var(--accent);
+      background: rgba(239, 49, 36, 0.08);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .progress {
+      height: 6px;
+      width: 100%;
+      background: #eef0f3;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 26px;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 33%;
+      background: var(--accent);
+      transition: width 0.2s ease;
+    }
+
+    h1 {
+      font-size: 24px;
+      line-height: 1.22;
+      margin: 0 0 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .hint {
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .option {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .option:hover {
+      border-color: #cfd4dc;
+      background: #fafafa;
+    }
+
+    .option input {
+      margin: 2px 0 0;
+      accent-color: var(--accent);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 15px;
+      font: inherit;
+      outline: none;
+      margin-bottom: 24px;
+    }
+
+    textarea:focus { border-color: var(--accent); }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .secondary {
+      background: #f1f3f5;
+      color: #30343b;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+      margin-left: auto;
+    }
+
+    .primary:hover { background: var(--accent-dark); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .summary {
+      display: grid;
+      gap: 12px;
+      margin: 20px 0 24px;
+    }
+
+    .summary-row {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 15px;
+    }
+
+    .summary-row strong {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .summary-row span {
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 14px; }
+      .survey { padding: 22px; }
+      h1 { font-size: 22px; }
+      .actions { flex-direction: column-reverse; }
+      .primary, .secondary { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="survey" aria-live="polite">
+    <div class="topline">
+      <div class="badge">Сегмент A</div>
+      <div class="progress-text" id="progressText">Шаг 1 из 3</div>
+    </div>
+
+    <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+    <section id="screen"></section>
+  </main>
+
+  <script>
+    const state = {
+      route: null,
+      step: 1,
+      answers: {}
+    };
+
+    const questions = {
+      q1: {
+        title: 'Почему за последние 120 дней вы не платили картой Альфа-Банка?',
+        hint: 'Выберите один вариант, который точнее всего описывает вашу ситуацию.',
+        type: 'radio',
+        name: 'reason',
+        options: [
+          ['other_card', 'Плачу другой картой — так удобнее'],
+          ['terms', 'Не устроили условия карты'],
+          ['cash', 'Плачу в основном наличными'],
+          ['no_card', 'Карты Альфа-Банка нет под рукой / потерял / забыл'],
+          ['bonus_only', 'Завёл карту ради бонуса, но не пользовался'],
+          ['other', 'Другое']
+        ]
+      },
+      q2a: {
+        title: 'Что именно удобнее в карте или способе оплаты, которым вы платите сейчас?',
+        hint: 'Можно выбрать несколько вариантов.',
+        type: 'checkbox',
+        name: 'convenience_reason',
+        options: [
+          ['income', 'Деньги или доход уже приходят туда'],
+          ['default', 'Эта карта стоит основной в телефоне / всегда под рукой'],
+          ['cashback', 'Там выгоднее или понятнее кэшбэк'],
+          ['credit', 'Там кредитная карта / рассрочка'],
+          ['app', 'Там удобнее приложение, переводы или пополнение'],
+          ['other', 'Другое']
+        ]
+      },
+      q3a: {
+        title: 'Чем вы чаще всего платили вместо карты Альфа-Банка за последний месяц?',
+        hint: 'Выберите один вариант.',
+        type: 'radio',
+        name: 'competitor',
+        options: [
+          ['sber', 'Сбер'],
+          ['tbank', 'Т-Банк'],
+          ['vtb', 'ВТБ'],
+          ['ozon_yandex', 'Озон Банк / Яндекс Pay'],
+          ['credit_other', 'Кредитная карта другого банка'],
+          ['other', 'Другое']
+        ]
+      },
+      q2b: {
+        title: 'Какие условия карты Альфа-Банка не устроили сильнее всего?',
+        hint: 'Можно выбрать несколько вариантов.',
+        type: 'checkbox',
+        name: 'bad_terms',
+        options: [
+          ['cashback', 'Кэшбэк'],
+          ['limits', 'Лимиты'],
+          ['service_fee', 'Стоимость обслуживания или уведомлений'],
+          ['fees', 'Комиссии за переводы или снятие'],
+          ['unclear', 'Условия были непонятны'],
+          ['other', 'Другое']
+        ]
+      },
+      q3b: {
+        title: 'Какая ситуация лучше всего описывает ваш опыт с условиями карты Альфа-Банка?',
+        hint: 'Выберите один вариант.',
+        type: 'radio',
+        name: 'terms_experience',
+        options: [
+          ['cashback_less', 'Кэшбэк оказался меньше ожидаемого / не начислился'],
+          ['cashback_limit', 'Нужных категорий или лимита кэшбэка не хватило'],
+          ['fee_charged', 'Списалась плата или комиссия'],
+          ['free_ops', 'Бесплатные переводы или снятие работали не так, как ожидалось'],
+          ['hard_to_understand', 'Условия было сложно понять в приложении'],
+          ['other', 'Другое']
+        ]
+      },
+      q2other: {
+        title: 'Коротко напишите, что именно произошло.',
+        hint: 'Одного-двух предложений достаточно.',
+        type: 'text',
+        name: 'comment'
+      }
+    };
+
+    const labels = Object.values(questions).reduce((acc, q) => {
+      if (q.options) q.options.forEach(([key, value]) => acc[`${q.name}:${key}`] = value);
+      return acc;
+    }, {});
+
+    const screen = document.getElementById('screen');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+
+    function getCurrentQuestionKey() {
+      if (state.step === 1) return 'q1';
+      if (state.route === 'other_card' && state.step === 2) return 'q2a';
+      if (state.route === 'other_card' && state.step === 3) return 'q3a';
+      if (state.route === 'terms' && state.step === 2) return 'q2b';
+      if (state.route === 'terms' && state.step === 3) return 'q3b';
+      return 'q2other';
+    }
+
+    function maxSteps() {
+      return ['other_card', 'terms'].includes(state.route) ? 3 : 2;
+    }
+
+    function setProgress() {
+      const total = state.step === 'done' ? maxSteps() : maxSteps();
+      const current = state.step === 'done' ? total : state.step;
+      progressText.textContent = state.step === 'done' ? 'Готово' : `Шаг ${current} из ${total}`;
+      progressBar.style.width = `${Math.round((current / total) * 100)}%`;
+    }
+
+    function renderQuestion() {
+      setProgress();
+      const key = getCurrentQuestionKey();
+      const q = questions[key];
+      const saved = state.answers[q.name];
+
+      let body = '';
+      if (q.type === 'text') {
+        body = `<textarea name="${q.name}" placeholder="Напишите ответ">${saved || ''}</textarea>`;
+      } else {
+        body = `<div class="options">${q.options.map(([value, label]) => {
+          const checked = Array.isArray(saved) ? saved.includes(value) : saved === value;
+          return `
+            <label class="option">
+              <input type="${q.type}" name="${q.name}" value="${value}" ${checked ? 'checked' : ''}>
+              <span>${label}</span>
+            </label>
+          `;
+        }).join('')}</div>`;
+      }
+
+      screen.innerHTML = `
+        <h1>${q.title}</h1>
+        <p class="hint">${q.hint}</p>
+        ${body}
+        <div class="actions">
+          <button class="secondary" id="backBtn" ${state.step === 1 ? 'disabled' : ''}>Назад</button>
+          <button class="primary" id="nextBtn">${state.step === maxSteps() ? 'Завершить' : 'Далее'}</button>
+        </div>
+      `;
+
+      document.getElementById('backBtn').addEventListener('click', goBack);
+      document.getElementById('nextBtn').addEventListener('click', goNext);
+    }
+
+    function readAnswer(q) {
+      if (q.type === 'text') {
+        return screen.querySelector(`[name="${q.name}"]`).value.trim();
+      }
+      if (q.type === 'checkbox') {
+        return [...screen.querySelectorAll(`[name="${q.name}"]:checked`)].map(input => input.value);
+      }
+      const checked = screen.querySelector(`[name="${q.name}"]:checked`);
+      return checked ? checked.value : null;
+    }
+
+    function goNext() {
+      const q = questions[getCurrentQuestionKey()];
+      const answer = readAnswer(q);
+      const hasAnswer = Array.isArray(answer) ? answer.length > 0 : Boolean(answer);
+      if (!hasAnswer) return;
+
+      state.answers[q.name] = answer;
+
+      if (state.step === 1) {
+        state.route = answer;
+      }
+
+      if (state.step >= maxSteps()) {
+        state.step = 'done';
+        renderSummary();
+        return;
+      }
+
+      state.step += 1;
+      renderQuestion();
+    }
+
+    function goBack() {
+      if (state.step === 1) return;
+      state.step -= 1;
+      renderQuestion();
+    }
+
+    function humanize(name, value) {
+      if (Array.isArray(value)) {
+        return value.map(v => labels[`${name}:${v}`] || v).join(', ');
+      }
+      return labels[`${name}:${value}`] || value;
+    }
+
+    function renderSummary() {
+      setProgress();
+      const rows = Object.entries(state.answers).map(([name, value]) => `
+        <div class="summary-row">
+          <strong>${name}</strong>
+          <span>${humanize(name, value)}</span>
+        </div>
+      `).join('');
+
+      screen.innerHTML = `
+        <h1>Спасибо, ответ сохранён</h1>
+        <p class="hint">Ниже — техническое резюме ответов для проверки прототипа.</p>
+        <div class="summary">${rows}</div>
+        <div class="actions">
+          <button class="secondary" id="restartBtn">Пройти заново</button>
+        </div>
+      `;
+
+      document.getElementById('restartBtn').addEventListener('click', () => {
+        state.route = null;
+        state.step = 1;
+        state.answers = {};
+        renderQuestion();
+      });
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
