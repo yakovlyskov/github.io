@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Чек-лист в поход — Ферязкино</title>
+<style>
+:root{--g:#287447;--bg:#f1f6f2;--card:#fff;--text:#17231b;--muted:#68766d;--line:#dbe6de;--warn:#fff1d2}*{box-sizing:border-box}body{margin:0;font:16px/1.45 system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:linear-gradient(#e5f1e8,#f5f7f5 320px);color:var(--text)}main{width:min(1050px,calc(100% - 24px));margin:auto;padding:24px 0 60px}.hero{background:linear-gradient(135deg,#195b34,#469363);color:#fff;border-radius:24px;padding:26px;box-shadow:0 12px 35px #214a2d20}.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.05;margin:0 0 10px}.hero p{margin:5px 0}.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.pill{padding:7px 11px;border:1px solid #ffffff3b;background:#ffffff1c;border-radius:99px;font-size:14px}.tools,.progress,.note,.box,.add{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:0 8px 26px #214a2d12}.tools{display:flex;gap:9px;flex-wrap:wrap;padding:11px;margin:15px 0;position:sticky;top:8px;z-index:3}.tools input[type=search]{flex:1 1 220px}button,input{font:inherit}button,.tools label,input[type=search],#newItem{min-height:42px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 12px}button{cursor:pointer;font-weight:650}button.primary{background:var(--g);border-color:var(--g);color:white}.tools label{display:flex;align-items:center;gap:7px}.progress{padding:17px;margin-bottom:15px}.progressTop{display:flex;justify-content:space-between;font-weight:700;font-size:18px}.track{height:13px;background:#e7eee9;border-radius:99px;overflow:hidden;margin-top:10px}.bar{height:100%;width:0;background:linear-gradient(90deg,#287447,#77ad87);transition:.2s}.note{padding:15px 17px;background:var(--warn);border-color:#ead59b;margin-bottom:15px}.note b{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.box{overflow:hidden}.box h2{font-size:18px;margin:0;padding:14px 16px;background:#fbfdfb;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.count{font-size:13px;color:var(--muted);font-weight:500}.list{padding:6px 11px 10px}.row{display:grid;grid-template-columns:25px 1fr auto;gap:9px;padding:10px 5px;border-bottom:1px dashed #e5ece7;align-items:start}.row:last-child{border:0}.row input{width:20px;height:20px;margin:2px 0;accent-color:var(--g)}.row label{cursor:pointer}.row.done label{text-decoration:line-through;color:#829087}.small{display:block;color:var(--muted);font-size:13px;text-decoration:none!important;margin-top:2px}.tag{font-size:11px;background:#fae7df;color:#94472d;border-radius:99px;padding:3px 7px;white-space:nowrap}.hide{display:none!important}.add{margin-top:15px;padding:16px}.add h2{margin:0 0 10px}.addline{display:flex;gap:8px}.addline input{flex:1}.custom button{min-height:32px;padding:0 8px}@media(max-width:720px){.grid{grid-template-columns:1fr}.tools{position:static}.row{grid-template-columns:25px 1fr}.tag{grid-column:2;justify-self:start}.addline{flex-direction:column}}@media print{body{background:#fff}.tools,.add{display:none}.hero,.progress,.note,.box{box-shadow:none}.grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body><main>
+<section class="hero"><h1>Чек-лист в поход</h1><p><b>Ферязкино, Тверская область</b></p><p>31 июля — 2 августа · 3 дня / 2 ночи</p><div class="pills"><span class="pill">Не замёрзнуть</span><span class="pill">Не промокнуть</span><span class="pill">Комфортно спать</span></div></section>
+<div class="tools"><input id="q" type="search" placeholder="Найти вещь…"><label><input id="open" type="checkbox"> Только неотмеченное</label><button onclick="print()">Печать / PDF</button><button id="reset">Сбросить</button></div>
+<section class="progress"><div class="progressTop"><span>Готовность</span><span id="stat"></span></div><div class="track"><div class="bar" id="bar"></div></div></section>
+<section class="note"><b>Уточнить у организаторов</b>Дают ли коврик или матрас, насколько тёплый спальник, будет ли питание, питьевая вода и зарядка.</section>
+<div class="grid" id="grid"></div>
+<section class="add"><h2>Добавить своё</h2><div class="addline"><input id="newItem" placeholder="Например: термос, книга, настольная игра"><button class="primary" id="addBtn">Добавить</button></div><div id="custom"></div></section>
+</main>
+<script>
+const groups=[
+['🛏️ Сон и тепло',[
+['Самонадувающийся коврик 5–7 см','Главная вещь для тепла от земли и комфорта спины.',1],['Надувная или компактная подушка','',0],['Сухой комплект для сна','Лонгслив, тонкие штаны и тёплые носки.',1],['Беруши','',0],['Маска для сна','',0]]],
+['👕 Одежда',[
+['2 быстросохнущие футболки','',0],['Лонгслив','',0],['Флисовая кофта','Для вечера и прохладной ночи.',1],['Походные брюки','Не джинсы: они долго сохнут.',0],['Запасные брюки или шорты','',0],['3–4 комплекта белья','',0],['4 пары носков','Одна пара — только для сна.',0],['Тонкая шапка или бафф','',0],['Кепка или панама','',0]]],
+['🌧️ Дождь и сырость',[
+['Непромокаемая куртка с капюшоном','',1],['Пончо или дождевик','',0],['Непромокаемые штаны','',0],['Чехол на рюкзак','',0],['Гермопакеты или плотные пакеты','Отдельно: сон, одежда, электроника.',1],['Пакет для мокрых вещей','',0],['Быстросохнущее полотенце','',0]]],
+['🥾 Обувь',[
+['Треккинговые кроссовки или лёгкие ботинки','Нескользкая подошва и защита от мокрой травы.',1],['Кроксы, сабо или сандалии для лагеря','',0],['Запасные шнурки','',0],['Гамаши или бахилы','Полезно при мокрой высокой траве.',0]]],
+['🦟 Комары и клещи',[
+['Репеллент для кожи','',1],['Средство от клещей для одежды','Обработать заранее и дать высохнуть.',1],['Средство после укусов','',0],['Выкручиватель клещей или пинцет','',0],['Светлый закрытый лонгслив','',0]]],
+['🧼 Гигиена',[
+['Зубная щётка и паста','',0],['Туалетная бумага','',0],['Влажные и сухие салфетки','',0],['Антисептик для рук','',0],['Солнцезащитный крем SPF 30+','',0],['Бальзам для губ','',0],['Пакеты для мусора','',0]]],
+['🔦 Снаряжение',[
+['Основной рюкзак или сумка','',0],['Небольшой дневной рюкзак','',0],['Налобный фонарь','',1],['Пауэрбанк 10 000–20 000 мА·ч','',0],['Кабели и зарядка','',0],['Бутылка для воды 0,75–1 л','',0],['Кружка, ложка и миска','Уточнить, выдаёт ли организатор.',0],['Небольшой складной нож','',0]]],
+['🩹 Аптечка',[
+['Личные лекарства','',1],['Привычное обезболивающее','',0],['Привычное антигистаминное','',0],['Пластыри и пластыри от мозолей','',0],['Антисептик для ран','',0],['Эластичный бинт','',0],['Проверенное средство для спины','',0]]],
+['🥤 Еда и вода',[
+['Простые перекусы','Орехи, батончики, сухофрукты или печенье.',0],['Запас воды на дорогу','',0],['Чай или кофе по желанию','',0],['Нейтральный перекус для желудка','Например, галеты или сухари.',0]]],
+['🪪 Документы и деньги',[
+['Паспорт','',1],['Полис ОМС или его фото','',0],['Банковская карта и наличные','',0],['Офлайн-точка лагеря и контакт организатора','',0]]],
+['✅ Перед выездом',[
+['Проверить прогноз за 2–3 дня','',1],['Зарядить телефон и пауэрбанк','',0],['Обработать одежду от клещей','',0],['Разложить вещи по гермопакетам','',0],['Проверить и разносить обувь','',0],['Уточнить коврик, еду, воду и зарядку','',0]]]
+];
+const K='hike-feryazkino-2026',CK=K+'-custom';let state=JSON.parse(localStorage.getItem(K)||'{}');
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function row(id,name,note,must,custom=false){return `<div class="row${state[id]?' done':''}" data-name="${esc(name.toLowerCase())}" data-id="${id}"><input type="checkbox" id="${id}" ${state[id]?'checked':''}><label for="${id}"><b>${esc(name)}</b>${note?`<span class="small">${esc(note)}</span>`:''}</label>${custom?'<button class="del">Удалить</button>':must?'<span class="tag">Обязательно</span>':''}</div>`}
+function render(){let n=0;grid.innerHTML=groups.map((g,gi)=>`<section class="box"><h2><span>${g[0]}</span><span class="count" id="c${gi}"></span></h2><div class="list">${g[1].map((x,i)=>row('i'+(n++),...x)).join('')}</div></section>`).join('');renderCustom();bind();update()}
+function renderCustom(){let a=JSON.parse(localStorage.getItem(CK)||'[]');custom.innerHTML=a.map(x=>row(x.id,x.name,'',0,true)).join('')}
+function bind(){document.querySelectorAll('.row input').forEach(x=>x.onchange=()=>{state[x.id]=x.checked;localStorage.setItem(K,JSON.stringify(state));x.closest('.row').classList.toggle('done',x.checked);update();filter()});document.querySelectorAll('.del').forEach(b=>b.onclick=()=>{let r=b.closest('.row'),a=JSON.parse(localStorage.getItem(CK)||'[]').filter(x=>x.id!==r.dataset.id);delete state[r.dataset.id];localStorage.setItem(CK,JSON.stringify(a));localStorage.setItem(K,JSON.stringify(state));render()})}
+function update(){let a=[...document.querySelectorAll('.row input')],d=a.filter(x=>x.checked).length,p=a.length?Math.round(d/a.length*100):0;stat.textContent=`${d} из ${a.length} · ${p}%`;bar.style.width=p+'%';document.querySelectorAll('.box').forEach((b,i)=>{let z=[...b.querySelectorAll('input')];document.getElementById('c'+i).textContent=z.filter(x=>x.checked).length+'/'+z.length})}
+function filter(){let s=q.value.trim().toLowerCase();document.querySelectorAll('.row').forEach(r=>r.classList.toggle('hide',!r.dataset.name.includes(s)||(open.checked&&r.querySelector('input').checked)));document.querySelectorAll('.box').forEach(b=>b.classList.toggle('hide',!b.querySelector('.row:not(.hide)')))}
+q.oninput=filter;open.onchange=filter;reset.onclick=()=>{if(confirm('Сбросить все отметки?')){state={};localStorage.removeItem(K);render()}};addBtn.onclick=()=>{let name=newItem.value.trim();if(!name)return;let a=JSON.parse(localStorage.getItem(CK)||'[]');a.push({id:'u'+Date.now(),name});localStorage.setItem(CK,JSON.stringify(a));newItem.value='';render()};newItem.onkeydown=e=>{if(e.key==='Enter')addBtn.click()};render();
+</script></body></html>
