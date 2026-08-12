@@ -21,5 +21,6 @@
   <script>
     (async()=>{const root=document.getElementById('report');const files=['part-1.html','part-2.html','part-3.html','part-4.html'];try{const parts=await Promise.all(files.map(f=>fetch(f,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(f);return r.text()})));root.className='';root.innerHTML=parts.join('');}catch(e){root.innerHTML='<p><strong>Не удалось загрузить часть отчёта.</strong> Обновите страницу.</p>';}})();
   </script>
+  <!-- pages-refresh: 2026-08-12 -->
 </body>
 </html>
