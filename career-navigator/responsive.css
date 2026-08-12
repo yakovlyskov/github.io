@@ -1,0 +1,170 @@
+/* Responsive layout enhancements */
+
+/* Desktop / large screens */
+@media (min-width: 1200px){
+  .wrap{max-width:1240px;padding-left:28px;padding-right:28px}
+  .mainGrid{grid-template-columns:280px minmax(0,1fr);gap:30px}
+  .heroGrid{grid-template-columns:minmax(0,1.5fr) minmax(300px,.5fr);gap:30px}
+  .card{padding:32px}
+  .heroCard{padding:44px}
+}
+
+/* Compact desktop / tablets landscape */
+@media (min-width: 901px) and (max-width: 1199px){
+  .wrap{max-width:100%;padding-left:22px;padding-right:22px}
+  .mainGrid{grid-template-columns:225px minmax(0,1fr);gap:20px}
+  .heroGrid{grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:20px}
+  .stepbtn{padding:10px}
+  .steptext{font-size:14px}
+  .scaleRow{grid-template-columns:minmax(170px,1.1fr) 96px minmax(180px,1fr) minmax(180px,1fr);gap:10px}
+  .card{padding:24px}
+}
+
+/* Tablet and phone: one-column flow */
+@media (max-width: 900px){
+  html{scroll-padding-top:124px}
+  body{overflow-x:hidden}
+  .wrap{width:100%;max-width:none;padding-left:18px;padding-right:18px}
+
+  .topbar{z-index:40}
+  .topinner{min-height:58px}
+  .topmeta{display:none}
+  .brand{font-size:15px}
+  .logo{width:32px;height:32px;border-radius:10px}
+
+  .hero{padding:22px 0 10px}
+  .heroGrid{display:grid;grid-template-columns:1fr;gap:14px}
+  .heroCard{padding:24px}
+  .sideCard{padding:20px}
+  .hero h1{font-size:clamp(32px,8.7vw,46px);line-height:1.04;letter-spacing:-.045em;margin:14px 0}
+  .hero p{font-size:16px;line-height:1.55;margin-bottom:0}
+  .chips{margin-top:18px;gap:7px}
+  .chip{font-size:12px;padding:7px 10px}
+
+  .mainGrid{display:block;padding-top:12px;padding-bottom:48px}
+  .sidebar{position:sticky;top:58px;z-index:30;background:rgba(245,247,251,.96);backdrop-filter:blur(10px);margin:0 -18px 16px;padding:10px 18px 9px;border-bottom:1px solid var(--line)}
+  .stepnav{display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding:0 0 3px;border:0;border-radius:0;box-shadow:none;background:transparent;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .stepnav::-webkit-scrollbar{display:none}
+  .stepbtn{min-width:auto;width:auto;flex:0 0 auto;padding:8px 10px;gap:8px;border:1px solid var(--line);background:#fff;scroll-snap-align:start;white-space:nowrap}
+  .stepbtn.active{border-color:#c9d1ff;box-shadow:0 4px 12px rgba(53,89,224,.08)}
+  .stepnum{width:25px;height:25px;flex-basis:25px;border-radius:8px}
+  .steptext{font-size:13px}
+  .steptext small{display:none}
+  .progress{height:5px;margin-top:7px}
+  .saveState{display:none}
+
+  .content{width:100%;min-width:0}
+  .card{padding:22px;border-radius:18px;margin-bottom:14px;box-shadow:0 8px 26px rgba(21,33,59,.06)}
+  .sectionHead{display:block;margin-bottom:20px}
+  .sectionHead h2{font-size:25px;line-height:1.12}
+  .sectionHead p{font-size:14px;line-height:1.5}
+  .sectionHead .pill{display:inline-flex;margin-top:10px;white-space:normal}
+
+  .grid2,.grid3{grid-template-columns:1fr;gap:0}
+  .field{margin-bottom:18px}
+  .field label{font-size:14px;line-height:1.4}
+  .input,textarea,select{font-size:16px;min-height:48px;padding:13px 14px;border-radius:12px}
+  textarea{min-height:118px}
+  .smallarea{min-height:92px}
+  input[type="range"]{min-height:30px;touch-action:pan-y}
+
+  .scaleRow{grid-template-columns:1fr;gap:10px;padding:18px 0}
+  .qtitle{padding-top:0;font-size:15px;line-height:1.45}
+  .rangeBox{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;text-align:left;padding:10px 12px}
+  .scoreBubble{text-align:center;font-size:20px}
+  .scaleRow textarea{min-height:88px}
+
+  .repeatCard{padding:16px;border-radius:14px;margin:12px 0}
+  .repeatHead{margin-bottom:12px}
+  .remove{min-height:40px;padding:8px 11px}
+  .addbtn,.btn{min-height:48px;padding:13px 16px}
+  .addbtn{width:100%}
+
+  .criteriaRow{grid-template-columns:1fr;gap:10px;padding:16px 0}
+  .criteriaRow label{font-size:15px}
+  .importance{display:grid;grid-template-columns:1fr 32px;gap:10px}
+  .importance strong{text-align:center;font-size:18px;color:var(--brand)}
+
+  .footerActions{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .footerActions>span:empty{display:none}
+  .footerActions>.btn:only-child{grid-column:1/-1}
+  .rightActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-column:1/-1}
+  .rightActions .btn{width:100%}
+
+  .reportHero{padding:22px;border-radius:17px}
+  .reportHero h2{font-size:28px;line-height:1.1}
+  .reportGrid{grid-template-columns:1fr;gap:14px}
+  .reportCard{padding:18px;border-radius:15px;min-width:0}
+  .barRow{grid-template-columns:120px minmax(0,1fr) 40px;gap:8px}
+  .role{padding:16px;min-width:0}
+  .roleTop{gap:8px}
+  .role h4{font-size:17px;overflow-wrap:anywhere}
+  .role p,.why,.mvp{overflow-wrap:anywhere}
+  .taglist{gap:6px}
+  .tag2{font-size:12px}
+  .planItem{grid-template-columns:32px minmax(0,1fr);gap:10px}
+  .planItem:before{width:32px;height:32px}
+}
+
+/* Phones */
+@media (max-width: 640px){
+  .wrap{padding-left:14px;padding-right:14px}
+  .sidebar{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}
+  .hero{padding-top:14px}
+  .heroCard{padding:20px}
+  .sideCard{padding:18px}
+  .eyebrow{font-size:10px;line-height:1.2;letter-spacing:.05em;white-space:normal}
+  .hero h1{font-size:clamp(30px,9.5vw,40px);margin:12px 0}
+  .hero p{font-size:15px}
+  .chips{gap:6px}
+  .chip{font-size:11px}
+
+  .card{padding:18px;border-radius:16px}
+  .sectionHead h2{font-size:23px}
+  .sectionHead p{font-size:13px}
+  .note{padding:13px 14px}
+
+  .footerActions{grid-template-columns:1fr}
+  .footerActions .btn{width:100%}
+  .rightActions{grid-template-columns:1fr}
+  .footerActions>.btn,.footerActions>.rightActions{grid-column:1}
+
+  .reportHero{padding:19px}
+  .reportHero h2{font-size:25px}
+  .reportHero p{font-size:14px}
+  .reportCard h3{font-size:18px}
+  .barRow{grid-template-columns:1fr 40px;gap:5px 8px}
+  .barRow>span:first-child{grid-column:1/-1;font-weight:700}
+  .roleTop{display:block}
+  .fit{display:inline-block;margin-top:7px}
+
+  .repeatHead strong{font-size:14px}
+  .privacy{font-size:12px}
+}
+
+/* Small phones (360–430px) */
+@media (max-width: 430px){
+  .wrap{padding-left:12px;padding-right:12px}
+  .sidebar{margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px}
+  .topinner{min-height:54px}
+  .sidebar{top:54px}
+  .brand{font-size:14px}
+  .logo{width:30px;height:30px}
+  .heroCard{padding:17px}
+  .sideCard{padding:16px}
+  .hero h1{font-size:29px}
+  .hero p{font-size:14px}
+  .chip{max-width:100%;white-space:normal}
+  .stepbtn{padding:7px 9px}
+  .steptext{font-size:12px}
+  .card{padding:16px}
+  .sectionHead h2{font-size:21px}
+  .input,textarea,select{padding:12px;font-size:16px}
+  .rangeBox{grid-template-columns:38px 1fr;padding:9px 10px}
+  .reportHero h2{font-size:23px}
+  .reportCard{padding:15px}
+  .role{padding:14px}
+}
+
+/* Prevent long user text and URLs from breaking layout everywhere */
+.reportCard,.repeatCard,.note,.why,.mvp,.role,.field,.qtitle{overflow-wrap:anywhere;word-break:break-word}
