@@ -3,204 +3,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Независимый разбор карьерной профориентации Андрея: сильные выводы, ограничения методики, перспективные карьерные траектории и план проверки гипотез." />
-  <title>Куда двигаться Андрею дальше — независимый карьерный разбор</title>
+  <meta name="description" content="Полный независимый разбор карьерной профориентации Андрея: оценка методики, профиль, карьерные траектории, рыночная проверка и практический план." />
+  <title>Куда двигаться Андрею дальше — полный карьерный разбор</title>
   <style>
-    :root{
-      --bg:#f6f7f9;--surface:#fff;--text:#17202a;--muted:#667085;--line:#e5e7eb;
-      --ink:#111827;--accent:#3758f9;--accent2:#12a594;--soft:#eef2ff;--good:#0f766e;
-      --warn:#b45309;--danger:#b42318;--radius:20px;--shadow:0 10px 30px rgba(17,24,39,.06);
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.58}
-    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
-    .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-    .hero{padding:64px 0 34px;background:linear-gradient(135deg,#111827 0%,#1e2a5a 58%,#153a49 100%);color:white}
-    .eyebrow{font-size:13px;letter-spacing:.13em;text-transform:uppercase;font-weight:800;opacity:.72}
-    h1{font-size:clamp(34px,6vw,62px);line-height:1.04;letter-spacing:-.045em;margin:12px 0 18px;max-width:900px}
-    .hero p{font-size:19px;max-width:780px;color:#d7def0;margin:0 0 24px}
-    .pillrow{display:flex;gap:10px;flex-wrap:wrap}.pill{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);border-radius:999px;padding:8px 12px;font-size:13px;color:#f5f7ff}
-    .summary{margin-top:-1px;background:white;border-bottom:1px solid var(--line)}
-    .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:24px 0}
-    .metric{padding:18px 20px;border:1px solid var(--line);border-radius:16px;background:#fff}.metric b{display:block;font-size:28px;letter-spacing:-.03em;color:var(--ink)}.metric span{font-size:13px;color:var(--muted)}
-    main{padding:38px 0 72px}
-    section{margin:0 0 44px}.kicker{font-weight:800;color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
-    h2{font-size:32px;line-height:1.15;letter-spacing:-.035em;margin:0 0 18px;color:var(--ink)}
-    h3{font-size:21px;line-height:1.25;margin:0 0 10px;color:var(--ink)}
-    p{margin:0 0 14px}.lead{font-size:20px;line-height:1.5;color:#344054}
-    .callout{padding:24px 26px;border-radius:var(--radius);background:#111827;color:white;box-shadow:var(--shadow)}.callout strong{color:#fff}.callout p{font-size:20px;margin:0;line-height:1.5}.callout .small{font-size:14px;color:#cfd5e1;margin-top:10px}
-    .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
-    .card p:last-child{margin-bottom:0}.tag{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800;background:var(--soft);color:#3445c5;margin-bottom:12px}
-    .tag.good{background:#ecfdf3;color:#087a55}.tag.warn{background:#fff7ed;color:#b45309}.tag.gray{background:#f2f4f7;color:#475467}
-    ul{margin:10px 0 0;padding-left:22px}li{margin:8px 0}.compact li{margin:5px 0}
-    .quote{border-left:4px solid var(--accent);padding:4px 0 4px 18px;font-size:20px;color:#344054;margin:20px 0}
-    .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0}.flow div{background:white;border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;font-size:13px;font-weight:700;position:relative}.flow div:not(:last-child)::after{content:"→";position:absolute;right:-11px;top:50%;transform:translateY(-50%);color:#98a2b3;font-size:18px;z-index:2}
-    .profile{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.profile .card{padding:17px}.profile b{display:block;font-size:14px;margin-bottom:5px}.profile span{font-size:13px;color:var(--muted)}
-    .rank{display:flex;flex-direction:column;gap:12px}.rank-item{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px}.rank-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.rank-title{font-weight:800;font-size:18px;color:var(--ink)}.score{font-weight:900;font-size:20px;white-space:nowrap}.bar{height:8px;border-radius:99px;background:#edf0f4;margin:12px 0 10px;overflow:hidden}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}.rank-item p{font-size:14px;color:#475467;margin:0}
-    .table-wrap{overflow-x:auto;background:white;border:1px solid var(--line);border-radius:18px}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#667085;background:#fafafa}td{font-size:14px}tr:last-child td{border-bottom:0}
-    .steps{counter-reset:steps;display:grid;gap:13px}.step{position:relative;background:white;border:1px solid var(--line);border-radius:18px;padding:18px 20px 18px 64px}.step:before{counter-increment:steps;content:counter(steps);position:absolute;left:18px;top:18px;width:30px;height:30px;border-radius:50%;background:#111827;color:white;display:grid;place-items:center;font-weight:800}.step b{color:var(--ink)}
-    .sources{font-size:14px;color:#475467}.sources li{margin:10px 0}.note{font-size:13px;color:#667085;padding:15px 18px;background:#f8fafc;border:1px solid var(--line);border-radius:14px}
-    footer{padding:28px 0 44px;color:#667085;font-size:13px;border-top:1px solid var(--line);background:#fff}
-    @media(max-width:820px){.summary-grid,.grid3{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.profile{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr}.flow div:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-17px}.hero{padding-top:46px}.rank-head{display:block}.score{margin-top:4px}.wrap{padding:0 18px}}
-    @media(max-width:520px){.profile{grid-template-columns:1fr}h2{font-size:28px}.hero p,.lead{font-size:17px}}
-    @media print{.hero{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.card,.rank-item,.callout{box-shadow:none}a{color:inherit;text-decoration:none}.wrap{max-width:none}.hero{padding:35px 0}.summary-grid{grid-template-columns:repeat(3,1fr)}section{break-inside:avoid}}
+    :root{--bg:#f6f7f9;--surface:#fff;--text:#17202a;--muted:#667085;--line:#e5e7eb;--ink:#111827;--accent:#3758f9;--accent2:#12a594;--soft:#eef2ff;--good:#0f766e;--warn:#b45309;--radius:20px;--shadow:0 10px 30px rgba(17,24,39,.06)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.62}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}.wrap{max-width:1040px;margin:0 auto;padding:0 24px}.hero{padding:64px 0 34px;background:linear-gradient(135deg,#111827 0%,#1e2a5a 58%,#153a49 100%);color:white}.eyebrow{font-size:13px;letter-spacing:.13em;text-transform:uppercase;font-weight:800;opacity:.72}h1{font-size:clamp(34px,6vw,62px);line-height:1.04;letter-spacing:-.045em;margin:12px 0 18px;max-width:900px}.hero p{font-size:19px;max-width:820px;color:#d7def0;margin:0 0 24px}.pillrow{display:flex;gap:10px;flex-wrap:wrap}.pill{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);border-radius:999px;padding:8px 12px;font-size:13px;color:#f5f7ff}.summary{background:#fff;border-bottom:1px solid var(--line)}.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:24px 0}.metric{padding:18px 20px;border:1px solid var(--line);border-radius:16px;background:#fff}.metric b{display:block;font-size:28px;letter-spacing:-.03em;color:var(--ink)}.metric span{font-size:13px;color:var(--muted)}main{padding:38px 0 72px}section{margin:0 0 46px}.kicker{font-weight:800;color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}h2{font-size:32px;line-height:1.15;letter-spacing:-.035em;margin:0 0 18px;color:var(--ink)}h3{font-size:21px;line-height:1.25;margin:0 0 10px;color:var(--ink)}p{margin:0 0 14px}.lead{font-size:20px;line-height:1.5;color:#344054}.callout{padding:24px 26px;border-radius:var(--radius);background:#111827;color:white;box-shadow:var(--shadow)}.callout strong{color:#fff}.callout p{font-size:20px;margin:0;line-height:1.5}.callout .small{font-size:14px;color:#cfd5e1;margin-top:10px}.quote{border-left:4px solid var(--accent);padding:4px 0 4px 18px;font-size:20px;color:#344054;margin:20px 0}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0}.flow div{background:white;border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;font-size:13px;font-weight:700;position:relative}.flow div:not(:last-child)::after{content:"→";position:absolute;right:-11px;top:50%;transform:translateY(-50%);color:#98a2b3;font-size:18px;z-index:2}ul,ol{margin:10px 0 0;padding-left:24px}li{margin:8px 0}.rank{display:flex;flex-direction:column;gap:12px}.rank-item{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px}.rank-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.rank-title{font-weight:800;font-size:18px;color:var(--ink)}.score{font-weight:900;font-size:20px;white-space:nowrap}.bar{height:8px;border-radius:99px;background:#edf0f4;margin:12px 0 10px;overflow:hidden}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}.rank-item p{font-size:14px;color:#475467;margin:0}.steps{counter-reset:steps;display:grid;gap:13px}.step{position:relative;background:white;border:1px solid var(--line);border-radius:18px;padding:18px 20px 18px 64px}.step:before{counter-increment:steps;content:counter(steps);position:absolute;left:18px;top:18px;width:30px;height:30px;border-radius:50%;background:#111827;color:white;display:grid;place-items:center;font-weight:800}.step b{color:var(--ink)}.sources{font-size:14px;color:#475467}.note{font-size:13px;color:#667085;padding:15px 18px;background:#f8fafc;border:1px solid var(--line);border-radius:14px}.loading{padding:26px;background:#fff;border:1px solid var(--line);border-radius:18px;color:var(--muted)}footer{padding:28px 0 44px;color:#667085;font-size:13px;border-top:1px solid var(--line);background:#fff}
+    @media(max-width:820px){.summary-grid{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.flow div:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-17px}.rank-head{display:block}.score{margin-top:4px}.wrap{padding:0 18px}.hero{padding-top:46px}}
+    @media(max-width:520px){h2{font-size:28px}.hero p,.lead{font-size:17px}}
+    @media print{.hero{background:#111827!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.callout{box-shadow:none}a{color:inherit;text-decoration:none}.wrap{max-width:none}.hero{padding:35px 0}section{break-inside:auto}}
   </style>
 </head>
 <body>
-  <header class="hero">
-    <div class="wrap">
-      <div class="eyebrow">Независимый карьерный разбор · 12 августа 2026</div>
-      <h1>Куда двигаться Андрею дальше</h1>
-      <p>Разбор результатов работы с карьерным консультантом: что в исследовании действительно полезно, где возник эффект самоподтверждения и какие карьерные траектории выглядят сильнее с учётом опыта, входного барьера и рынка.</p>
-      <div class="pillrow">
-        <span class="pill">43 года</span><span class="pill">СПО: зубной техник</span><span class="pill">опыт: подология / собственная студия</span><span class="pill">цель: устойчивый следующий этап</span>
-      </div>
-    </div>
-  </header>
-
-  <div class="summary">
-    <div class="wrap summary-grid">
-      <div class="metric"><b>44 → 77</b><span>рост самооценки карьерной ясности по итоговой анкете</span></div>
-      <div class="metric"><b>3</b><span>гипотезы, которые стоит проверить в реальности прежде обучения</span></div>
-      <div class="metric"><b>№1</b><span>цифровая стоматология / CAD-CAM как самый короткий карьерный мост</span></div>
-    </div>
-  </div>
-
-  <main class="wrap">
-    <section>
-      <div class="callout">
-        <p><strong>Главный вывод:</strong> Андрею не обязательно «начинать жизнь заново». Наиболее перспективный ход — подняться на технологический уровень выше уже накопленного опыта: от ручной услуги к цифровому моделированию, оборудованию, внедрению и системам.</p>
-        <div class="small">Это сохраняет сильные стороны — точность, диагностику, помощь людям и видимый результат — и снижает долю того, что уже привело к выгоранию.</div>
-      </div>
-    </section>
-
-    <section>
-      <div class="kicker">1. Оценка процесса</div>
-      <h2>Что в работе с консультантом было сделано хорошо</h2>
-      <p class="lead">Методика в целом была выстроена разумно: сначала собирались данные о личности и опыте, затем — потребности, профессии, критерии и только после этого гипотезы для проверки.</p>
-      <div class="grid3">
-        <div class="card"><span class="tag good">Сильная сторона</span><h3>Хорошая глубина исследования</h3><p>Анкета, профессиональный путь, «мои победы», опрос окружения, «10 жизней», карьерные якоря и анализ профессий дали Андрею язык для описания себя.</p></div>
-        <div class="card"><span class="tag good">Сильная сторона</span><h3>Появились критерии «моё / не моё»</h3><p>Вместо абстрактного «хочу хорошую работу» появились конкретные фильтры: автономия, понятный участок ответственности, новизна, помощь человеку, видимый результат.</p></div>
-        <div class="card"><span class="tag good">Сильная сторона</span><h3>Выбор превратился в гипотезу</h3><p>Самая полезная часть финала — продуктовый подход: не покупать профессию заранее, а сначала сделать маленький MVP-тест и посмотреть на фактическую реакцию.</p></div>
-      </div>
-    </section>
-
-    <section>
-      <div class="kicker">2. Ограничения</div>
-      <h2>Где выводы стали менее надёжными</h2>
-      <div class="grid2">
-        <div class="card"><span class="tag warn">Риск</span><h3>Слишком рано появилась красивая история</h3><p>После первых двух мест работы ИИ сформулировал архетипы вроде «Мастер-преобразователь», «Технический хирург», «Мастер-Мудрец». Дальше новые ответы часто интерпретировались уже через этот образ, а не независимо.</p></div>
-        <div class="card"><span class="tag warn">Риск</span><h3>Тесты звучат точнее, чем измеряют</h3><p>В интерпретациях встречаются нейрофизиологические объяснения про кору, дофамин и лимбическую систему. Обычные самоотчётные тесты не позволяют делать такие точные биологические выводы. Их лучше использовать как повод для вопросов, а не как «скан мозга».</p></div>
-        <div class="card"><span class="tag warn">Риск</span><h3>Критерии уже были настроены под профиль</h3><p>В итоговой таблице профессии оценивались по критериям, которые сами были выведены из предыдущих интерпретаций. Поэтому психолог и карьерный консультант закономерно набрали высокий балл — они хорошо совпали с уже выбранным описанием Андрея.</p></div>
-        <div class="card"><span class="tag warn">Риск</span><h3>Не хватило экономики перехода</h3><p>В матрице почти отсутствуют стоимость входа, требования к образованию, вероятность первой работы, стартовый доход, конкуренция и ценность уже накопленного опыта. Для взрослого карьерного перехода это критические параметры.</p></div>
-      </div>
-      <div class="quote">«Профессия набрала много баллов» — ещё не значит «это лучший карьерный переход». Нужны одновременно психологическое соответствие, реальный вход и экономическая целесообразность.</div>
-    </section>
-
-    <section>
-      <div class="kicker">3. Что повторяется в исходных данных</div>
-      <h2>Независимый профиль Андрея</h2>
-      <p class="lead">Если убрать яркие интерпретации ИИ и оставить собственные ответы Андрея плюс повторяющиеся наблюдения разных людей, получается профиль не столько «ремесленника», сколько <strong>спокойного диагноста-практика</strong>.</p>
-      <div class="profile">
-        <div class="card"><b>Разобраться</b><span>интерес к причинам, устройству систем, расследованию, ошибкам и новым случаям</span></div>
-        <div class="card"><b>Исправить</b><span>не просто обсуждать проблему, а доводить её до конкретного улучшения</span></div>
-        <div class="card"><b>Работать точно</b><span>внимательность к деталям, аккуратность, спокойный темп, ручная и техническая точность</span></div>
-        <div class="card"><b>Помочь человеку</b><span>желательно видеть, кому именно стало лучше и за счёт чего</span></div>
-        <div class="card"><b>Сохранять автономию</b><span>свой участок, минимум микроменеджмента, понятная ответственность и человеческое отношение</span></div>
-      </div>
-      <p style="margin-top:18px"><strong>Важная поправка:</strong> ручная работа — не обязательно конечная профессия. Скорее это один из знакомых Андрею способов реализовывать более общую потребность: <em>понять → точно воздействовать → увидеть результат</em>.</p>
-    </section>
-
-    <section>
-      <div class="kicker">4. Независимое ранжирование</div>
-      <h2>Какие направления выглядят сильнее</h2>
-      <p class="note">Оценки ниже — не психометрические баллы. Это стратегическая оценка с учётом совпадения с профилем, переноса прошлого опыта, сложности входа и ситуации на рынке на август 2026 года.</p>
-      <div class="rank" style="margin-top:16px">
-        <div class="rank-item"><div class="rank-head"><div class="rank-title">1. Цифровая стоматология / CAD-CAM / Exocad / 3Shape</div><div class="score">9 / 10</div></div><div class="bar"><i style="width:90%"></i></div><p><strong>Почему:</strong> Андрей не обнуляет образование зубного техника, но уходит от значительной части «грязной» клиентской работы в цифровое моделирование, сканирование, фрезеровку и контроль результата. Есть техническая сложность, отдельные кейсы и материальный результат.</p></div>
-        <div class="rank-item"><div class="rank-head"><div class="rank-title">2. Внедрение / сервис / обучение в DentalTech и MedTech</div><div class="score">8.5 / 10</div></div><div class="bar"><i style="width:85%"></i></div><p><strong>Почему:</strong> сочетает диагностику, оборудование/ПО, помощь людям, обучение небольших групп, разнообразие кейсов и движение. Особенно интересны роли у поставщиков стоматологического оборудования, цифровых систем и медицинского ПО.</p></div>
-        <div class="rank-item"><div class="rank-head"><div class="rank-title">3. Аналитика медицинских информационных систем</div><div class="score">7 / 10 сейчас</div></div><div class="bar"><i style="width:70%"></i></div><p><strong>Почему:</strong> хорошо совпадает интерес к устройству систем и сбору информации, но прямой вход в системную аналитику с нуля создаёт высокую конкуренцию. Сильнее выглядит как второй шаг после внедрения/сопровождения в медицинском домене.</p></div>
-        <div class="rank-item"><div class="rank-head"><div class="rank-title">4. UX / CX research</div><div class="score">6 / 10</div></div><div class="bar"><i style="width:60%"></i></div><p><strong>Почему:</strong> есть совпадение по наблюдательности, интервью и поиску закономерностей. Но рынок узкий, а многие вакансии требуют уже 1–3+ года опыта. Хорошая гипотеза для бесплатного теста, но не для немедленной покупки курса.</p></div>
-        <div class="rank-item"><div class="rank-head"><div class="rank-title">5. Карьерный консультант / профориентолог</div><div class="score">4 / 10</div></div><div class="bar"><i style="width:40%"></i></div><p><strong>Почему:</strong> навыки слушания и структурирования подходят, но частная практика требует самопродвижения, неопределённого потока клиентов и сильного знания рынка. Кроме того, действующий профстандарт «Профконсультант» для профильных трудовых функций указывает высшее образование.</p></div>
-        <div class="rank-item"><div class="rank-head"><div class="rank-title">6. Психолог-консультант</div><div class="score">3 / 10 как ближайший переход</div></div><div class="bar"><i style="width:30%"></i></div><p><strong>Почему:</strong> способность слушать есть, но результат работы часто медленный и плохо осязаемый, эмоциональная нагрузка высока, а официальный профстандарт психолога-консультанта требует высшего образования соответствующего уровня/траектории. Для Андрея это длинный и дорогой тест гипотезы.</p></div>
-      </div>
-    </section>
-
-    <section>
-      <div class="kicker">5. Почему CAD/CAM поднялся на первое место</div>
-      <h2>Это не «назад в зубные техники», а цифровизация уже имеющегося капитала</h2>
-      <div class="flow">
-        <div>СПО зубного техника</div><div>понимание стоматологии</div><div>Exocad / 3Shape / 3D</div><div>цифровое производство</div><div>дальше: внедрение / экспертность / аналитика</div>
-      </div>
-      <div class="grid2">
-        <div class="card"><span class="tag good">Рынок</span><h3>Есть реальные вакансии</h3><p>В выдаче hh.ru по Москве на момент проверки было около 13 вакансий CAD/CAM-зубного техника. Встречались позиции оператора без опыта с указанным доходом 100–200 тыс. ₽ до налогов, а роли с опытом — порядка 150–300 тыс. ₽.</p></div>
-        <div class="card"><span class="tag good">Карьерный арбитраж</span><h3>Не конкурировать «с нуля»</h3><p>Главное преимущество — предметная база. В новой области Андрей может быть не «43-летним джуном без опыта», а специалистом со стоматологическим образованием, который добавил цифровой инструмент.</p></div>
-      </div>
-    </section>
-
-    <section>
-      <div class="kicker">6. Рыночная проверка</div>
-      <h2>Что добавляет рынок к психологическому совпадению</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Направление</th><th>Сигнал рынка</th><th>Что это значит для Андрея</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Dental CAD/CAM</strong></td><td>HH показывает отдельную нишу; есть вакансии без опыта и роли 1–3 года с заметно более высоким доходом.</td><td>Можно проверить вход коротким практическим обучением, не покупая длинную новую профессию.</td></tr>
-            <tr><td><strong>Внедрение ИС / MedTech</strong></td><td>Широкий рынок внедрения; встречаются отдельные роли по медицинским ИС. В конкретных вакансиях часто нужны SQL и опыт 1–3 года.</td><td>Лучше заходить через предметную область: стоматология/медицина + техническая поддержка/внедрение, затем наращивать IT-базу.</td></tr>
-            <tr><td><strong>UX research</strong></td><td>В Москве около 50 профильных вакансий в выдаче; значительная часть требует 1–3+ года. Иногда появляются стажировки без опыта.</td><td>Проверять через собственные исследования и стажировки; не считать курс гарантией трудоустройства.</td></tr>
-            <tr><td><strong>Психолог-консультант</strong></td><td>Профстандарт: высшее образование — специалитет/магистратура либо бакалавриат + профпереподготовка по консультированию.</td><td>При текущем СПО короткая профпереподготовка сама по себе не является простым официальным маршрутом в профессию.</td></tr>
-            <tr><td><strong>Профконсультант</strong></td><td>Актуальный профстандарт также ориентирован на высшее образование; для непрофильного высшего предусмотрена переподготовка.</td><td>Сценарий «со СПО пройти короткий курс и войти» в исходной таблице чрезмерно оптимистичен.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section>
-      <div class="kicker">7. Что делать теперь</div>
-      <h2>План на 6–8 недель: перейти от тестов к реальности</h2>
-      <p class="lead">Данных о личности уже достаточно. Следующий прирост ясности даст не ещё один тест, а несколько десятков часов реальной деятельности.</p>
-      <div class="steps">
-        <div class="step"><b>CAD/CAM: 20–30 часов практики.</b> Найти работающего специалиста, посмотреть реальный рабочий день, пройти вводный блок по Exocad/3Shape и самостоятельно сделать 3–5 учебных кейсов.</div>
-        <div class="step"><b>DentalTech/MedTech: 5 интервью + 1 день наблюдения.</b> Поговорить с сервисными инженерами, специалистами по внедрению и обучению клиентов у поставщиков оборудования/ПО. Узнать не «как профессия звучит», а как проходит обычный вторник.</div>
-        <div class="step"><b>UX research: 5 реальных исследований.</b> Провести несколько коротких юзабилити-тестов или интервью, оформить наблюдения и рекомендации. Проверить, возникает ли желание сделать шестое исследование без внешнего давления.</div>
-        <div class="step"><b>После каждого теста оценить четыре сигнала.</b> Хочется ли разобраться глубже? Есть ли энергия после 2–3 часов? Хочется ли стать лучше? Готов ли я делать это 3–4 дня в неделю через два года?</div>
-        <div class="step"><b>Только затем покупать обучение.</b> Выбирать курс не по рекламной программе, а по конкретному skills gap, который проявился в тесте: Exocad, SQL, методология исследований и т. д.</div>
-      </div>
-    </section>
-
-    <section>
-      <div class="kicker">8. Практический фильтр оффера</div>
-      <h2>Какая работа с высокой вероятностью будет «его»</h2>
-      <div class="grid2">
-        <div class="card"><span class="tag good">Искать</span><ul class="compact"><li>конкретные задачи и видимый результат</li><li>экспертный участок ответственности</li><li>сложные, но конечные кейсы</li><li>автономию в способе выполнения</li><li>небольшое количество содержательных контактов</li><li>обучение и рост в предметной области</li><li>предсказуемую оплату и уважение границ</li></ul></div>
-        <div class="card"><span class="tag warn">Осторожно</span><ul class="compact"><li>хаотичная многозадачность и постоянный поток</li><li>микроменеджмент</li><li>чистые продажи и необходимость постоянно «продавать себя»</li><li>рутина без возможности что-то улучшить</li><li>работа, где результат зависит от чужой дисциплины больше, чем от его навыка</li><li>дорогое обучение до первого реального теста профессии</li></ul></div>
-      </div>
-    </section>
-
-    <section>
-      <div class="callout">
-        <p><strong>Итоговая траектория, которую я бы проверял первой:</strong><br>зубной техник / подология → <strong>цифровая стоматология CAD/CAM</strong> → при интересе <strong>внедрение и сопровождение DentalTech/MedTech</strong> → затем возможный переход в <strong>аналитику медицинских систем</strong>.</p>
-        <div class="small">Это не обещание, что путь обязательно окажется правильным. Его преимущество в другом: он использует уже накопленный капитал и позволяет получить реальные данные о себе быстро и относительно дёшево.</div>
-      </div>
-    </section>
-
-    <section class="sources">
-      <div class="kicker">Источники</div>
-      <h2>На чём основан разбор</h2>
-      <p>Основной источник — заполненная карьерная таблица Андрея: анкета, исследование личности и опыта, потребности, список профессий, матрица оценки и финальные гипотезы. Рыночные и квалификационные утверждения дополнительно сверены с открытыми источниками.</p>
-      <ol>
-        <li><a href="https://mintrud.gov.ru/docs/mintrud/orders/2458" target="_blank" rel="noopener">Минтруд РФ — профстандарт «Психолог-консультант»</a>.</li>
-        <li><a href="https://www.consultant.ru/document/cons_doc_LAW_452871/" target="_blank" rel="noopener">КонсультантПлюс — профстандарт «Профконсультант»</a>.</li>
-        <li><a href="https://www.consultant.ru/document/cons_doc_LAW_399306/7e13deac26b82e3ef30031127b2d0f3a708e3ffd/" target="_blank" rel="noopener">Требования к образованию для профконсультанта / карьерного консультанта</a>.</li>
-        <li><a href="https://hh.ru/vacancies/zubnoj-tehnik-operator-cad-cam" target="_blank" rel="noopener">HH.ru — вакансии зубного техника / оператора CAD-CAM в Москве</a>.</li>
-        <li><a href="https://hh.ru/vacancies/spetsialist-po-vnedreniyu-informatsionnyh-sistem" target="_blank" rel="noopener">HH.ru — вакансии специалистов по внедрению информационных систем в Москве</a>.</li>
-        <li><a href="https://hh.ru/vacancies/ux-issledovatel" target="_blank" rel="noopener">HH.ru — вакансии UX-исследователей в Москве</a>.</li>
-      </ol>
-      <p class="note">Число вакансий и зарплатные вилки — снимок поисковой выдачи на август 2026 года и могут быстро меняться. Они используются как индикатор структуры рынка, а не как гарантия конкретного дохода или трудоустройства.</p>
-    </section>
-  </main>
-
+  <header class="hero"><div class="wrap"><div class="eyebrow">Независимый карьерный разбор · 12 августа 2026</div><h1>Куда двигаться Андрею дальше</h1><p>Полная версия независимого разбора результатов работы с карьерным консультантом: не только рекомендации, но и логика, почему одни выводы выглядят надёжными, другие — спорными, и почему я предлагаю именно такую последовательность карьерных экспериментов.</p><div class="pillrow"><span class="pill">43 года</span><span class="pill">СПО: зубной техник</span><span class="pill">опыт: подология / собственная студия</span><span class="pill">полный ход рассуждения</span></div></div></header>
+  <div class="summary"><div class="wrap summary-grid"><div class="metric"><b>44 → 77</b><span>рост карьерной ясности по итоговой анкете</span></div><div class="metric"><b>№1</b><span>CAD/CAM как самый короткий мост из текущего опыта</span></div><div class="metric"><b>6–8 недель</b><span>на проверку трёх гипотез до покупки обучения</span></div></div></div>
+  <main class="wrap"><div id="report" class="loading">Загружается полный отчёт…</div><noscript><p class="note">Для отображения полного отчёта требуется JavaScript.</p></noscript></main>
   <footer><div class="wrap">Независимый аналитический разбор · август 2026. Отчёт предназначен для карьерного решения и не является психологической или медицинской диагностикой.</div></footer>
+  <script>
+    (async()=>{const root=document.getElementById('report');const files=['part-1.html','part-2.html','part-3.html','part-4.html'];try{const parts=await Promise.all(files.map(f=>fetch(f,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(f);return r.text()})));root.className='';root.innerHTML=parts.join('');}catch(e){root.innerHTML='<p><strong>Не удалось загрузить часть отчёта.</strong> Обновите страницу.</p>';}})();
+  </script>
 </body>
 </html>
