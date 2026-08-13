@@ -18,8 +18,9 @@ function roleScore(role,dimScores,drains){
  const tc=touchedCriteria();let num=0,den=0;
  tc.forEach(c=>{const w=Number(state.criteria?.[c.id]??3);num+=(role.crit[c.id]||0)*w;den+=5*w});
  const a=den?num/den*100:null;
- let s=0,dw=0;for(const[k,w]of Object.entries(role.dims)){const signal=dimScores[k]||0;if(signal>0){s+=signal*w;dw+=100*w}}
- const b=dw?s/dw*100:null;
+ let s=0,dw=0,hasTextSignal=false;
+ for(const[k,w]of Object.entries(role.dims)){const signal=dimScores[k]||0;s+=signal*w;dw+=100*w;if(signal>0)hasTextSignal=true}
+ const b=dw&&hasTextSignal?s/dw*100:null;
  let base=a!==null&&b!==null?a*.68+b*.32:a!==null?a:b!==null?b:0;
  let p=0;(role.risk||[]).forEach(r=>p+=(drains[r]||0)*.12);
  return Math.max(0,Math.min(96,Math.round(base-p)));
