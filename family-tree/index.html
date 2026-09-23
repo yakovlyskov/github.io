@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Семейное дерево · Лысковы и Максимовы</title>
+<style>
+  :root { --ink:#243337; --muted:#718184; --line:#d7e1dc; --bg:#f5f7f3; --white:#fffdf8; --green:#174d43; --green2:#327568; --ochre:#a76c42; --shadow:0 12px 36px rgba(20,49,44,.12); }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif; }
+  button,input { font:inherit; }
+  button { cursor:pointer; }
+  .app { display:grid; grid-template-columns:338px minmax(0,1fr); height:100dvh; min-height:550px; }
+  .side { background:var(--white); border-right:1px solid var(--line); display:flex; flex-direction:column; z-index:3; overflow:hidden; }
+  .brand { padding:25px 23px 16px; }
+  .eyebrow { color:var(--green2); font-size:10px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+  h1 { font-size:25px; letter-spacing:-.045em; line-height:1.05; margin:9px 0 8px; font-family:Georgia,serif; font-weight:500; }
+  .subtitle { color:var(--muted); line-height:1.5; font-size:12px; }
+  .stats { display:flex; gap:7px; margin-top:17px; }
+  .stat { background:#edf2ec; border-radius:10px; padding:9px 11px; flex:1; }
+  .stat strong { display:block; color:var(--green); font-size:18px; }
+  .stat span { font-size:10px; color:var(--muted); }
+  .search-area { padding:4px 23px 16px; position:relative; }
+  .search { width:100%; outline:0; border:1px solid var(--line); border-radius:11px; padding:11px 13px; background:white; color:var(--ink); font-size:13px; }
+  .search:focus { border-color:var(--green2); box-shadow:0 0 0 3px #dcece5; }
+  .results { position:absolute; left:23px; right:23px; top:50px; background:white; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); max-height:290px; overflow:auto; display:none; z-index:9; padding:5px; }
+  .results.show { display:block; }
+  .result { display:block; width:100%; border:0; background:transparent; text-align:left; padding:9px 10px; border-radius:7px; color:var(--ink); font-size:12px; }
+  .result:hover,.result:focus { background:#eef4ee; }
+  .result small { display:block; color:var(--muted); margin-top:2px; }
+  .details { overflow-y:auto; padding:8px 23px 24px; flex:1; }
+  .details h2 { font-family:Georgia,serif; font-weight:500; font-size:23px; line-height:1.15; margin:8px 0 8px; }
+  .profile-head { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+  .profile-sub { color:var(--muted); font-size:12px; line-height:1.5; margin-bottom:18px; }
+  .mini-label { text-transform:uppercase; font-size:10px; font-weight:800; letter-spacing:.12em; color:var(--muted); margin:18px 0 7px; }
+  .rel { width:100%; display:flex; align-items:center; justify-content:space-between; text-align:left; border:1px solid #e4eae5; background:#fff; color:var(--ink); padding:10px 11px; border-radius:10px; margin:5px 0; font-size:12px; }
+  .rel:hover { border-color:#8baea0; background:#f7faf6; }
+  .rel small { color:var(--muted); font-size:10px; }
+  .empty { color:#98a29e; font-size:12px; margin:7px 0; }
+  .side-foot { padding:12px 23px 17px; border-top:1px solid var(--line); font-size:10px; color:var(--muted); line-height:1.5; }
+  .list-button { border:0; padding:0; color:var(--green); background:none; text-decoration:underline; font-size:11px; }
+  .main { position:relative; min-width:0; display:flex; flex-direction:column; }
+  .toolbar { padding:15px 22px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); background:rgba(255,255,255,.8); z-index:2; }
+  .toolbar-left,.toolbar-right { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .seg { display:flex; background:#e9efea; border-radius:10px; padding:3px; }
+  .seg button { border:0; border-radius:8px; background:none; padding:8px 12px; color:#57706b; font-size:12px; font-weight:650; }
+  .seg button.active { background:white; color:var(--green); box-shadow:0 1px 5px #183f351c; }
+  .control { border:1px solid var(--line); background:white; border-radius:9px; padding:8px 11px; color:var(--green); font-size:12px; min-height:34px; }
+  .control:hover { border-color:#8baea0; }
+  .depth { color:var(--muted); font-size:11px; white-space:nowrap; }
+  .viewport { flex:1; position:relative; overflow:hidden; cursor:grab; touch-action:none; background-color:#f7f8f4; background-image:radial-gradient(#dbe4dd 0.7px,transparent 0.7px); background-size:22px 22px; }
+  .viewport.dragging { cursor:grabbing; }
+  .stage { position:absolute; top:0; left:0; transform-origin:0 0; }
+  .lines { position:absolute; inset:0; overflow:visible; pointer-events:none; }
+  .lines path { fill:none; stroke:#b8cbc2; stroke-width:1.7; }
+  .person { position:absolute; width:188px; min-height:82px; text-align:left; border:1px solid #dce6dd; border-left:4px solid #8fa9a1; border-radius:12px; background:white; padding:12px 12px 10px; box-shadow:0 3px 10px #1b453213; color:var(--ink); transition:box-shadow .15s,border-color .15s; }
+  .person:hover { box-shadow:0 8px 20px #19453630; border-color:#7cab9a; }
+  .person.female { border-left-color:#bd9278; }
+  .person.focus { border-left-color:#174d43; background:#174d43; color:white; box-shadow:0 10px 25px #1b463b3a; }
+  .person .name { display:block; font-size:12px; font-weight:700; line-height:1.3; overflow-wrap:anywhere; }
+  .person .years { display:block; font-size:10px; color:#758681; margin-top:7px; }
+  .person.focus .years { color:#c7ddd0; }
+  .person .dot { float:right; opacity:.55; }
+  .hint { position:absolute; bottom:15px; left:18px; right:18px; text-align:center; font-size:11px; color:#798984; pointer-events:none; }
+  .modal { position:fixed; inset:0; z-index:20; background:#102b2880; display:none; align-items:center; justify-content:center; padding:16px; }
+  .modal.show { display:flex; }
+  .dialog { background:var(--white); border-radius:16px; width:min(600px,100%); max-height:min(85vh,780px); display:flex; flex-direction:column; box-shadow:var(--shadow); padding:22px; }
+  .dialog-top { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .dialog h2 { margin:0 0 14px; font-family:Georgia,serif; font-weight:500; }
+  .all-list { overflow:auto; margin-top:12px; border-top:1px solid var(--line); }
+  .all-list button { width:100%; display:flex; justify-content:space-between; gap:10px; padding:10px 5px; border:0; border-bottom:1px solid #e9eee9; background:transparent; color:var(--ink); text-align:left; font-size:12px; }
+  .all-list button:hover { color:var(--green2); background:#f3f7f2; }
+  .all-list small { color:var(--muted); white-space:nowrap; }
+  @media(max-width:760px) { .app { grid-template-columns:1fr; grid-template-rows:auto minmax(400px,1fr); height:100dvh; } .side { max-height:260px; border-right:0; border-bottom:1px solid var(--line); } .brand { padding:12px 16px 4px; } h1 { font-size:20px; margin:3px 0; } .subtitle,.stats,.side-foot { display:none; } .search-area { padding:4px 16px 8px; } .results { left:16px; right:16px; top:46px; } .details { padding:0 16px 8px; } .details h2 { font-size:17px; margin:3px 0; } .profile-sub { margin-bottom:4px; } .mini-label,.rel,.empty { display:none; } .toolbar { padding:8px; gap:7px; } .seg button { padding:7px 9px; } .control { padding:7px 8px; } .hint { bottom:8px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="eyebrow">Семейный архив</div><h1>Лысковы и Максимовы</h1><div class="subtitle">Интерактивное дерево по экспорту MyHeritage от 3 февраля 2025 года</div><div class="stats"><div class="stat"><strong id="peopleCount"></strong><span>человека</span></div><div class="stat"><strong id="familyCount"></strong><span>семейных связей</span></div></div></div>
+    <div class="search-area"><input id="search" class="search" type="search" placeholder="Найти родственника по имени" autocomplete="off" aria-label="Найти человека"><div id="results" class="results"></div></div>
+    <div id="details" class="details"></div>
+    <div class="side-foot">Все данные хранятся в этом файле. Для просмотра интернет не нужен.<br><button id="showAll" class="list-button">Открыть список всех людей</button></div>
+  </aside>
+  <main class="main">
+    <div class="toolbar"><div class="toolbar-left"><div class="seg"><button id="all" class="active">Все 243</button><button id="anc">Предки</button><button id="desc">Потомки</button></div><span id="depthText" class="depth"></span><button id="less" class="control" title="На одно поколение меньше">−</button><button id="more" class="control" title="На одно поколение больше">+</button></div><div class="toolbar-right"><button id="home" class="control">К Якову</button><button id="fit" class="control">Уместить</button><button id="zoomOut" class="control">− масштаб</button><button id="zoomIn" class="control">+ масштаб</button></div></div>
+    <div id="viewport" class="viewport" aria-label="Интерактивное семейное дерево"><div id="stage" class="stage"><svg id="lines" class="lines"></svg><div id="nodes"></div></div><div class="hint">Все родственники показаны сразу · ищите по имени или увеличивайте нужную ветвь</div></div>
+  </main>
+</div>
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-label="Все люди"><div class="dialog"><div class="dialog-top"><h2>Все люди в дереве</h2><button id="closeModal" class="control">Закрыть</button></div><input id="allSearch" class="search" type="search" placeholder="Поиск по списку"><div id="allList" class="all-list"></div></div></div>
+<script id="treeData" type="application/json">{"people":[{"id":"I500001","name":"Иосиф Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500003","families":["F500001"]},{"id":"I500002","name":"Татьяна Лыскова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500002","families":["F500001"]},{"id":"I500003","name":"Яков Иосифович Лысков","sex":"M","birth":"18 APR 1987","birthPlace":"Видное, М.О. Россия","death":"","deathPlace":"","parentFamily":"F500001","families":["F500005"]},{"id":"I500004","name":"Агрепина Филатовна Лыскова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500012","families":["F500002"]},{"id":"I500005","name":"Семен Филиппович Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500010","families":["F500002"]},{"id":"I500006","name":"Сура Вайнер","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500026","families":["F500003"]},{"id":"I500007","name":"Яков Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500004","families":["F500003"]},{"id":"I500008","name":"Есель Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500025","families":["F500004"]},{"id":"I500009","name":"Ольга Сергеевна Максимова","sex":"F","birth":"1990","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500020","families":["F500005"]},{"id":"I500010","name":"Виктор Семенович Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500002","families":["F500006"]},{"id":"I500011","name":"Елена Семеновная Лыскова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500002","families":[]},{"id":"I500012","name":"Анна Семеновна Лыскова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500002","families":["F500007"]},{"id":"I500013","name":"Арон Яковлевич Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500003","families":["F500008"]},{"id":"I500014","name":"Герман Яковлевич Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500003","families":[]},{"id":"I500015","name":"Дора Яковлевна Цейтлин","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500003","families":[]},{"id":"I500016","name":"Раиса Яковлевна Цейтлин","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500003","families":["F500009"]},{"id":"I500017","name":"Алевтина Дмитриевна","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500006"]},{"id":"I500018","name":"Николай Викторович Лысков","sex":"M","birth":"28 JAN 1980","birthPlace":"Пгт Восточный Омутнинского района Кировской области","death":"","deathPlace":"","parentFamily":"F500006","families":["F500018"]},{"id":"I500019","name":"Марина Викторовна Лыскова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500006","families":["F500017"]},{"id":"I500020","name":"Михаил Сметрин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500007"]},{"id":"I500021","name":"Сергей Михайлович Сметрин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500007","families":["F500031"]},{"id":"I500022","name":"Валентина Михайловна Сметрина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500007","families":["F500019"]},{"id":"I500023","name":"Лариса","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500008"]},{"id":"I500024","name":"Людмила Ароновна Цейтлин","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500008","families":["F500016"]},{"id":"I500025","name":"Владимир Петрович","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500009"]},{"id":"I500026","name":"Вячеслав Пугачев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500009","families":[]},{"id":"I500027","name":"Филипп Васильевич Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500011","families":["F500010"]},{"id":"I500028","name":"Устинья Давыдовна Шуклина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500010"]},{"id":"I500029","name":"Василий Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500011","F500015"]},{"id":"I500030","name":"Филат Андреевич Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500013","families":["F500012"]},{"id":"I500031","name":"Матрена Спиридоновна Леконцева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500014","families":["F500012"]},{"id":"I500032","name":"Андрей Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500013"]},{"id":"I500033","name":"Спиридон Леконцев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500014"]},{"id":"I500034","name":"Михаил Васильевич Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500015","families":[]},{"id":"I500035","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500015"]},{"id":"I500036","name":"Михаил Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500011","families":[]},{"id":"I500037","name":"Федор Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500011","families":[]},{"id":"I500038","name":"Кондрат Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500011","families":[]},{"id":"I500039","name":"Евления Евгения Лысков","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500011","families":[]},{"id":"I500040","name":"Павел Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500010","families":[]},{"id":"I500041","name":"Сергей Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500010","families":[]},{"id":"I500042","name":"Михаил Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500010","families":[]},{"id":"I500043","name":"Петр Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500010","families":[]},{"id":"I500044","name":"Соломонида (Дунька) Лыскова","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500010","families":[]},{"id":"I500045","name":"Анна Лыскова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500012","families":[]},{"id":"I500046","name":"Евдония Лыскова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500012","families":[]},{"id":"I500047","name":"Михаил Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500012","families":[]},{"id":"I500048","name":"Неонила Лыскова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500013","families":[]},{"id":"I500049","name":"Иван Лысков","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500013","families":[]},{"id":"I500050","name":"Иван Леконцев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500014","families":[]},{"id":"I500051","name":"Марк Леконцев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500014","families":[]},{"id":"I500052","name":"Алина Назни","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500016","families":[]},{"id":"I500053","name":"Аркадий","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500016"]},{"id":"I500054","name":"Андрей Федорович Тукан","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500017"]},{"id":"I500055","name":"Надежда Андреевна Тукан","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500017","families":[]},{"id":"I500056","name":"Людмила","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500018"]},{"id":"I500057","name":"Наталья Юрьевна Шерстенника","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500019","families":[]},{"id":"I500058","name":"Имя неизвестно","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500019"]},{"id":"I500059","name":"Сергей Никитич Максимов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500024","families":["F500020"]},{"id":"I500060","name":"Наталья Леонтьевна Петухова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500021","families":["F500020"]},{"id":"I500061","name":"Леонтий Николаевич Петухов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500069","families":["F500021"]},{"id":"I500062","name":"Тамара Андреевна Ипатьева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500037","families":["F500021"]},{"id":"I500063","name":"Елена Леонтьевна","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500021","families":["F500022"]},{"id":"I500064","name":"Иван Григорьев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500022","families":["F500039"]},{"id":"I500065","name":"Сергей Владимирович Григорьев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500022"]},{"id":"I500066","name":"Анна Сергеевна Максимова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500020","families":["F500023"]},{"id":"I500067","name":"Андрей Анатольевич Бригер","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500023"]},{"id":"I500068","name":"Никита Иванович Максимов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500075","families":["F500024"]},{"id":"I500069","name":"Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500025"]},{"id":"I500070","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500025"]},{"id":"I500073","name":"Берг Вайнер","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500026"]},{"id":"I500074","name":"Лиля Вайнер","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500026","families":["F500027"]},{"id":"I500075","name":"Леонид Михайлович Пердников","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500027","families":[]},{"id":"I500076","name":"Имя неизвестно","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500027"]},{"id":"I500077","name":"Бейнус Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500004","families":["F500028"]},{"id":"I500078","name":"Берл Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500004","families":["F500032"]},{"id":"I500079","name":"Борух Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500004","families":["F500030"]},{"id":"I500080","name":"Паша Цейтлин","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500004","families":[]},{"id":"I500081","name":"Элька","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500004"]},{"id":"I500082","name":"Мирка Анцелевна Тофт","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500033","families":["F500028"]},{"id":"I500083","name":"Иосиф Борисович Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500028","families":["F500029"]},{"id":"I500084","name":"Ирина Александровна Федотова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500035","families":["F500029"]},{"id":"I500085","name":"Сева Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500030","families":[]},{"id":"I500086","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500030"]},{"id":"I500087","name":"Катерина Сметрина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500031","families":[]},{"id":"I500088","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500031"]},{"id":"I500089","name":"Лева Цейтлин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500032","families":[]},{"id":"I500090","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500032"]},{"id":"I500091","name":"Ольга Цейтлин","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500032","families":[]},{"id":"I500092","name":"Тофт","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500033"]},{"id":"I500093","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500033"]},{"id":"I500094","name":"Циля Тофт","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500033","families":["F500034"]},{"id":"I500095","name":"Миля","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500034","families":[]},{"id":"I500096","name":"Имя неизвестно","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500034"]},{"id":"I500097","name":"Аня","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500034","families":[]},{"id":"I500098","name":"Фаня","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500034","families":[]},{"id":"I500099","name":"Алла","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500034","families":[]},{"id":"I500100","name":"Ира Цейтлин","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500029","families":[]},{"id":"I500101","name":"Александр Соловьев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500029","families":[]},{"id":"I500102","name":"Федотова","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500035"]},{"id":"I500103","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500035"]},{"id":"I500104","name":"Татьяна Федотова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500035","families":[]},{"id":"I500105","name":"Татьяна Федотова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500035","families":[]},{"id":"I500106","name":"Илья Юрьевич Котельников","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500029","families":["F500036"]},{"id":"I500107","name":"Илья Ильич Котельников","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500036","families":[]},{"id":"I500108","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500036"]},{"id":"I500109","name":"Андрей Ипатьева","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500044","families":["F500037"]},{"id":"I500110","name":"Татьяна Васильева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500053","families":["F500037"]},{"id":"I500111","name":"Василий Андреевич Ипатьева","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500037","families":["F500038"]},{"id":"I500112","name":"Мария Кудришова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500038"]},{"id":"I500113","name":"Анна Александровная Дмитриева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500039"]},{"id":"I500114","name":"Николай Васильевич Ипатьева","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500038","families":["F500040"]},{"id":"I500115","name":"Людмила","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500040"]},{"id":"I500116","name":"Светлана Васильевна Ипатьева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500038","families":["F500041"]},{"id":"I500117","name":"Александр","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500041"]},{"id":"I500118","name":"Галина Васильевна Ипатьева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500038","families":[]},{"id":"I500119","name":"Надежда Васильевна Ипатьева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500038","families":["F500042"]},{"id":"I500120","name":"Борис","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500042"]},{"id":"I500121","name":"Владимир Васильевич Ипатьева","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500038","families":["F500043"]},{"id":"I500122","name":"Татьяна","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500043"]},{"id":"I500123","name":"Татьяна Ипатьева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500040","families":[]},{"id":"I500124","name":"Юра","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500041","families":[]},{"id":"I500125","name":"Андрей","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500041","families":[]},{"id":"I500126","name":"Крестина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500042","families":[]},{"id":"I500127","name":"Дарья Ипатьева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500043","families":[]},{"id":"I500128","name":"Сын? Ипатьева","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500043","families":[]},{"id":"I500129","name":"Ипатий Ипатьев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500044"]},{"id":"I500130","name":"Евдокия","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500044"]},{"id":"I500131","name":"Григорий Ипатьева","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500044","families":["F500045"]},{"id":"I500132","name":"Мария","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500045"]},{"id":"I500133","name":"Анастасия Григорьевна Ипатьева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500045","families":["F500046"]},{"id":"I500134","name":"Игнатий Юрин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500046"]},{"id":"I500135","name":"Владимир Юрин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500046","families":["F500047"]},{"id":"I500136","name":"Евгений Юрин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500046","families":["F500050"]},{"id":"I500137","name":"Татьяна Юрина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500046","families":["F500052"]},{"id":"I500138","name":"Анна Сергеевна","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500047"]},{"id":"I500139","name":"Светлана Юрина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500047","families":["F500048"]},{"id":"I500140","name":"Елена Юрин","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500047","families":["F500049"]},{"id":"I500141","name":"Муж?","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500048"]},{"id":"I500142","name":"Муж?","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500049"]},{"id":"I500143","name":"Анастасия","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500049","families":[]},{"id":"I500144","name":"Ольга","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500049","families":[]},{"id":"I500145","name":"Алиса","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500048","families":[]},{"id":"I500146","name":"Пелагея","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500050"]},{"id":"I500147","name":"Ирина Юрина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500050","families":["F500051"]},{"id":"I500148","name":"Миша","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500051","families":[]},{"id":"I500149","name":"Имя неизвестно","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500051"]},{"id":"I500150","name":"Анатолий Анатов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500052"]},{"id":"I500151","name":"Елена","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500052","families":[]},{"id":"I500152","name":"Ольга","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500052","families":[]},{"id":"I500153","name":"Василий Тихонов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500053"]},{"id":"I500154","name":"Анна","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500053"]},{"id":"I500155","name":"Андрей Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500053","families":["F500054"]},{"id":"I500156","name":"Александр Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500053","families":["F500066"]},{"id":"I500157","name":"Николай Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500053","families":["F500068"]},{"id":"I500158","name":"Анастасия","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500054"]},{"id":"I500159","name":"Николай Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500054","families":["F500055"]},{"id":"I500160","name":"Виктор","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500054","families":["F500059"]},{"id":"I500161","name":"Юрий","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500054","families":["F500063"]},{"id":"I500162","name":"Галина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500054","families":["F500056"]},{"id":"I500163","name":"Александр Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500055","families":[]},{"id":"I500164","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500055"]},{"id":"I500165","name":"? Сын Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500055","families":[]},{"id":"I500166","name":"Юрий Косаткин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500056"]},{"id":"I500167","name":"Татьяна","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500056","families":[]},{"id":"I500168","name":"Андрей","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500056","families":["F500057"]},{"id":"I500169","name":"Денис","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500057","families":["F500058"]},{"id":"I500170","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500057"]},{"id":"I500171","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500058","families":[]},{"id":"I500172","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500058"]},{"id":"I500173","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500058","families":[]},{"id":"I500174","name":"Раиса","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500059"]},{"id":"I500175","name":"Евгений","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500059","families":["F500060"]},{"id":"I500176","name":"Ольга","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500059","families":["F500061"]},{"id":"I500177","name":"Марина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500059","families":["F500062"]},{"id":"I500178","name":"? Сын","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500060","families":[]},{"id":"I500179","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500060"]},{"id":"I500180","name":"? Сын","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500061","families":[]},{"id":"I500181","name":"Имя неизвестно","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500061"]},{"id":"I500182","name":"Владимир","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500062"]},{"id":"I500183","name":"Артем","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500062","families":[]},{"id":"I500184","name":"Валентина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500063"]},{"id":"I500185","name":"Наталья","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500063","families":["F500064"]},{"id":"I500186","name":"Надежда","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500063","families":["F500065"]},{"id":"I500187","name":"?Сын","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500064","families":[]},{"id":"I500188","name":"Имя неизвестно","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500064"]},{"id":"I500189","name":"?Сын","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500065","families":[]},{"id":"I500190","name":"Имя неизвестно","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500065"]},{"id":"I500191","name":"Владимир Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500066","families":["F500067"]},{"id":"I500192","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500066"]},{"id":"I500193","name":"Галина Исаева","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500067"]},{"id":"I500194","name":"Александр Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500067","families":[]},{"id":"I500195","name":"Сергей Васильев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500067","families":[]},{"id":"I500196","name":"Валентина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500068"]},{"id":"I500197","name":"Николай Григорьевич Петухов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500073","families":["F500069"]},{"id":"I500198","name":"Елена Никонова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500074","families":["F500069"]},{"id":"I500199","name":"Валерий Николаевич Петухов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500069","families":["F500070"]},{"id":"I500200","name":"Дарья Петухов","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500070","families":[]},{"id":"I500201","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500070"]},{"id":"I500202","name":"Вячеслав Николаевич Петухов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500069","families":[]},{"id":"I500203","name":"Лидия Николаевна Петухова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500069","families":[]},{"id":"I500204","name":"Юрий Николаевич Петухов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500069","families":["F500071"]},{"id":"I500205","name":"Игорь Петухова","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500071","families":[]},{"id":"I500206","name":"Имя неизвестно","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500071"]},{"id":"I500207","name":"Светлана Петухова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500071","families":[]},{"id":"I500208","name":"Григорий Николаевич Петухов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500069","families":[]},{"id":"I500209","name":"Анатолий Николаевич Петухов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500069","families":["F500072"]},{"id":"I500210","name":"Валентина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500072"]},{"id":"I500211","name":"Сергей","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500072","families":[]},{"id":"I500212","name":"Валерия","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500072","families":[]},{"id":"I500213","name":"Григорий Петухов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500073"]},{"id":"I500214","name":"Николай Никонов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500074"]},{"id":"I500215","name":"Ксения Емельянова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500074"]},{"id":"I500216","name":"Пилагея Николаевна Казмина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500083","families":["F500024"]},{"id":"I500217","name":"Иван Максимович Максимов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500080","families":["F500075"]},{"id":"I500218","name":"Ксения Михайловна","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500082","families":["F500075"]},{"id":"I500219","name":"Татьяна Ивановна Максимова","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500075","families":["F500076"]},{"id":"I500220","name":"Любовь Ивановна Максимова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500075","families":["F500077"]},{"id":"I500221","name":"Мария Ивановна Максимов","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500075","families":["F500078"]},{"id":"I500222","name":"Александра Ивановна Максимова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500075","families":["F500079"]},{"id":"I500223","name":"Александр","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500076"]},{"id":"I500224","name":"Валентин Лапин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500077"]},{"id":"I500225","name":"Александр Маурчев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500078"]},{"id":"I500226","name":"Федр Николаевич Епифанов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500079"]},{"id":"I500227","name":"Максим Нестеров","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500081","families":["F500080"]},{"id":"I500228","name":"Агрепина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500080"]},{"id":"I500229","name":"Нестер Нестеров","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500081"]},{"id":"I500230","name":"Михаил","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500082"]},{"id":"I500231","name":"Николай Осипович Казмин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500087","families":["F500083"]},{"id":"I500232","name":"Ксения Герасимовна Суворова","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500088","families":["F500083"]},{"id":"I500233","name":"Татьяна Николаевна Казмина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500083","families":["F500084"]},{"id":"I500234","name":"Лидия Николаевна Казмина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500083","families":["F500085"]},{"id":"I500235","name":"Михаил Николаевич Казмина","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500083","families":[]},{"id":"I500236","name":"Анна Николаевна Казмина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500083","families":["F500086"]},{"id":"I500237","name":"Иван","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500084"]},{"id":"I500238","name":"Валерий Лазарев","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500085"]},{"id":"I500239","name":"Иван Николаевич Подгорнов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500086"]},{"id":"I500240","name":"Осип Казмин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500087"]},{"id":"I500241","name":"Ефимия","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500087"]},{"id":"I500242","name":"Герасим Суворов","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500088"]},{"id":"I500243","name":"Ефимия Паршина","sex":"F","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":null,"families":["F500088"]},{"id":"I500244","name":"Михаил Николаевич Казмин","sex":"M","birth":"","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500083","families":[]},{"id":"I500245","name":"Лев Лысков","sex":"M","birth":"20 JAN 2021","birthPlace":"","death":"","deathPlace":"","parentFamily":"F500005","families":[]}],"families":[{"id":"F500001","father":"I500001","mother":"I500002","children":["I500003"],"marriage":"","divorce":""},{"id":"F500002","father":"I500005","mother":"I500004","children":["I500002","I500010","I500011","I500012"],"marriage":"","divorce":""},{"id":"F500003","father":"I500007","mother":"I500006","children":["I500001","I500013","I500014","I500015","I500016"],"marriage":"","divorce":""},{"id":"F500004","father":"I500008","mother":"I500081","children":["I500007","I500077","I500078","I500079","I500080"],"marriage":"","divorce":""},{"id":"F500005","father":"I500003","mother":"I500009","children":["I500245"],"marriage":"","divorce":""},{"id":"F500006","father":"I500010","mother":"I500017","children":["I500018","I500019"],"marriage":"","divorce":""},{"id":"F500007","father":"I500020","mother":"I500012","children":["I500021","I500022"],"marriage":"","divorce":""},{"id":"F500008","father":"I500013","mother":"I500023","children":["I500024"],"marriage":"","divorce":""},{"id":"F500009","father":"I500025","mother":"I500016","children":["I500026"],"marriage":"","divorce":""},{"id":"F500010","father":"I500027","mother":"I500028","children":["I500005","I500040","I500041","I500042","I500043","I500044"],"marriage":"","divorce":""},{"id":"F500011","father":"I500029","mother":null,"children":["I500027","I500036","I500037","I500038","I500039"],"marriage":"","divorce":""},{"id":"F500012","father":"I500030","mother":"I500031","children":["I500004","I500045","I500046","I500047"],"marriage":"","divorce":""},{"id":"F500013","father":"I500032","mother":null,"children":["I500030","I500048","I500049"],"marriage":"","divorce":""},{"id":"F500014","father":"I500033","mother":null,"children":["I500031","I500050","I500051"],"marriage":"","divorce":""},{"id":"F500015","father":"I500029","mother":"I500035","children":["I500034"],"marriage":"","divorce":""},{"id":"F500016","father":"I500053","mother":"I500024","children":["I500052"],"marriage":"","divorce":""},{"id":"F500017","father":"I500054","mother":"I500019","children":["I500055"],"marriage":"","divorce":""},{"id":"F500018","father":"I500018","mother":"I500056","children":[],"marriage":"","divorce":""},{"id":"F500019","father":"I500058","mother":"I500022","children":["I500057"],"marriage":"","divorce":""},{"id":"F500020","father":"I500059","mother":"I500060","children":["I500009","I500066"],"marriage":"","divorce":""},{"id":"F500021","father":"I500061","mother":"I500062","children":["I500060","I500063"],"marriage":"","divorce":""},{"id":"F500022","father":"I500065","mother":"I500063","children":["I500064"],"marriage":"","divorce":""},{"id":"F500023","father":"I500067","mother":"I500066","children":[],"marriage":"","divorce":""},{"id":"F500024","father":"I500068","mother":"I500216","children":["I500059"],"marriage":"","divorce":""},{"id":"F500025","father":"I500069","mother":"I500070","children":["I500008"],"marriage":"","divorce":""},{"id":"F500026","father":"I500073","mother":null,"children":["I500006","I500074"],"marriage":"","divorce":""},{"id":"F500027","father":"I500076","mother":"I500074","children":["I500075"],"marriage":"","divorce":""},{"id":"F500028","father":"I500077","mother":"I500082","children":["I500083"],"marriage":"","divorce":""},{"id":"F500029","father":"I500083","mother":"I500084","children":["I500100","I500101","I500106"],"marriage":"","divorce":""},{"id":"F500030","father":"I500079","mother":"I500086","children":["I500085"],"marriage":"","divorce":""},{"id":"F500031","father":"I500021","mother":"I500088","children":["I500087"],"marriage":"","divorce":""},{"id":"F500032","father":"I500078","mother":"I500090","children":["I500089","I500091"],"marriage":"","divorce":""},{"id":"F500033","father":"I500092","mother":"I500093","children":["I500082","I500094"],"marriage":"","divorce":""},{"id":"F500034","father":"I500096","mother":"I500094","children":["I500095","I500097","I500098","I500099"],"marriage":"","divorce":""},{"id":"F500035","father":"I500102","mother":"I500103","children":["I500084","I500104","I500105"],"marriage":"","divorce":""},{"id":"F500036","father":"I500106","mother":"I500108","children":["I500107"],"marriage":"","divorce":""},{"id":"F500037","father":"I500109","mother":"I500110","children":["I500062","I500111"],"marriage":"","divorce":""},{"id":"F500038","father":"I500111","mother":"I500112","children":["I500114","I500116","I500118","I500119","I500121"],"marriage":"","divorce":""},{"id":"F500039","father":"I500064","mother":"I500113","children":[],"marriage":"","divorce":""},{"id":"F500040","father":"I500114","mother":"I500115","children":["I500123"],"marriage":"","divorce":""},{"id":"F500041","father":"I500117","mother":"I500116","children":["I500124","I500125"],"marriage":"","divorce":""},{"id":"F500042","father":"I500120","mother":"I500119","children":["I500126"],"marriage":"","divorce":""},{"id":"F500043","father":"I500121","mother":"I500122","children":["I500127","I500128"],"marriage":"","divorce":""},{"id":"F500044","father":"I500129","mother":"I500130","children":["I500109","I500131"],"marriage":"","divorce":""},{"id":"F500045","father":"I500131","mother":"I500132","children":["I500133"],"marriage":"","divorce":""},{"id":"F500046","father":"I500134","mother":"I500133","children":["I500135","I500136","I500137"],"marriage":"","divorce":""},{"id":"F500047","father":"I500135","mother":"I500138","children":["I500139","I500140"],"marriage":"","divorce":""},{"id":"F500048","father":"I500141","mother":"I500139","children":["I500145"],"marriage":"","divorce":""},{"id":"F500049","father":"I500142","mother":"I500140","children":["I500143","I500144"],"marriage":"","divorce":""},{"id":"F500050","father":"I500136","mother":"I500146","children":["I500147"],"marriage":"","divorce":""},{"id":"F500051","father":"I500149","mother":"I500147","children":["I500148"],"marriage":"","divorce":""},{"id":"F500052","father":"I500150","mother":"I500137","children":["I500151","I500152"],"marriage":"","divorce":""},{"id":"F500053","father":"I500153","mother":"I500154","children":["I500110","I500155","I500156","I500157"],"marriage":"","divorce":""},{"id":"F500054","father":"I500155","mother":"I500158","children":["I500159","I500160","I500161","I500162"],"marriage":"","divorce":""},{"id":"F500055","father":"I500159","mother":"I500164","children":["I500163","I500165"],"marriage":"","divorce":""},{"id":"F500056","father":"I500166","mother":"I500162","children":["I500167","I500168"],"marriage":"","divorce":""},{"id":"F500057","father":"I500168","mother":"I500170","children":["I500169"],"marriage":"","divorce":""},{"id":"F500058","father":"I500169","mother":"I500172","children":["I500171","I500173"],"marriage":"","divorce":""},{"id":"F500059","father":"I500160","mother":"I500174","children":["I500175","I500176","I500177"],"marriage":"","divorce":""},{"id":"F500060","father":"I500175","mother":"I500179","children":["I500178"],"marriage":"","divorce":""},{"id":"F500061","father":"I500181","mother":"I500176","children":["I500180"],"marriage":"","divorce":""},{"id":"F500062","father":"I500182","mother":"I500177","children":["I500183"],"marriage":"","divorce":""},{"id":"F500063","father":"I500161","mother":"I500184","children":["I500185","I500186"],"marriage":"","divorce":""},{"id":"F500064","father":"I500188","mother":"I500185","children":["I500187"],"marriage":"","divorce":""},{"id":"F500065","father":"I500190","mother":"I500186","children":["I500189"],"marriage":"","divorce":""},{"id":"F500066","father":"I500156","mother":"I500192","children":["I500191"],"marriage":"","divorce":""},{"id":"F500067","father":"I500191","mother":"I500193","children":["I500194","I500195"],"marriage":"","divorce":""},{"id":"F500068","father":"I500157","mother":"I500196","children":[],"marriage":"","divorce":""},{"id":"F500069","father":"I500197","mother":"I500198","children":["I500061","I500199","I500202","I500203","I500204","I500208","I500209"],"marriage":"","divorce":""},{"id":"F500070","father":"I500199","mother":"I500201","children":["I500200"],"marriage":"","divorce":""},{"id":"F500071","father":"I500204","mother":"I500206","children":["I500205","I500207"],"marriage":"","divorce":""},{"id":"F500072","father":"I500209","mother":"I500210","children":["I500211","I500212"],"marriage":"","divorce":""},{"id":"F500073","father":"I500213","mother":null,"children":["I500197"],"marriage":"","divorce":""},{"id":"F500074","father":"I500214","mother":"I500215","children":["I500198"],"marriage":"","divorce":""},{"id":"F500075","father":"I500217","mother":"I500218","children":["I500068","I500219","I500220","I500221","I500222"],"marriage":"","divorce":""},{"id":"F500076","father":"I500219","mother":"I500223","children":[],"marriage":"","divorce":""},{"id":"F500077","father":"I500224","mother":"I500220","children":[],"marriage":"","divorce":""},{"id":"F500078","father":"I500225","mother":"I500221","children":[],"marriage":"","divorce":""},{"id":"F500079","father":"I500226","mother":"I500222","children":[],"marriage":"","divorce":""},{"id":"F500080","father":"I500227","mother":"I500228","children":["I500217"],"marriage":"","divorce":""},{"id":"F500081","father":"I500229","mother":null,"children":["I500227"],"marriage":"","divorce":""},{"id":"F500082","father":"I500230","mother":null,"children":["I500218"],"marriage":"","divorce":""},{"id":"F500083","father":"I500231","mother":"I500232","children":["I500216","I500233","I500234","I500235","I500236","I500244"],"marriage":"","divorce":""},{"id":"F500084","father":"I500237","mother":"I500233","children":[],"marriage":"","divorce":""},{"id":"F500085","father":"I500238","mother":"I500234","children":[],"marriage":"","divorce":""},{"id":"F500086","father":"I500239","mother":"I500236","children":[],"marriage":"","divorce":""},{"id":"F500087","father":"I500240","mother":"I500241","children":["I500231"],"marriage":"","divorce":""},{"id":"F500088","father":"I500242","mother":"I500243","children":["I500232"],"marriage":"","divorce":""}]}</script>
+<script>
+(() => {
+  'use strict';
+  const data = JSON.parse(document.getElementById('treeData').textContent);
+  const people = new Map(data.people.map(p => [p.id,p]));
+  const families = new Map(data.families.map(f => [f.id,f]));
+  const $ = id => document.getElementById(id);
+  const E = (tag, cls, text) => { const e = document.createElement(tag); if(cls)e.className=cls; if(text!==undefined)e.textContent=text; return e; };
+  const rootId = people.has('I500003') ? 'I500003' : data.people[0].id;
+  let selected = rootId, mode = 'all', depth = 4, scale = 1, tx = 0, ty = 0, width = 0, height = 0;
+  const CARD_W = 188, CARD_H = 82, DX = 216, DY = 154;
+  const year = date => (date || '').match(/\b(?:1[6-9]|20)\d{2}\b/)?.[0] || '';
+  const label = p => p?.name || 'Имя неизвестно';
+  const life = p => {
+    if(!p)return '';
+    const b=year(p.birth), d=year(p.death);
+    return b && d ? `${b}–${d}` : b ? `р. ${b}` : d ? `ум. ${d}` : '';
+  };
+  const sorted = ids => [...new Set(ids.filter(id => people.has(id)))].sort((a,b)=>label(people.get(a)).localeCompare(label(people.get(b)),'ru'));
+  $('peopleCount').textContent=data.people.length;
+  $('familyCount').textContent=data.families.length;
+
+  function parentIds(p) {
+    const f=families.get(p?.parentFamily);
+    return f ? [f.father,f.mother].filter(id=>id && people.has(id)) : [];
+  }
+  function childIds(p) {
+    return [...new Set((p?.families||[]).flatMap(id=>families.get(id)?.children||[]))].filter(id=>people.has(id));
+  }
+  function partnerIds(p) {
+    return sorted((p?.families||[]).map(id=>families.get(id)).filter(Boolean).flatMap(f=>[f.father,f.mother].filter(id=>id && id!==p.id)));
+  }
+  function buildAllGraph() {
+    // Spouses share a row; every child is placed exactly one row below its parents.
+    const adj=new Map(data.people.map(p=>[p.id,[]]));
+    for(const f of data.families){
+      const parents=[f.father,f.mother].filter(id=>people.has(id));
+      for(const p of parents){
+        for(const q of parents)if(q!==p)adj.get(p).push([q,0]);
+        for(const c of f.children)if(people.has(c)){
+          adj.get(p).push([c,1]);adj.get(c).push([p,-1]);
+        }
+      }
+    }
+    const rank=new Map([[rootId,0]]), queue=[rootId];
+    for(let i=0;i<queue.length;i++)for(const [id,delta] of adj.get(queue[i])){
+      if(!rank.has(id)){rank.set(id,rank.get(queue[i])+delta);queue.push(id);}
+    }
+    // Preserve disconnected records too, should the GEDCOM change later.
+    for(const p of data.people)if(!rank.has(p.id))rank.set(p.id,0);
+    const groupParent=new Map(data.people.map(p=>[p.id,p.id]));
+    function find(id){while(groupParent.get(id)!==id)id=groupParent.get(id);return id;}
+    function union(a,b){a=find(a);b=find(b);if(a!==b)groupParent.set(b,a);}
+    for(const f of data.families)if(f.father&&f.mother&&rank.get(f.father)===rank.get(f.mother))union(f.father,f.mother);
+    const groups=new Map();
+    for(const p of data.people){const id=find(p.id);if(!groups.has(id))groups.set(id,{id,rank:rank.get(p.id),members:[]});groups.get(id).members.push(p.id);}
+    for(const g of groups.values())g.members.sort((a,b)=>label(people.get(a)).localeCompare(label(people.get(b)),'ru'));
+    const rows=new Map();
+    for(const g of groups.values()){if(!rows.has(g.rank))rows.set(g.rank,[]);rows.get(g.rank).push(g);}
+    const levels=[...rows.keys()].sort((a,b)=>a-b);
+    for(const row of rows.values())row.sort((a,b)=>label(people.get(a.members[0])).localeCompare(label(people.get(b.members[0])),'ru'));
+    // Repeated barycentre passes keep close relatives near one another.
+    for(let pass=0;pass<8;pass++){
+      const position=new Map();
+      for(const row of rows.values())row.forEach((g,index)=>g.members.forEach(id=>position.set(id,index)));
+      for(const level of (pass%2 ? [...levels].reverse() : levels)){
+        const row=rows.get(level);
+        const scored=row.map((g,index)=>{
+          const neighbors=g.members.flatMap(id=>adj.get(id).filter(([other,d])=>d===(pass%2?1:-1)).map(([other])=>position.get(other)).filter(v=>v!==undefined));
+          return {g,index,score:neighbors.length?neighbors.reduce((a,b)=>a+b,0)/neighbors.length:index};
+        });
+        scored.sort((a,b)=>a.score-b.score||a.index-b.index);
+        rows.set(level,scored.map(v=>v.g));
+      }
+    }
+    const nodes=[];let maxWidth=0;
+    const GAP=29, ROW_H=182;
+    for(let li=0;li<levels.length;li++){
+      const row=rows.get(levels[li]);let x=0;
+      for(const g of row){
+        for(const id of g.members){nodes.push({id,x,y:li*ROW_H+50});x+=CARD_W+GAP;}
+        x+=17;
+      }
+      maxWidth=Math.max(maxWidth,x);
+    }
+    for(const n of nodes)n.x+=(maxWidth-(rows.get(rank.get(n.id)).reduce((v,g)=>v+g.members.length*(CARD_W+GAP)+17,0)))/2+40;
+    const pos=new Map(nodes.map(n=>[n.id,n]));
+    return {nodes,pos,edges:[],all:true,w:maxWidth+100,h:levels.length*ROW_H+70};
+  }
+  const allGraph=buildAllGraph();
+  function relationGroup(container,title,ids) {
+    container.append(E('div','mini-label',title));
+    if(!ids.length){container.append(E('div','empty','Нет сведений в файле'));return;}
+    for(const id of ids){
+      const p=people.get(id), b=E('button','rel');
+      b.append(E('span','',label(p)),E('small','',life(p) + '  ↗'));
+      b.onclick=()=>select(id); container.append(b);
+    }
+  }
+  function showDetails() {
+    const p=people.get(selected), box=$('details'); box.replaceChildren();
+    box.append(E('div','eyebrow','В центре дерева'),E('h2','',label(p)));
+    const facts=[];
+    if(p.birth)facts.push(`Рождение: ${p.birth}${p.birthPlace ? ' · '+p.birthPlace : ''}`);
+    if(p.death)facts.push(`Смерть: ${p.death}${p.deathPlace ? ' · '+p.deathPlace : ''}`);
+    if(!facts.length)facts.push('Даты жизни не указаны в исходном файле');
+    for(const f of facts)box.append(E('div','profile-sub',f));
+    relationGroup(box,'Родители',parentIds(p));
+    relationGroup(box,'Партнёры',partnerIds(p));
+    const sib=parentIds(p).length ? sorted((families.get(p.parentFamily)?.children||[]).filter(id=>id!==p.id)) : [];
+    relationGroup(box,'Братья и сёстры',sib);
+    relationGroup(box,'Дети',sorted(childIds(p)));
+  }
+  function buildGraph() {
+    const nodes=[], edges=[], ancestry=mode==='anc', counts=new Map();
+    function walk(id,d,path) {
+      const key=`${id}:${nodes.length}`;
+      const n={id,key,d,x:0,y:0,children:[]}; nodes.push(n);
+      if(d < depth && !path.has(id)) {
+        const p=people.get(id), next=ancestry ? parentIds(p) : childIds(p);
+        for(const child of next) {
+          if(path.has(child))continue;
+          const c=walk(child,d+1,new Set([...path,id]));
+          n.children.push(c); edges.push([n,c]);
+        }
+      }
+      return n;
+    }
+    const root=walk(selected,0,new Set());
+    let nextX=0;
+    function position(n) {
+      for(const c of n.children)position(c);
+      n.x = n.children.length ? (n.children[0].x+n.children[n.children.length-1].x)/2 : nextX++*DX;
+      n.y = (ancestry ? depth-n.d : n.d)*DY;
+    }
+    position(root);
+    const minX=Math.min(...nodes.map(n=>n.x));
+    const minY=Math.min(...nodes.map(n=>n.y));
+    for(const n of nodes){n.x=n.x-minX+50;n.y=n.y-minY+50;}
+    width=Math.max(...nodes.map(n=>n.x))+CARD_W+50;
+    height=Math.max(...nodes.map(n=>n.y))+CARD_H+50;
+    return {nodes,edges};
+  }
+  function render(shouldFit=true) {
+    $('all').classList.toggle('active',mode==='all');
+    $('anc').classList.toggle('active',mode==='anc');
+    $('desc').classList.toggle('active',mode==='desc');
+    $('depthText').textContent=mode==='all'?'7 поколений · 243 человека':`До ${depth+1} поколений`;
+    $('less').hidden=mode==='all';$('more').hidden=mode==='all';
+    const graph=mode==='all'?allGraph:buildGraph();
+    const {nodes,edges}=graph, svg=$('lines'), holder=$('nodes');
+    if(graph.all){width=graph.w;height=graph.h;}
+    svg.replaceChildren();holder.replaceChildren();
+    svg.setAttribute('width',width);svg.setAttribute('height',height);
+    $('stage').style.width=width+'px';$('stage').style.height=height+'px';
+    function line(d){const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',d);svg.append(path);}
+    if(graph.all)for(const f of data.families){
+      const a=graph.pos.get(f.father),b=graph.pos.get(f.mother);
+      const parents=[a,b].filter(Boolean);
+      if(!parents.length)continue;
+      const cy=parents[0].y+CARD_H+22;
+      const x1=parents[0].x+CARD_W/2, x2=parents.length>1?parents[1].x+CARD_W/2:x1;
+      const mid=(x1+x2)/2;
+      if(parents.length>1){
+        if(f.children.length)line(`M ${x1} ${parents[0].y+CARD_H} V ${cy} H ${x2} V ${parents[1].y+CARD_H}`);
+        else line(`M ${parents[0].x+CARD_W} ${parents[0].y+CARD_H/2} H ${parents[1].x} `);
+      } else if(f.children.length)line(`M ${x1} ${parents[0].y+CARD_H} V ${cy}`);
+      for(const id of f.children){
+        const child=graph.pos.get(id);if(!child)continue;
+        const cx=child.x+CARD_W/2, y=child.y;
+        const bend=(cy+y)/2;
+        line(`M ${mid} ${cy} C ${mid} ${bend}, ${cx} ${bend}, ${cx} ${y}`);
+      }
+    }
+    else for(const [a,b] of edges){
+      const x1=a.x+CARD_W/2, x2=b.x+CARD_W/2;
+      const y1=mode==='anc' ? a.y : a.y+CARD_H;
+      const y2=mode==='anc' ? b.y+CARD_H : b.y;
+      const mid=(y1+y2)/2;
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',`M ${x1} ${y1} C ${x1} ${mid}, ${x2} ${mid}, ${x2} ${y2}`);
+      svg.append(path);
+    }
+    for(const n of nodes){
+      const p=people.get(n.id), card=E('button','person'+(p.sex==='F'?' female':'')+(n.id===selected?' focus':''));
+      card.style.left=n.x+'px';card.style.top=n.y+'px';
+      card.title='Открыть ветвь: '+label(p);
+      card.append(E('span','name',label(p)),E('span','years',life(p)||'Дата неизвестна'));
+      card.onclick=()=>select(n.id);
+      holder.append(card);
+    }
+    showDetails();
+    if(shouldFit)requestAnimationFrame(fit);
+  }
+  function applyTransform() {$('stage').style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;}
+  function fit() {
+    const v=$('viewport'), vw=v.clientWidth, vh=v.clientHeight;
+    if(!vw||!vh)return;
+    scale=Math.min(1.28,Math.max(.035,Math.min((vw-32)/width,(vh-38)/height)));
+    tx=(vw-width*scale)/2;ty=(vh-height*scale)/2;applyTransform();
+  }
+  function zoom(factor,cx,cy) {
+    const old=scale;scale=Math.min(2.5,Math.max(.12,scale*factor));
+    tx=cx-(cx-tx)*scale/old;ty=cy-(cy-ty)*scale/old;applyTransform();
+  }
+  function select(id) {
+    if(!people.has(id))return;
+    selected=id;$('results').classList.remove('show');$('search').value='';
+    $('modal').classList.remove('show');
+    if(mode==='all'){
+      render(false);
+      const n=allGraph.pos.get(id),v=$('viewport');
+      if(n){scale=Math.max(scale,.78);tx=v.clientWidth/2-(n.x+CARD_W/2)*scale;ty=v.clientHeight/2-(n.y+CARD_H/2)*scale;applyTransform();}
+    }else render();
+  }
+  $('all').onclick=()=>{mode='all';render();};
+  $('anc').onclick=()=>{mode='anc';render();};
+  $('desc').onclick=()=>{mode='desc';render();};
+  $('less').onclick=()=>{depth=Math.max(1,depth-1);render();};
+  $('more').onclick=()=>{depth=Math.min(8,depth+1);render();};
+  $('home').onclick=()=>{selected=rootId;mode='anc';depth=4;render();};
+  $('fit').onclick=fit;
+  $('zoomIn').onclick=()=>zoom(1.25,$('viewport').clientWidth/2,$('viewport').clientHeight/2);
+  $('zoomOut').onclick=()=>zoom(.8,$('viewport').clientWidth/2,$('viewport').clientHeight/2);
+  const viewport=$('viewport');let drag=null;
+  viewport.addEventListener('pointerdown',e=>{if(e.target.closest('.person'))return;drag={x:e.clientX,y:e.clientY,tx,ty};viewport.setPointerCapture(e.pointerId);viewport.classList.add('dragging');});
+  viewport.addEventListener('pointermove',e=>{if(!drag)return;tx=drag.tx+e.clientX-drag.x;ty=drag.ty+e.clientY-drag.y;applyTransform();});
+  function endDrag(){drag=null;viewport.classList.remove('dragging');}
+  viewport.addEventListener('pointerup',endDrag);viewport.addEventListener('pointercancel',endDrag);
+  viewport.addEventListener('wheel',e=>{e.preventDefault();const r=viewport.getBoundingClientRect();zoom(e.deltaY<0?1.12:.89,e.clientX-r.left,e.clientY-r.top);},{passive:false});
+  window.addEventListener('resize',fit);
+
+  function matches(q){return data.people.filter(p=>p.name.toLocaleLowerCase('ru').includes(q)).sort((a,b)=>a.name.localeCompare(b.name,'ru'));}
+  $('search').addEventListener('input',e=>{
+    const q=e.target.value.trim().toLocaleLowerCase('ru'), box=$('results');box.replaceChildren();
+    if(!q){box.classList.remove('show');return;}
+    for(const p of matches(q).slice(0,20)){
+      const row=E('button','result',p.name);row.append(E('small','',life(p)||'Дата неизвестна'));row.onclick=()=>select(p.id);box.append(row);
+    }
+    if(!box.children.length)box.append(E('div','empty','Ничего не найдено'));
+    box.classList.add('show');
+  });
+  $('search').addEventListener('keydown',e=>{if(e.key==='Escape')$('results').classList.remove('show');if(e.key==='Enter')$('results').querySelector('button')?.click();});
+  document.addEventListener('click',e=>{if(!e.target.closest('.search-area'))$('results').classList.remove('show');});
+  function populateAll(){
+    const q=$('allSearch').value.trim().toLocaleLowerCase('ru'), list=$('allList');list.replaceChildren();
+    const frag=document.createDocumentFragment();
+    for(const p of matches(q)){
+      const row=E('button');row.append(E('span','',p.name),E('small','',life(p)));
+      row.onclick=()=>select(p.id);frag.append(row);
+    }
+    list.append(frag);
+  }
+  $('showAll').onclick=()=>{$('modal').classList.add('show');$('allSearch').value='';populateAll();$('allSearch').focus();};
+  $('allSearch').oninput=populateAll;
+  $('closeModal').onclick=()=>$('modal').classList.remove('show');
+  $('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').classList.remove('show');});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('show');});
+  render();
+})();
+</script>
+</body>
+</html>
