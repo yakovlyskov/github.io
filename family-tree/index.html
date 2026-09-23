@@ -85,7 +85,7 @@
   </aside>
   <main class="main">
     <div class="toolbar"><div class="toolbar-left"><div class="seg"><button id="all" class="active">Все 243</button><button id="anc">Предки</button><button id="desc">Потомки</button></div><span id="depthText" class="depth"></span><button id="less" class="control" title="На одно поколение меньше">−</button><button id="more" class="control" title="На одно поколение больше">+</button></div><div class="toolbar-right"><button id="home" class="control">К Якову</button><button id="fit" class="control">Уместить</button><button id="zoomOut" class="control">− масштаб</button><button id="zoomIn" class="control">+ масштаб</button></div></div>
-    <div id="viewport" class="viewport" aria-label="Интерактивное семейное дерево"><div id="stage" class="stage"><svg id="lines" class="lines"></svg><div id="nodes"></div></div><div class="hint">Все родственники показаны сразу · ищите по имени или увеличивайте нужную ветвь</div></div>
+    <div id="viewport" class="viewport" aria-label="Интерактивное семейное дерево"><div id="stage" class="stage"><svg id="lines" class="lines"></svg><div id="nodes"></div></div><div class="hint">Перетаскивайте дерево · разводите или сводите два пальца для масштаба</div></div>
   </main>
 </div>
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-label="Все люди"><div class="dialog"><div class="dialog-top"><h2>Все люди в дереве</h2><button id="closeModal" class="control">Закрыть</button></div><input id="allSearch" class="search" type="search" placeholder="Поиск по списку"><div id="allList" class="all-list"></div></div></div>
@@ -292,7 +292,7 @@
     tx=(vw-width*scale)/2;ty=(vh-height*scale)/2;applyTransform();
   }
   function zoom(factor,cx,cy) {
-    const old=scale;scale=Math.min(2.5,Math.max(.12,scale*factor));
+    const old=scale;scale=Math.min(4,Math.max(.035,scale*factor));
     tx=cx-(cx-tx)*scale/old;ty=cy-(cy-ty)*scale/old;applyTransform();
   }
   function select(id) {
@@ -314,11 +314,44 @@
   $('fit').onclick=fit;
   $('zoomIn').onclick=()=>zoom(1.25,$('viewport').clientWidth/2,$('viewport').clientHeight/2);
   $('zoomOut').onclick=()=>zoom(.8,$('viewport').clientWidth/2,$('viewport').clientHeight/2);
-  const viewport=$('viewport');let drag=null;
-  viewport.addEventListener('pointerdown',e=>{if(e.target.closest('.person'))return;drag={x:e.clientX,y:e.clientY,tx,ty};viewport.setPointerCapture(e.pointerId);viewport.classList.add('dragging');});
-  viewport.addEventListener('pointermove',e=>{if(!drag)return;tx=drag.tx+e.clientX-drag.x;ty=drag.ty+e.clientY-drag.y;applyTransform();});
-  function endDrag(){drag=null;viewport.classList.remove('dragging');}
-  viewport.addEventListener('pointerup',endDrag);viewport.addEventListener('pointercancel',endDrag);
+  const viewport=$('viewport'), pointers=new Map();let drag=null,pinch=null;
+  function point(e){const r=viewport.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};}
+  function startPinch(){
+    const pair=[...pointers.entries()].slice(0,2),a=pair[0][1],b=pair[1][1];
+    const x=(a.x+b.x)/2,y=(a.y+b.y)/2;
+    pinch={ids:pair.map(([id])=>id),distance:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),scale,worldX:(x-tx)/scale,worldY:(y-ty)/scale};
+    drag=null;
+    for(const [id] of pair)try{viewport.setPointerCapture(id);}catch{}
+  }
+  viewport.addEventListener('pointerdown',e=>{
+    const onCard=!!e.target.closest('.person');
+    if(onCard && e.pointerType==='mouse')return;
+    const p=point(e);pointers.set(e.pointerId,p);
+    if(pointers.size===1){
+      drag=onCard?null:{x:p.x,y:p.y,tx,ty};
+      if(!onCard)viewport.setPointerCapture(e.pointerId);
+    }else if(pointers.size===2)startPinch();
+    viewport.classList.add('dragging');
+  });
+  viewport.addEventListener('pointermove',e=>{
+    if(!pointers.has(e.pointerId))return;
+    const p=point(e);pointers.set(e.pointerId,p);
+    if(pinch && pinch.ids.every(id=>pointers.has(id))){
+      const [a,b]=pinch.ids.map(id=>pointers.get(id));
+      const distance=Math.max(1,Math.hypot(a.x-b.x,a.y-b.y));
+      scale=Math.min(4,Math.max(.035,pinch.scale*distance/pinch.distance));
+      tx=(a.x+b.x)/2-pinch.worldX*scale;
+      ty=(a.y+b.y)/2-pinch.worldY*scale;
+      applyTransform();
+    }else if(drag){tx=drag.tx+p.x-drag.x;ty=drag.ty+p.y-drag.y;applyTransform();}
+  });
+  function endPointer(e){
+    pointers.delete(e.pointerId);pinch=null;
+    if(pointers.size>=2)startPinch();
+    else if(pointers.size===1){const p=pointers.values().next().value;drag={x:p.x,y:p.y,tx,ty};}
+    else {drag=null;viewport.classList.remove('dragging');}
+  }
+  viewport.addEventListener('pointerup',endPointer);viewport.addEventListener('pointercancel',endPointer);
   viewport.addEventListener('wheel',e=>{e.preventDefault();const r=viewport.getBoundingClientRect();zoom(e.deltaY<0?1.12:.89,e.clientX-r.left,e.clientY-r.top);},{passive:false});
   window.addEventListener('resize',fit);
 
