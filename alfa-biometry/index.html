@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Биометрия — короткий опрос</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --canvas: #f2f3f5;
+      --surface: #ffffff;
+      --text: #17191c;
+      --secondary: #62666d;
+      --line: #e8e9ec;
+      --choice: #f5f6f7;
+      --choice-hover: #eff0f2;
+      --selected: #fff1ef;
+      --red: #e52d20;
+      --red-hover: #cc271c;
+      --button-text: #ffffff;
+      --disabled: #e8e9ec;
+      --disabled-text: #747880;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: var(--canvas);
+      color: var(--text);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --canvas: #141518;
+        --surface: #212226;
+        --text: #f4f4f5;
+        --secondary: #b0b2b9;
+        --line: #3a3c43;
+        --choice: #2c2e34;
+        --choice-hover: #35373e;
+        --selected: #412b2b;
+        --red: #ff5148;
+        --red-hover: #fa6259;
+        --button-text: #17191c;
+        --disabled: #32343a;
+        --disabled-text: #a2a5ad;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px 16px; min-width: 280px; }
+    button, input, textarea { font: inherit; }
+    button, label { -webkit-tap-highlight-color: transparent; }
+    button { touch-action: manipulation; cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 3px solid var(--red);
+      outline-offset: 4px;
+    }
+    button:disabled { cursor: default; }
+    [hidden] { display: none !important; }
+    .survey {
+      width: 100%; max-width: 440px; margin: 0 auto;
+      padding: 28px; background: var(--surface); border-radius: 28px;
+      box-shadow: 0 12px 44px #00000009;
+    }
+    .header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+    .context { font-size: 14px; font-weight: 600; line-height: 20px; }
+    .step { color: var(--secondary); font-size: 13px; line-height: 20px; white-space: nowrap; }
+    .progress { display: flex; gap: 5px; margin: 0 0 26px; }
+    .progress span { width: 50%; height: 3px; border-radius: 4px; background: var(--line); }
+    .progress span.active { background: var(--red); }
+    h1 { font-size: 27px; line-height: 1.16; letter-spacing: -.6px; font-weight: 650; margin: 0 0 12px; text-wrap: balance; }
+    .hint { font-size: 14px; line-height: 20px; color: var(--secondary); margin: 0 0 22px; }
+    .definition { margin: 0 0 24px; padding: 15px 16px; border-radius: 14px; background: var(--choice); color: var(--secondary); font-size: 14px; line-height: 21px; }
+    .definition strong { color: var(--text); font-weight: 600; }
+    fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+    .choices { display: grid; gap: 7px; }
+    .choice {
+      display: flex; align-items: center; gap: 13px; min-height: 52px;
+      padding: 13px 15px; border-radius: 14px; background: var(--choice);
+      border: 1.5px solid transparent; cursor: pointer;
+      font-size: 15px; line-height: 21px;
+      transition: background-color .12s, border-color .12s;
+    }
+    .choice input { flex: 0 0 19px; width: 19px; height: 19px; margin: 0; accent-color: var(--red); }
+    .choice:has(input:checked) { border-color: var(--red); background: var(--selected); }
+    @media (hover: hover) { .choice:hover { background: var(--choice-hover); } .choice:has(input:checked):hover { background: var(--selected); } }
+    .actions { display: grid; gap: 9px; margin-top: 24px; }
+    .primary {
+      width: 100%; border: 0; border-radius: 14px; min-height: 52px;
+      background: var(--red); color: var(--button-text); font-size: 16px;
+      line-height: 22px; font-weight: 600; padding: 14px 16px;
+    }
+    .primary:disabled { background: var(--disabled); color: var(--disabled-text); }
+    @media (hover: hover) { .primary:not(:disabled):hover { background: var(--red-hover); } }
+    .quiet {
+      background: transparent; color: var(--secondary); border: 0;
+      border-radius: 10px; min-height: 44px; padding: 10px 12px;
+      font-size: 14px; line-height: 20px;
+    }
+    .quiet:hover { color: var(--text); }
+    .navigation { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .navigation .quiet:first-child { margin-left: -10px; }
+    .navigation .quiet:last-child { margin-right: -10px; }
+    .text-answer { margin-top: 16px; }
+    .text-answer label { display: block; font-size: 14px; line-height: 20px; margin: 0 0 8px; color: var(--secondary); }
+    textarea {
+      display: block; width: 100%; min-height: 126px; resize: vertical;
+      border: 1.5px solid var(--line); border-radius: 14px; padding: 14px;
+      background: var(--choice); color: var(--text); font-size: 16px; line-height: 23px;
+    }
+    textarea::placeholder { color: var(--secondary); }
+    .count { text-align: right; margin-top: 6px; color: var(--secondary); font-size: 12px; line-height: 18px; font-variant-numeric: tabular-nums; }
+    .outcome { padding: 48px 0 38px; text-align: center; }
+    .outcome-mark {
+      display: grid; place-items: center; margin: 0 auto 26px; width: 56px; height: 56px;
+      border-radius: 50%; background: var(--selected); color: var(--red);
+      font-size: 27px; font-weight: 500;
+    }
+    .outcome h1 { font-size: 28px; margin-bottom: 12px; }
+    .outcome .hint { margin-bottom: 28px; }
+    .outcome .quiet { color: var(--text); background: var(--choice); padding: 12px 22px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+    noscript { display: block; line-height: 1.5; padding: 20px; text-align: center; }
+    @media (max-width: 479px) {
+      body { padding: 0; background: var(--surface); }
+      .survey { padding: 22px 20px; border-radius: 0; box-shadow: none; }
+      h1 { font-size: 25px; }
+    }
+    @media (max-width: 359px) {
+      .survey { padding: 20px 16px; }
+      h1 { font-size: 23px; }
+      .choice { padding: 12px; gap: 11px; }
+      .navigation { gap: 0; }
+      .navigation .quiet { padding-left: 8px; padding-right: 8px; font-size: 13px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="survey" aria-label="Опрос о подключении услуг с биометрией">
+    <div class="header">
+      <span class="context">Услуги с биометрией</span>
+      <span class="step" id="step-label">Вопрос 1</span>
+    </div>
+    <div class="progress" id="progress" aria-hidden="true"><span class="active"></span><span></span></div>
+    <div id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <section id="reason-screen" aria-labelledby="reason-title">
+      <p class="definition" id="biometry-definition"><strong>Биометрия</strong> — это способ подтвердить личность по лицу или голосу. Для подключения услуг банк запрашивает доступ к данным через Госуслуги; биометрию сдают в приложении «Госуслуги Биометрия». Биометрические данные хранятся в Единой биометрической системе (ЕБС).</p>
+      <h1 id="reason-title">Почему вы пока не подключили услуги с биометрией?</h1>
+      <p class="hint" id="reason-hint">Выберите главную причину</p>
+      <form id="reason-form">
+        <fieldset aria-labelledby="reason-title" aria-describedby="biometry-definition reason-hint">
+          <div class="choices" id="reason-choices"></div>
+        </fieldset>
+        <div class="actions">
+          <button class="primary" id="reason-next" type="submit" disabled>Далее</button>
+          <button class="quiet" id="dismiss" type="button">Не хочу отвечать</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="detail-screen" aria-labelledby="detail-title" hidden>
+      <h1 id="detail-title"></h1>
+      <p class="hint" id="detail-hint">Выберите один вариант</p>
+      <form id="detail-form">
+        <fieldset aria-labelledby="detail-title" aria-describedby="detail-hint">
+          <div class="choices" id="detail-choices"></div>
+          <div class="text-answer" id="text-answer" hidden>
+            <label for="comment" id="comment-label">Свой вариант — необязательно</label>
+            <textarea id="comment" name="comment" maxlength="300" placeholder="Напишите в свободной форме" aria-describedby="comment-count"></textarea>
+            <div class="count" id="comment-count">0 / 300</div>
+          </div>
+        </fieldset>
+        <div class="actions">
+          <button class="primary" id="finish" type="submit" disabled>Завершить</button>
+          <div class="navigation">
+            <button class="quiet" id="back" type="button">Назад</button>
+            <button class="quiet" id="skip" type="button">Пропустить вопрос</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section class="outcome" id="done-screen" aria-labelledby="done-title" hidden>
+      <div class="outcome-mark" id="outcome-mark" aria-hidden="true">✓</div>
+      <h1 id="done-title">Спасибо за ответы!</h1>
+      <p class="hint" id="done-text">Опрос завершён</p>
+      <button class="quiet" id="restart" type="button">Пройти ещё раз</button>
+    </section>
+    <noscript>Чтобы пройти опрос, включите JavaScript в браузере.</noscript>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // Standalone research prototype. No network requests or persistent storage.
+      // In production, show after an unfinished journey and join responses to
+      // existing funnel events. Rotate substantive choices to limit order bias.
+      // Every route has at most two questions; the third screen is completion.
+      const reasons = [
+        ['no_value', 'Не вижу для себя пользы'],
+        ['need_information', 'Не хватает информации'],
+        ['privacy', 'Не хочу давать доступ к данным'],
+        ['friction', 'Возникли сложности с подключением'],
+        ['later', 'Отложил(а) на потом'],
+        ['already', 'Считал(а), что всё уже подключено'],
+        ['other', 'Другая причина'],
+        ['unsure', 'Затрудняюсь ответить']
+      ];
+      const branches = {
+        no_value: {
+          question: 'Почему вы не видите для себя пользы?',
+          options: [
+            ['usual_methods', 'Привычные способы меня устраивают'],
+            ['rare_offices', 'Редко бываю в отделениях'],
+            ['no_use_case', 'Не пользуюсь перечисленными услугами'],
+            ['no_advantage', 'Не заметил(а) существенных преимуществ'],
+            ['other', 'Другая причина'],
+            ['unsure', 'Затрудняюсь ответить']
+          ]
+        },
+        need_information: {
+          question: 'Какой информации вам не хватило?',
+          options: [
+            ['purpose', 'Какую пользу я получу от подключения'],
+            ['data', 'К каким данным я разрешаю доступ'],
+            ['access', 'Кто сможет использовать мою биометрию'],
+            ['gosuslugi', 'Зачем переходить на Госуслуги'],
+            ['opt_out', 'Как отказаться от использования биометрии'],
+            ['other', 'Другое'],
+            ['unsure', 'Затрудняюсь ответить']
+          ]
+        },
+        privacy: {
+          question: 'Что больше всего останавливает?',
+          options: [
+            ['leak', 'Опасаюсь утечки биометрических данных'],
+            ['misuse', 'Опасаюсь использования данных без моего согласия'],
+            ['data_access', 'Не хочу давать банку доступ к данным на Госуслугах'],
+            ['state_system', 'Не хочу хранить биометрию в ЕБС'],
+            ['deletion', 'Не уверен(а), что смогу удалить данные'],
+            ['principle', 'В принципе не хочу пользоваться биометрией'],
+            ['other', 'Другое'],
+            ['unsure', 'Затрудняюсь ответить']
+          ]
+        },
+        friction: {
+          question: 'Что именно остановило при подключении?',
+          options: [
+            ['gosuslugi_access', 'Не получилось войти в Госуслуги'],
+            ['data_permission', 'Не получилось разрешить доступ к данным'],
+            ['extra_app', 'Не хочу устанавливать приложение «Госуслуги Биометрия»'],
+            ['biometric_capture', 'Не получилось сдать биометрию в приложении'],
+            ['instructions', 'Не понял(а), что делать дальше'],
+            ['app_switching', 'Неудобно переходить между приложениями'],
+            ['other', 'Другая сложность'],
+            ['unsure', 'Не помню']
+          ]
+        },
+        later: {
+          question: 'Почему решили отложить?',
+          options: [
+            ['no_time', 'Не было времени'],
+            ['conditions', 'Не было подходящих условий'],
+            ['research_first', 'Хотел(а) сначала подробнее разобраться'],
+            ['browsing', 'Зашёл(ла) только посмотреть'],
+            ['other', 'Другая причина'],
+            ['unsure', 'Не помню']
+          ]
+        },
+        already: {
+          question: 'Почему вы считали, что услуги уже подключены?',
+          options: [
+            ['alfa_services', 'Подключал(а) услуги с биометрией в Альфа-Банке'],
+            ['alfa', 'Сдавал(а) биометрию в Альфа-Банке'],
+            ['another_bank', 'Сдавал(а) биометрию в другом банке'],
+            ['gosuslugi', 'Сдавал(а) биометрию в приложении «Госуслуги Биометрия»'],
+            ['device_login', 'Настраивал(а) вход в приложение по лицу или отпечатку'],
+            ['other', 'Другое'],
+            ['unsure', 'Не помню']
+          ]
+        },
+        other: {
+          question: 'Расскажите, почему вы пока не подключили услуги с биометрией',
+          hint: 'Можно ответить своими словами или пропустить',
+          options: []
+        }
+      };
+      const el = id => document.getElementById(id);
+      const freshState = () => ({ reason: '', detail: '', comment: '', step: 1, completed: false });
+      let state = freshState();
+
+      function addChoices(container, name, items, selected) {
+        container.replaceChildren();
+        for (const [value, text] of items) {
+          const label = document.createElement('label');
+          label.className = 'choice';
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = name;
+          input.value = value;
+          input.checked = value === selected;
+          const span = document.createElement('span');
+          span.textContent = text;
+          label.append(input, span);
+          container.append(label);
+        }
+      }
+
+      function showStep(step) {
+        state.step = step;
+        el('reason-screen').hidden = step !== 1;
+        el('detail-screen').hidden = step !== 2;
+        el('done-screen').hidden = step !== 3;
+        el('progress').hidden = step === 3;
+        el('step-label').textContent = step === 1 ? 'Вопрос 1' : step === 2 ? 'Последний вопрос' : '';
+        el('progress').lastElementChild.classList.toggle('active', step === 2);
+        if (step === 1) el('announcement').textContent = 'Вопрос 1. ' + el('reason-title').textContent;
+        if (step === 2) el('announcement').textContent = 'Последний вопрос. ' + el('detail-title').textContent;
+        if (step === 3) el('announcement').textContent = el('done-title').textContent;
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+
+      function updateDetailControls() {
+        const freeText = state.reason === 'other';
+        const showText = freeText || state.detail === 'other';
+        el('text-answer').hidden = !showText;
+        el('comment-label').textContent = freeText ? 'Ваш ответ — необязательно' : 'Свой вариант — необязательно';
+        el('finish').disabled = !freeText && !state.detail;
+      }
+
+      function renderDetail() {
+        const branch = branches[state.reason];
+        el('detail-title').textContent = branch.question;
+        el('detail-hint').textContent = branch.hint || 'Выберите один вариант';
+        addChoices(el('detail-choices'), 'detail', branch.options, state.detail);
+        el('comment').value = state.comment;
+        el('comment-count').textContent = state.comment.length + ' / 300';
+        updateDetailControls();
+        showStep(2);
+        const checked = el('detail-choices').querySelector('input:checked');
+        const first = el('detail-choices').querySelector('input');
+        (checked || first || el('comment')).focus({ preventScroll: true });
+      }
+
+      function complete(skipped = false) {
+        if (state.completed) return;
+        state.completed = true;
+        const hasFollowup = state.reason !== 'unsure';
+        const useText = !skipped && (state.reason === 'other' || state.detail === 'other');
+        const result = {
+          surveyVersion: '1.1',
+          primaryReason: state.reason,
+          followupAnswer: skipped ? null : (state.detail || null),
+          freeText: useText ? state.comment.trim() : '',
+          followupStatus: !hasFollowup ? 'not_asked' : skipped ? 'skipped' : 'answered'
+        };
+        // Optional integration hook; emitting the event does not send data.
+        window.dispatchEvent(new CustomEvent('biometry-survey-complete', { detail: result }));
+        el('done-title').textContent = 'Спасибо за ответы!';
+        el('done-text').textContent = 'Опрос завершён';
+        el('outcome-mark').hidden = false;
+        el('restart').textContent = 'Пройти ещё раз';
+        showStep(3);
+        el('restart').focus({ preventScroll: true });
+      }
+
+      el('reason-choices').addEventListener('change', event => {
+        if (!event.target.matches('input[name="reason"]')) return;
+        if (state.reason !== event.target.value) {
+          state.detail = '';
+          state.comment = '';
+        }
+        state.reason = event.target.value;
+        el('reason-next').disabled = false;
+        el('reason-next').textContent = state.reason === 'unsure' ? 'Завершить' : 'Далее';
+      });
+      el('reason-form').addEventListener('submit', event => {
+        event.preventDefault();
+        if (!state.reason || state.step !== 1) return;
+        if (state.reason === 'unsure') complete();
+        else renderDetail();
+      });
+      el('detail-choices').addEventListener('change', event => {
+        if (!event.target.matches('input[name="detail"]')) return;
+        state.detail = event.target.value;
+        updateDetailControls();
+      });
+      el('comment').addEventListener('input', event => {
+        state.comment = event.target.value;
+        el('comment-count').textContent = state.comment.length + ' / 300';
+      });
+      el('detail-form').addEventListener('submit', event => {
+        event.preventDefault();
+        if (state.step !== 2 || (state.reason !== 'other' && !state.detail)) return;
+        const blankOther = state.reason === 'other' && !state.comment.trim();
+        complete(blankOther);
+      });
+      el('skip').addEventListener('click', () => complete(true));
+      el('back').addEventListener('click', () => {
+        showStep(1);
+        el('reason-choices').querySelector('input:checked').focus({ preventScroll: true });
+      });
+      el('dismiss').addEventListener('click', () => {
+        state.completed = true;
+        window.dispatchEvent(new CustomEvent('biometry-survey-dismissed'));
+        el('done-title').textContent = 'Опрос закрыт';
+        el('done-text').textContent = 'Можно вернуться к нему позже';
+        el('outcome-mark').hidden = true;
+        el('restart').textContent = 'Вернуться к опросу';
+        showStep(3);
+        el('restart').focus({ preventScroll: true });
+      });
+      el('restart').addEventListener('click', () => {
+        state = freshState();
+        el('reason-form').reset();
+        el('detail-form').reset();
+        el('reason-next').textContent = 'Далее';
+        el('reason-next').disabled = true;
+        showStep(1);
+        el('reason-choices').querySelector('input').focus({ preventScroll: true });
+      });
+      addChoices(el('reason-choices'), 'reason', reasons, '');
+    })();
+  </script>
+</body>
+</html>
