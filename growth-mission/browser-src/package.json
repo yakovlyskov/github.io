@@ -1,0 +1,22 @@
+{
+  "name": "growth-mission-pages",
+  "version": "1.0.0",
+  "description": "Growth Mission: GitHub Pages multiplayer training",
+  "main": "index.js",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test-model.cjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "esbuild": "0.28.0",
+    "lucide-react": "1.31.0",
+    "peerjs": "1.5.5",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "private": true
+}
