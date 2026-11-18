@@ -2,511 +2,495 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Кредитный помощник · Альфа-Банк</title>
-<meta name="description" content="Подберите кредит и сравните платёж, срок и общую сумму выплат.">
+<meta name="description" content="Подберите кредит по цели, сравните платежи и выберите подходящий срок.">
 <style>
-:root{--ink:#241e2a;--muted:#625969;--paper:#f7f5f8;--surface:#fff;--line:#eee8f0;--accent:#ca214a;--soft:#f7f0f8;--purple:#593b6e;--positive:#116748}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
-button,input,select{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:var(--purple);text-underline-offset:3px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a779c2;outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.46}[hidden]{display:none!important}
-.wrap{width:min(1120px,calc(100% - 56px));margin:auto}.site-header{background:#fff;border-bottom:1px solid var(--line)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand,.header-actions,.agent,.stage{display:flex;align-items:center;gap:12px}.brand{font-weight:760;letter-spacing:-.025em}.brand-mark{background:#e32e50;color:#fff;width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-size:17px}.link-button{border:0;padding:6px 0;background:none;color:var(--muted);font-weight:630;font-size:13px}.link-button:hover{text-decoration:underline}
-.intro{margin:24px 0 17px}.intro h1{font-size:clamp(28px,4vw,42px);line-height:1.12;letter-spacing:-.042em;margin:0;font-weight:780}.intro p{color:var(--muted);font-size:15px;margin:7px 0 0}
-.workspace{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);align-items:stretch;gap:17px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:21px;min-width:0;box-shadow:0 4px 14px #22142f06}.chat{display:flex;flex-direction:column;min-height:510px}.panel-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}.avatar{border-radius:12px;background:#fbe8ef;color:#bd2552;width:39px;height:39px;display:grid;place-items:center;font-size:24px;flex-shrink:0}.agent strong,.agent small{display:block}.agent small{font-size:12px;color:var(--muted);margin-top:1px}.stage{gap:4px}.stage span{display:block;width:14px;height:4px;border-radius:99px;background:#ede4f0}.stage span.done{background:#ad74bd}
-.log{flex:1;min-height:356px;max-height:480px;overflow:auto;padding:18px 20px 12px;scrollbar-width:thin;overscroll-behavior:contain}.msg{display:block;width:fit-content;max-width:92%;margin:0 0 11px;padding:11px 14px;background:var(--soft);border-radius:4px 14px 14px;color:#372c3f;font-size:14px;overflow-wrap:anywhere}.msg.user{margin-left:auto;color:white;background:#593b6e;border-radius:14px 4px 14px 14px}.msg a{font-weight:650}.starter,.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.starter button{display:flex;align-items:center;gap:9px;min-height:44px;text-align:left;padding:9px 12px;background:#fff;border:1px solid #e5dbea;border-radius:12px;color:var(--ink);font-weight:660;font-size:13px}.starter{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:430px}.starter button{width:100%}.starter button.other-goal{background:#f8f0f9;border-color:#ddcbe2;color:#52395e}.starter button.other-goal:hover{background:#f2e5f5}.starter button span{flex-shrink:0;display:grid;place-items:center;color:var(--accent);font-size:16px}.starter button:hover,.chip:hover,.secondary:hover{background:#faf2f7;border-color:#d8b3d1}.chip,.secondary{border:1px solid #e8dce9;background:#fff;color:#52395e;font-weight:650;border-radius:10px;padding:8px 11px;font-size:13px}.chat-bottom{margin-top:auto;padding:13px 18px 12px;border-top:1px solid var(--line)}.composer{display:flex;gap:7px;align-items:center;background:#f8f5f9;border:1px solid #eee6f0;border-radius:13px;padding:4px}.composer input{min-width:0;width:100%;border:none;background:transparent;padding:8px 9px;color:var(--ink);font-size:14px}.send{flex:0 0 36px;height:36px;border-radius:9px;border:0;color:#fff;background:#c62249;font-size:18px}
-.calc{padding:19px 20px 17px}.calc-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.calc h2{margin:0;font-size:20px;letter-spacing:-.035em}.sample{color:#6f4d7a;background:#f6eff8;border-radius:6px;padding:3px 7px;font-size:11px;font-weight:700;white-space:nowrap}.offer{font-size:13px;margin:5px 0 14px;color:var(--muted)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field{display:grid;gap:4px;font-size:12px;font-weight:650;color:var(--muted);min-width:0}.field input,.field select{width:100%;min-width:0;color:var(--ink);background:#fff;border:1px solid #e6deeb;border-radius:10px;padding:8px 9px;height:40px;font-weight:670;font-size:14px}.payment{margin-top:12px;background:#f6eff8;border:1px solid #f0e7f5;border-radius:13px;padding:10px 13px}.payment small{display:block;color:#654a72;font-size:12px}.payment strong{font-size:31px;letter-spacing:-.045em;line-height:1.17;font-variant-numeric:tabular-nums}.payment em{font-size:12px;font-style:normal;color:var(--muted);margin-left:5px}.figures{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin:12px 0}.figures div{display:grid;gap:1px}.figures div:nth-child(n+3){padding-top:7px;border-top:1px solid var(--line)}.figures dt{font-size:11px;color:var(--muted)}.figures dd{font-weight:720;font-size:14px;margin:0;font-variant-numeric:tabular-nums}.status{background:#fff2e5;color:#703b19;border-radius:8px;padding:8px 10px;font-size:12px;margin:8px 0}.status.good{background:#eaf7f0;color:var(--positive)}.calc-actions{display:grid;gap:7px}.primary{background:#c82249;color:#fff;border:0;border-radius:11px;padding:11px 14px;font-weight:730;font-size:14px}.primary:hover,.send:hover{background:#a6193b}.calc-note{color:var(--muted);font-size:11px;line-height:1.4;margin:9px 0 0}.inline-form{display:grid;gap:9px;max-width:100%;padding:12px;margin:0 0 12px;border:1px solid var(--line);border-radius:13px}.inline-form .fields{grid-template-columns:repeat(auto-fit,minmax(122px,1fr))}.inline-form .field-wide{grid-column:1/-1}.inline-form .primary{justify-self:start}.inline-form p{font-size:12px;color:var(--muted);margin:0}.check{display:flex;gap:8px;align-items:flex-start;font-size:14px}.check input{accent-color:var(--accent);margin-top:4px}
-footer{margin:17px 0 28px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:12px}.sources{display:flex;gap:13px;flex-wrap:wrap}dialog{width:min(600px,calc(100% - 26px));max-height:calc(100dvh - 30px);overflow:auto;border:1px solid var(--line);border-radius:20px;padding:19px;color:var(--ink);box-shadow:0 18px 60px #170d2d45}dialog::backdrop{background:#2b173775}dialog h2{font-size:22px;letter-spacing:-.03em;margin:0}dialog p{font-size:14px;margin:10px 0}.dialog-head,.dialog-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}.dialog-actions .primary{text-decoration:none;text-align:center}.dialog-actions{margin-top:15px;flex-wrap:wrap;justify-content:flex-end}.dismiss{border:0;border-radius:9px;background:var(--soft);width:34px;height:34px;color:var(--ink);font-size:20px;flex-shrink:0}.comparison{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}.comparison th,.comparison td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}.comparison th{color:#52395e}.comparison td:not(:first-child){font-weight:650}.comparison tbody tr:last-child{background:var(--soft)}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.skip{position:absolute;left:-9999px}.skip:focus{left:10px;top:10px;z-index:5;background:#fff;padding:8px}
-
-.mobile-only,.short-reset{display:none}
-@media(max-width:790px){
-  .mobile-only{display:inline-flex;align-items:center;justify-content:center}
-  .wrap{width:min(610px,calc(100% - 28px))}
-  .nav{min-height:57px}
-  .intro{margin:16px 0 12px}
-  .intro p{font-size:14px}
-  .workspace{grid-template-columns:minmax(0,1fr);gap:9px}
-  .view-switch{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#eee8f1;border:1px solid #e5ddeb;border-radius:12px;padding:4px}
-  .view-switch button{min-height:44px;border:1px solid transparent;border-radius:8px;background:transparent;color:#52395e;font-size:14px;font-weight:690}
-  .view-switch button[aria-pressed="true"]{border-color:#e5ddeb;background:#fff;color:#36213e;box-shadow:0 1px 4px #2819360e}
-  .workspace[data-view="chat"] .calc,.workspace[data-view="calc"] .chat{display:none}
-  .result-link{width:100%;margin-bottom:4px}
-  .panel{border-radius:17px}
-  .panel-head,.log,.calc{padding-left:15px;padding-right:15px}
-  .stage{display:none}
-  .chat{min-height:0}
-  .log{min-height:0;max-height:400px;max-height:clamp(220px,56svh,460px)}
-  .msg{max-width:97%}
-  .chat-bottom{margin-top:0}
-  .composer input,.field input,.field select{font-size:16px}
-  .field input,.field select,.starter button,.chip,.secondary,.primary,.send,.dismiss{min-height:44px}
-  .send{flex-basis:44px}
-  .calc-head{flex-wrap:wrap}
-  .calc-note{font-size:12px}
-  .check{min-height:44px;align-items:center}
-  .check input{width:20px;height:20px;margin:0;flex-shrink:0}
-  .dialog-actions button{flex:1 1 auto}
-  .dismiss{min-width:44px}
-  .comparison{overflow-wrap:anywhere}
-  #chat-panel,#calculator{scroll-margin-top:12px}
+:root{--ink:#251c29;--muted:#625568;--paper:#f7f4f7;--white:#fff;--line:#e9e0ea;--red:#ad1744;--red-hover:#8f1137;--rose:#fbeaf1;--purple:#573960;--plum:#38263f;--green:#145d47;--warm:#773913}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.44 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #a767b2;outline-offset:3px}
+a{color:var(--red);text-underline-offset:3px}
+[hidden]{display:none!important}
+.shell{width:min(100% - 28px,520px);margin:auto}
+.top{background:var(--white);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.top .shell{display:flex;justify-content:space-between;align-items:center;min-height:52px;gap:8px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:760;white-space:nowrap}
+.brand span{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--red);color:#fff;font-size:15px}
+.quiet{min-height:44px;border:0;background:transparent;padding:6px;color:var(--purple);font-size:13px;font-weight:700}
+.quiet:hover{text-decoration:underline}
+main.shell{margin-top:15px;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+.progress{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;font-weight:700;margin-bottom:9px}
+.meter{display:flex;align-items:center;gap:4px}
+.meter i{height:4px;width:17px;border-radius:9px;background:#e6daeb}
+.meter i.on{background:#975789}
+h1,h2,p,dl{margin:0}
+h1{font-size:clamp(25px,7vw,36px);letter-spacing:-.045em;line-height:1.12;text-wrap:balance}
+.lead{color:var(--muted);margin:6px 0 14px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}
+.choice,.pill,.outline,.primary,.inline-go{border-radius:12px;min-height:44px;font-weight:710}
+.choice{min-width:0;min-height:54px;text-align:left;padding:7px 9px;border:1px solid var(--line);background:var(--white);color:var(--ink);display:flex;align-items:center;gap:7px;font-size:13px;line-height:1.28}
+.choice:hover,.outline:hover,.pill:hover{border-color:#c69ebd;background:#fcf3f8}
+.choice b{width:26px;height:26px;display:grid;place-items:center;flex:0 0 26px;border-radius:8px;background:var(--rose);color:var(--red);font-size:17px}
+.choice.other{background:#f1e9f4;color:var(--plum);border-color:#e4d7e9}
+.quick-text{display:flex;align-items:center;gap:6px;padding:4px;border:1px solid #dfcde1;border-radius:13px;background:var(--white)}
+.quick-text input{width:100%;min-width:0;min-height:44px;border:0;background:none;padding:6px 8px;color:var(--ink);font-size:16px}
+.inline-go{flex:0 0 44px;line-height:1;border:0;background:var(--red);color:#fff;font-size:23px}
+.example,.hint{color:var(--muted);font-size:12px}
+.example{margin:5px 0 0 4px}
+.sheet,.option{padding:13px;border-radius:15px;border:1px solid var(--line);background:var(--white)}
+.sheet{display:grid;gap:12px}
+.group{display:grid;gap:5px}
+.group label,.group legend{font-weight:700;font-size:14px;color:var(--ink)}
+label.field{display:grid;gap:4px;font-size:13px;font-weight:700;color:var(--muted)}
+.field input{width:100%;min-width:0;min-height:46px;border:1px solid #ded3e2;border-radius:10px;padding:8px 10px;background:#fff;color:var(--ink);font-size:16px}
+fieldset{padding:0;margin:0;border:0;min-inline-size:0}
+legend{padding:0;margin-bottom:5px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{border:1px solid var(--line);background:#fff;color:var(--purple);padding:6px 9px;font-size:13px;flex:1 0 auto}
+.priorities{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.amounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.pill[aria-pressed="true"]{background:var(--rose);border-color:#c57294;color:#8a2048}
+details summary{cursor:pointer;display:flex;align-items:center;gap:7px;min-height:44px;font-size:14px;font-weight:700;color:var(--purple);list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"+";width:20px;text-align:center;flex-shrink:0}
+details[open] summary::before{content:"−"}
+.detail-fields,.stack{display:grid;gap:8px}
+.primary,.outline{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:8px 11px;line-height:1.25;font-size:14px}
+.primary{color:#fff;background:var(--red);border:1px solid var(--red)}
+.primary:hover,.inline-go:hover{background:var(--red-hover)}
+.outline{border:1px solid #dfd1e2;background:var(--white);color:var(--purple)}
+.full{width:100%}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0}
+.context-line{font-size:13px;color:var(--muted);overflow-wrap:anywhere;margin:0 0 9px}
+.option{display:grid;gap:7px}
+.option.featured{border-color:#c98ba9;background:#fffafb}
+.option-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px;flex-wrap:wrap}
+.option-top h2{font-size:15px;line-height:1.25}
+.term,.mode{white-space:nowrap;color:var(--purple);font-size:12px;font-weight:690}
+.mode{display:inline-block;margin-bottom:6px;padding:3px 7px;background:#eee5f1;border-radius:7px}
+.big{font-size:clamp(26px,8vw,33px);font-weight:810;letter-spacing:-.06em;line-height:1.1;font-variant-numeric:tabular-nums}
+.big small{font-size:13px;font-weight:600;letter-spacing:0;color:var(--muted)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid var(--line);padding-top:7px}
+.metrics dt{font-size:12px;color:var(--muted)}
+.metrics dd{margin:2px 0 0;font-size:14px;font-weight:760}
+.signal{border-radius:9px;padding:7px 9px;background:#fff0e0;color:var(--warm);font-size:13px}
+.signal.good{background:#e8f4ee;color:var(--green)}
+.fine{color:var(--muted);font-size:12px;margin-top:9px}
+.notice{color:#8f1538;font-size:13px}
+dialog{padding:13px;width:min(100% - 20px,500px);max-height:calc(100dvh - 30px);border:1px solid var(--line);border-radius:17px;color:var(--ink);box-shadow:0 16px 70px #28123048}
+dialog::backdrop{background:#2c16386c}
+.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dialog-head h2{font-size:20px;letter-spacing:-.035em;line-height:1.17}
+.close{border:0;border-radius:10px;background:#f4edf5;color:var(--plum);width:44px;height:44px;flex:0 0 44px;font-size:21px}
+.dialog-body{display:grid;gap:8px;margin-top:8px}
+.comparison{border-collapse:collapse;width:100%;table-layout:fixed;font-size:13px}
+.comparison th,.comparison td{padding:7px 4px;text-align:left;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.comparison thead th{color:var(--purple)}
+.comparison tbody td{font-weight:680}
+.comparison tbody tr:last-child{background:#f7f0f7}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+@media(max-width:360px){
+ .shell{width:calc(100% - 20px)}
+ .top .shell{min-height:46px}
+ main.shell{margin-top:10px}
+ .lead{margin-bottom:9px;font-size:14px}
+ .choices{margin-block:9px}
+ .choice{min-height:48px;padding:5px 7px}
+ .choice b{flex-basis:22px;width:22px;height:22px}
 }
-@media(max-width:380px){
-  .wrap{width:calc(100% - 20px)}
-  .intro h1{font-size:26px}
-  .brand{font-size:14px}
-  .nav{gap:8px}
-  .brand{white-space:nowrap}
-  .long-reset{display:none}
-  .short-reset{display:inline}
-  .agent{gap:7px}
-  .agent .avatar{width:32px;height:32px}
-  .agent strong{font-size:14px}
-  .starter button{gap:6px;padding:8px}
-  .dialog-actions{display:grid}
+@media(min-width:680px){
+ .top .shell{min-height:60px}
+ main.shell{margin-top:24px}
+ .choice{min-height:58px}
+ .sheet,.option{padding:15px}
+ .amounts{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 </style>
 </head>
 <body>
-<a class="skip" href="#chat-input">К диалогу</a>
-<header class="site-header"><div class="wrap nav"><div class="brand"><span class="brand-mark" aria-hidden="true">✦</span> Альфа-Банк</div><div class="header-actions"><button id="reset" class="link-button" aria-label="Начать заново" type="button"><span class="long-reset">Начать заново</span><span class="short-reset" aria-hidden="true">Сбросить</span></button></div></div></header>
-<main class="wrap">
-<header class="intro">
-  <h1>Кредитный помощник</h1>
-  <p>Подберите кредит и сравните платёж и общую сумму выплат.</p>
-</header>
-<div class="workspace" id="workspace" data-view="chat">
-<nav class="view-switch mobile-only" aria-label="Разделы кредитного помощника">
-  <button type="button" data-view-target="chat" aria-controls="chat-panel" aria-pressed="true">Диалог</button>
-  <button type="button" data-view-target="calc" aria-controls="calculator" aria-pressed="false">Ваш расчёт</button>
-</nav>
-<section class="panel chat" id="chat-panel" tabindex="-1" aria-label="Диалог с помощником"><div class="panel-head"><div class="agent"><div class="avatar" aria-hidden="true">✦</div><div><strong>ИИ-помощник</strong><small id="stage-text">Выбор цели</small></div></div><div class="stage" id="stage" aria-hidden="true"><span></span><span></span><span></span></div></div>
-<div class="log" id="log" role="log" aria-label="История диалога"></div>
-<div class="chat-bottom"><form id="composer" class="composer"><label class="sr" for="chat-input">Сообщение помощнику</label><input id="chat-input" maxlength="250" autocomplete="off" placeholder="Напишите цель и сумму"><button class="send" type="submit" aria-label="Отправить">↑</button></form></div></section>
-<section class="panel calc" id="calculator" tabindex="-1" aria-labelledby="calc-title"><div class="calc-head"><h2 id="calc-title">Ваш расчёт</h2><span class="sample">Предварительно</span></div>
-<p class="offer" id="offer"></p>
-<div class="fields"><label class="field"><span id="amount-label">Сумма, ₽</span><input id="amount" type="number" min="30000" max="7500000" step="1" required></label><label class="field">Срок<select id="term"><option value="12">1 год</option><option value="18">1 год 6 мес.</option><option value="24">2 года</option><option value="30">2 года 6 мес.</option><option value="36">3 года</option><option value="48">4 года</option><option value="60">5 лет</option></select></label></div>
-<div class="payment" aria-live="polite"><small>Ежемесячный платёж</small><strong id="payment"></strong><em>в месяц</em></div>
-<dl class="figures"><div><dt>Расчётная ставка</dt><dd id="rate"></dd></div><div><dt>Общая сумма выплат</dt><dd id="total"></dd></div><div><dt>Переплата</dt><dd id="over"></dd></div><div><dt>Страховка</dt><dd id="insurance"></dd></div></dl>
-<p id="status" class="status" hidden></p>
-<div class="calc-actions"><button class="secondary" id="compare" type="button">Сравнить варианты</button><button class="primary" id="review" type="button">Проверить перед оформлением</button></div>
-<p class="calc-note">Платёж рассчитан по примерной ставке. ПСК, доступную сумму и итоговые условия определяет банк.</p></section>
-</div>
-<footer><div class="sources" aria-label="Продукты на сайте Альфа-Банка"><a href="https://alfabank.ru/get-money/credit/credit-cash/" target="_blank" rel="noopener">Кредит наличными ↗</a><a href="https://alfabank.ru/get-money/credit/refinancing/" target="_blank" rel="noopener">Рефинансирование ↗</a><a href="https://alfabank.ru/get-money/autocredit/" target="_blank" rel="noopener">Кредит на авто ↗</a></div></footer>
-</main>
-<dialog id="modal" aria-labelledby="modal-title"><div class="dialog-head"><h2 id="modal-title"></h2><button id="close" class="dismiss" type="button" aria-label="Закрыть">×</button></div><div id="modal-body"></div></dialog>
+<header class="top"><div class="shell"><div class="brand"><span aria-hidden="true">✦</span>Альфа-Банк</div><button id="navigation" class="quiet" type="button" hidden>← Назад</button></div></header>
+<main class="shell" id="main"></main>
+<dialog id="dialog" aria-labelledby="dialog-title">
+ <div class="dialog-head"><h2 id="dialog-title"></h2><button id="close" class="close" type="button" aria-label="Закрыть">×</button></div>
+ <div id="dialog-body" class="dialog-body"></div>
+</dialog>
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
-const log = $("log");
-const money = n => new Intl.NumberFormat("ru-RU",{maximumFractionDigits:0}).format(n) + " ₽";
-const percent = n => new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2}).format(n) + "%";
-const termText = n => n + " мес.";
-const limit = 750000;
-const terms = [12,18,24,30,36,48,60];
 const products = {
   cash:{name:"Кредит наличными",rate:28.9,source:"https://alfabank.ru/get-money/credit/credit-cash/"},
   refi:{name:"Рефинансирование",rate:26.9,source:"https://alfabank.ru/get-money/credit/refinancing/"},
   auto:{name:"Кредит наличными на автомобиль",rate:27.9,source:"https://alfabank.ru/get-money/autocredit/"}
 };
-const topics = {cash:"Ремонт или покупка",refi:"Погасить кредиты",auto:"Купить автомобиль",other:"Другая цель"};
-const primaryChips = [["payment","Платёж высокий"],["overpay","Снизить переплату"],["competitor","В другом банке дешевле"],["insurance","Что со страховкой?"],["early","Досрочное погашение"],["limit","Нужна сумма больше"]];
-let state;
-const annuity = (principal, rate, months) => {
-  const r = rate / 1200;
-  return r ? principal * r / (1 - (1 + r) ** -months) : principal / months;
-};
-function quote(withInsurance=false, months=state.term) {
-  const fee = withInsurance ? Math.round(state.amount * .13) : 0;
-  const rate = products[state.product].rate - (withInsurance ? 4 : 0);
-  const payment = annuity(state.amount + fee,rate,months);
-  return {fee,rate,payment,total:payment*months,months};
+const goals = [
+  ["cash","Ремонт или покупка","⌂"],["refi","Погасить кредиты","↻"],
+  ["auto","Купить автомобиль","◇"],["other","Другая цель","+"]
+];
+const presets = [100000,300000,500000,1000000];
+const terms = [12,18,24,30,36,42,48,54,60];
+const maxAmount = 7500000;
+const formatMoney = new Intl.NumberFormat("ru-RU",{maximumFractionDigits:0});
+const formatRate = new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2});
+const money = value => formatMoney.format(value)+" ₽";
+const percent = value => formatRate.format(value)+"%";
+const termText = months => months+" мес.";
+const esc = value => String(value ?? "").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
+const normalize = text => text.toLowerCase().replaceAll("ё","е");
+const main = $("main");
+const popup = $("dialog");
+let step = 1;
+const state={product:"cash",goal:"",opening:"",amount:"",budget:"",context:"",priority:"",payment:"",remaining:"",insurance:false,selected:null};
+
+function annuity(principal,rate,months){
+  const monthlyRate=rate/1200;
+  return monthlyRate ? principal*monthlyRate/(1-(1+monthlyRate)**-months) : principal/months;
 }
-function activeQuote(){return quote(state.insurance);}
-function setStage(n){
-  $("stage-text").textContent = ["Выбор цели","Уточнение задачи","Варианты кредита"][n];
-  Array.from($("stage").children).forEach((el,i)=>el.classList.toggle("done",i<=n));
+
+function estimate(months,withInsurance=state.insurance){
+  const amount=Number(state.amount);
+  const fee=withInsurance?Math.round(amount*.13):0;
+  const rate=products[state.product].rate-(withInsurance?4:0);
+  const payment=annuity(amount+fee,rate,months);
+  return {months,fee,rate,payment,total:payment*months,over:payment*months-amount};
 }
-function bubble(value,isUser=false){
-  const el=document.createElement("p");
-  el.className=isUser?"msg user":"msg";
-  el.textContent=value;
-  log.append(el);
-  return el;
-}
-function scrollLog(){log.scrollTop=log.scrollHeight;}
-const mobileLayout=matchMedia("(max-width: 790px)");
-const workspace=$("workspace");
-const viewButtons=workspace.querySelectorAll("[data-view-target]");
-function selectView(view){
-  workspace.dataset.view=view;
-  for(const button of viewButtons)button.setAttribute("aria-pressed",String(button.dataset.viewTarget===view));
-}
-function openView(view){
-  selectView(view);
-  const panel=$(view==="calc"?"calculator":"chat-panel");
-  panel.focus({preventScroll:true});
-  if(mobileLayout.matches){
-    if(workspace.getBoundingClientRect().top<0)workspace.scrollIntoView({block:"start"});
-    if(view==="chat")scrollLog();
-  }else{
-    panel.scrollIntoView({block:"nearest"});
-  }
-}
-function showChatOnMobile(){
-  if(mobileLayout.matches)openView("chat");
-}
-for(const button of viewButtons)button.addEventListener("click",()=>openView(button.dataset.viewTarget));
-document.querySelector(".skip").addEventListener("click",event=>{
-  event.preventDefault();
-  openView("chat");
-  $("chat-input").focus();
-});
-function chips(options,starter=false){
-  const row=document.createElement("div");
-  row.className=starter?"starter":"chips";
-  for (const [id,label,icon] of options){
-    const button=document.createElement("button");
-    button.type="button";
-    button.className=starter?"":"chip";
-    button.dataset.action=id;
-    if(icon){const mark=document.createElement("span");mark.textContent=icon;mark.setAttribute("aria-hidden","true");button.append(mark);}
-    button.append(document.createTextNode(label));
-    if(starter && id==="other")button.classList.add("other-goal");
-    row.append(button);
-  }
-  log.append(row);
-}
-function clearForms(){log.querySelectorAll("form").forEach(form=>form.remove());}
-function status(text,tone=""){
-  const el=$("status");
-  el.hidden=!text;
-  el.className=tone==="good"?"status good":"status";
-  el.textContent=text;
-}
-function render(){
-  const p=products[state.product],q=activeQuote();
-  $("offer").textContent=state.product==="cash"?p.name+" · ориентир "+money(limit):p.name;
-  $("amount-label").textContent=state.product==="refi"?"Остаток долга, ₽":"Сумма на руки, ₽";
-  $("amount").value=state.amount;
-  $("term").value=state.term;
-  $("payment").textContent=money(q.payment);
-  $("rate").textContent=percent(q.rate);
-  $("total").textContent=money(q.total);
-  $("over").textContent=money(q.total-state.amount);
-  $("insurance").textContent=q.fee?money(q.fee)+" в сумме кредита":"Не включена";
-  const cta=$("review");
-  const above=state.product==="cash"&&state.amount>limit;
-  cta.textContent=above?"Подобрать вариант по сумме":"Проверить перед оформлением";
-  if(above)status("Сумма на "+money(state.amount-limit)+" выше ориентира. Доступную сумму уточнит банк.");
-  else if(state.budget && Math.round(q.payment)>state.budget)status("Платёж выше вашего ориентира на "+money(Math.round(q.payment)-state.budget)+".");
-  else if(state.budget)status("Платёж укладывается в ваш ориентир "+money(state.budget)+".","good");
-  else status("");
-}
-function reset(){
-  if($("modal").open)$("modal").close();
-  state={product:"cash",amount:600000,term:36,budget:null,insurance:false,current:null,awaitingGoal:false};
-  log.replaceChildren();
-  selectView("chat");
-  setStage(0);
-  bubble("На что вам нужны деньги? Выберите цель или напишите своими словами.");
-  chips([["cash",topics.cash,"⌂"],["refi",topics.refi,"↺"],["auto",topics.auto,"◇"],["other",topics.other,"+"]],true);
-  chips([["existing","Посмотреть платёж и условия"]]);
-  $("chat-input").value="";
-  render();
-}
-function numericField(name,label,value,min,max,step=1){
-  const field=document.createElement("label");field.className="field";field.textContent=label;
-  const input=document.createElement("input");
-  Object.assign(input,{name,type:"number",value,min,max,step,required:true});
-  field.append(input);
-  return field;
-}
-function goalField(){
-  const field=document.createElement("label");
-  field.className="field field-wide";
-  field.textContent="На что нужны деньги?";
-  const input=document.createElement("input");
-  Object.assign(input,{name:"goal",type:"text",placeholder:"Например, на обучение",maxLength:120,required:true});
-  field.append(input);
-  return field;
-}
-function askOtherGoal(){
-  state.awaitingGoal=true;
-  setStage(1);
-  bubble("Расскажите, на что нужны деньги, и укажите сумму. Например, на обучение, поездку или лечение.");
-  const amount=numericField("amount","Нужно на руки, ₽","",30000,7500000);
-  const budget=numericField("budget","Платёж до, ₽ (если знаете)","",1000,7500000);
-  budget.querySelector("input").required=false;
-  formInChat("goal",[goalField(),amount,budget],"Рассчитать кредит");
-}
-function formInChat(kind,fields,label,hint){
-  clearForms();
-  const form=document.createElement("form");form.className="inline-form";form.dataset.form=kind;
-  const grid=document.createElement("div");grid.className="fields";grid.append(...fields);form.append(grid);
-  if(hint){const note=document.createElement("p");note.textContent=hint;form.append(note);}
-  const btn=document.createElement("button");btn.type="submit";btn.className="primary";btn.textContent=label;form.append(btn);
-  log.append(form);
-}
+
 function productForGoal(text){
-  const normalized=text.toLowerCase().replaceAll("ё","е");
-  if(/рефинанс|(?:закры|погас).{0,18}(?:кредит|долг|карт)/.test(normalized))return "refi";
-  if(/машин|автомобил|автокредит/.test(normalized))return "auto";
-  if(/ремонт|техник|наличн|обучен|учеб|лечен|поезд|путешеств|отпуск|свадьб|переезд|расход/.test(normalized))return "cash";
-  return null;
+  const value=normalize(text);
+  if(/рефинанс|(?:закры|погас).{0,18}(?:кредит|долг|карт)/.test(value))return "refi";
+  if(/машин|автомобил|автокредит/.test(value))return "auto";
+  return "cash";
 }
-function choose(product,figures={}){
-  state.product=product;
-  state.insurance=false;
-  state.current=null;
-  state.awaitingGoal=false;
-  state.budget=figures.budget||null;
-  state.amount=figures.amount??{cash:600000,refi:450000,auto:900000}[product];
-  state.term=figures.term??(product==="auto"?48:36);
-  if(product!=="refi" && figures.amount){
-    explainQuote();
-    return;
+
+function parseContext(text){
+  const value=normalize(text);
+  const found={};
+  const amounts=/(\d{1,3}(?:[ \u00a0\u202f]\d{3})+|\d+(?:[,.]\d+)?)\s*(млн|тыс(?:яч[аи]?)?\.?|[кk](?![а-яa-z]))?/giu;
+  for(const match of value.matchAll(amounts)){
+    const unit=match[2];
+    const raw=Number(match[1].replace(/\s/g,"").replace(",","."));
+    const amount=Math.round(raw*(unit==="млн"?1e6:unit?1e3:1));
+    const before=value.slice(Math.max(0,match.index-38),match.index);
+    const after=value.slice(match.index+match[0].length).trimStart();
+    if(!unit&&/^(?:год[а-я]*|лет(?:$|[\s,.])|мес)/.test(after)){
+      const months=raw*(after.startsWith("мес")?1:12);
+      if(Number.isInteger(months)&&months>=12&&months<=60)found.months=months;
+    }else if(/(?:плат[её]ж[а-я]*|ежемесячно)\s*(?:до|не больше|около|в)?\s*$/.test(before)||/^(?:₽|руб\.?\s*)?\s*(?:в\s+месяц|ежемесячно)/.test(after)){
+      if(amount>=1&&amount<=maxAmount)found.budget=amount;
+    }else if(amount>=30000&&amount<=maxAmount&&found.amount===undefined){
+      found.amount=amount;
+    }
   }
+  if(/меньше.{0,10}переплат|снизить.{0,10}переплат/.test(value))found.priority="total";
+  if(/меньше.{0,10}платеж|снизить.{0,10}платеж|платеж.{0,10}пониже/.test(value))found.priority="payment";
+  if(/без\s+страхов/.test(value))found.insurance=false;
+  else if(/со\s+страхов/.test(value))found.insurance=true;
+  return found;
+}
+
+function parameters(){
+  const parsed=parseContext(state.context);
+  return {
+    term:parsed.months,
+    budget:Number(state.budget)||parsed.budget||0,
+    priority:state.priority||parsed.priority
+  };
+}
+
+function calculateOptions(){
+  const {term,budget,priority}=parameters();
+  const defaultTerm=state.product==="auto"?48:36;
+  const firstFit=budget?terms.find(months=>Math.round(estimate(months).payment)<=budget):undefined;
+  const chosen=term??(priority==="payment"?60:budget?(firstFit??60):priority==="total"?24:defaultTerm);
+  const needsLowerPayment=budget&&Math.round(estimate(chosen).payment)>budget;
+  const longerAlternative=chosen<60&&(chosen<=24||needsLowerPayment||priority==="total"||(!priority&&!budget));
+  const alternative=longerAlternative?Math.min(chosen+12,60):Math.max(chosen-12,12);
+  return [estimate(chosen),estimate(alternative)];
+}
+
+function progress(){
+  const label=step===1?"Цель":step===2?"Параметры":"Варианты";
+  return '<div class="progress"><span>'+label+' · '+Math.min(step,3)+' из 3</span><span class="meter" aria-hidden="true">'+[1,2,3].map(n=>'<i class="'+(n<=step?'on':'')+'"></i>').join("")+'</span></div>';
+}
+
+function heading(title,subtitle=""){
+  return progress()+'<h1 id="step-title" tabindex="-1">'+title+'</h1>'+(subtitle?'<p class="lead">'+subtitle+'</p>':'');
+}
+
+function render(focus=true){
+  const screens=[goalScreen,detailsScreen,resultScreen,selectionScreen];
+  main.innerHTML=screens[step-1]();
+  $("navigation").hidden=step===1;
+  if(focus){
+    window.scrollTo(0,0);
+    $("step-title").focus({preventScroll:true});
+  }
+}
+
+function go(stepNumber){
+  if(popup.open)popup.close();
+  step=stepNumber;
   render();
-  setStage(1);
-  if(product==="refi"){
-    bubble("Сравним рефинансирование с текущим графиком. Укажите остаток долга, платёж и сколько месяцев осталось.");
-    refinanceForm();
-  } else {
-    bubble(product==="auto"?"С кредитом наличными на автомобиль можно купить машину у дилера или у частного продавца. Сколько нужно на руки и какой платёж вам удобен?":"Для этой цели можно рассмотреть кредит наличными. Сколько нужно на руки и какой платёж вам удобен?");
-    formInChat("need",[numericField("amount","Нужно на руки, ₽",state.amount,30000,7500000),numericField("budget","Платёж до, ₽",state.budget??25000,1000,7500000)],"Подобрать вариант");
-  }
 }
-function refinanceForm(){
-  const current=state.current;
-  formInChat("debts",[numericField("balance","Остаток долга, ₽",state.amount,30000,7500000),numericField("payment","Текущий платёж, ₽",current?.payment??21800,1,7500000),numericField("months","Месяцев осталось",current?.months??30,1,360)],"Сравнить с текущим кредитом","Для сравнения нужен остаток на дату закрытия и одинаковый платёж до конца текущего графика.");
+
+function goalScreen(){
+  return heading("На что нужны деньги?","Кредитный помощник Альфа-Банка")+
+    '<div class="choices" aria-label="Цель кредита">'+goals.map(([id,label,mark])=>'<button class="choice '+(id==="other"?"other":"")+'" type="button" data-product="'+id+'"><b aria-hidden="true">'+mark+'</b>'+label+'</button>').join("")+'</div>'+
+    '<form class="quick-text" id="goal-form"><label class="sr" for="goal-text">Цель или сумма</label><input id="goal-text" name="opening" type="text" maxlength="250" value="'+esc(state.opening)+'" placeholder="Напишите цель или сумму" required><button class="inline-go" type="submit" aria-label="Продолжить">→</button></form>'+
+    '<p class="example">Например, 300 000 ₽ на обучение</p>';
 }
-function explainQuote(){
-  setStage(2);render();
-  const q=activeQuote();
-  if(state.product==="cash"&&state.amount>limit){
-    bubble("Вам нужно "+money(state.amount)+". Это больше ориентира "+money(limit)+". Сравните платежи на обеих суммах или уточните доступную сумму у банка.");
-    chips([["use-limit","Рассчитать до "+money(limit)],["recheck","Что с большей суммой?"]]);
-  } else {
-    let message=products[state.product].name+". На "+termText(state.term)+" платёж составит около "+money(q.payment)+", общая сумма выплат — "+money(q.total)+".";
-    if(state.budget && Math.round(q.payment)>state.budget) message+=" Это выше вашего ориентира.";
-    bubble(message);
-  }
-  chips(primaryChips);
-  const link=document.createElement("button");
-  link.type="button";
-  link.className="primary mobile-only result-link";
-  link.dataset.action="calculation";
-  link.textContent="Открыть расчёт";
-  log.append(link);
+
+function numberField(name,label,value,min,max,required=false,decimal=false){
+  return '<label class="field">'+label+'<input type="number" inputmode="'+(decimal?'decimal':'numeric')+'" name="'+name+'" value="'+esc(value)+'" min="'+min+'" max="'+max+'" step="'+(decimal?'any':'1')+'" '+(required?'required':'')+'></label>';
 }
-function openModal(title,html){
-  $("modal-title").textContent=title;$("modal-body").innerHTML=html;
-  if(!$("modal").open)$("modal").showModal();
+
+function detailsScreen(){
+  const refi=state.product==="refi";
+  const custom=state.goal==="Другая цель";
+  const title=refi?"Какой остаток по кредиту?":"Сколько вам нужно?";
+  const preamble=state.goal&&!custom?esc(state.goal):"Укажите сумму. Остальные параметры можно добавить по желанию.";
+  return heading(title,preamble)+
+    '<form class="sheet" id="parameters-form">'+
+      '<div class="group">'+numberField("amount",refi?"Остаток долга, ₽":"Сумма на руки, ₽",state.amount,30000,maxAmount,true)+
+      '<div class="pills amounts" aria-label="Быстрый выбор суммы">'+presets.map(value=>'<button class="pill" type="button" data-amount="'+value+'" aria-pressed="'+(Number(state.amount)===value)+'">'+money(value)+'</button>').join("")+'</div></div>'+
+      '<fieldset class="group"><legend>Что важнее?</legend><div class="pills priorities">'+
+      priorityButton("payment","Снизить платёж")+priorityButton("total","Снизить переплату")+'</div></fieldset>'+
+      (refi?'<details '+(state.payment||state.remaining?'open':'')+'><summary>Данные действующего кредита</summary><div class="detail-fields">'+
+        numberField("payment","Платёж сейчас, ₽",state.payment,1,maxAmount)+numberField("remaining","Месяцев осталось",state.remaining,1,360)+
+        '<p class="hint">Укажите оба значения, чтобы сравнить с рефинансированием.</p></div></details>':'')+
+      '<details '+(custom||state.budget||state.context?'open':'')+'><summary>Добавить условия</summary><div class="detail-fields">'+
+        numberField("budget","Комфортный платёж до, ₽",state.budget,1,maxAmount)+
+        '<label class="field">'+(custom?"Ваша цель или другие условия":"Что ещё учесть")+'<input type="text" name="context" maxlength="250" value="'+esc(state.context)+'" placeholder="'+(custom?'Например, на обучение':'Например, на 3 года без страховки')+'"></label></div></details>'+
+      '<p class="notice" id="parameter-error" role="alert" hidden></p>'+
+      '<button class="primary full" type="submit">Показать варианты</button></form>';
 }
+
+function priorityButton(id,label){
+  return '<button class="pill" type="button" data-priority="'+id+'" aria-pressed="'+(state.priority===id)+'">'+label+'</button>';
+}
+
+function budgetSignal(estimate){
+  const {budget}=parameters();
+  if(!budget)return "";
+  const difference=Math.round(estimate.payment)-budget;
+  return difference>0
+    ? '<p class="signal">Выше ориентира на '+money(difference)+' в месяц</p>'
+    : '<p class="signal good">В пределах '+money(budget)+' в месяц</p>';
+}
+
+function metrics(offer){
+  return '<dl class="metrics"><div><dt>Всего выплатите</dt><dd>'+money(offer.total)+'</dd></div><div><dt>Переплата</dt><dd>'+money(offer.over)+'</dd></div></dl>';
+}
+
+function optionCard(offer,other,index){
+  const label=offer.payment<other.payment?"Платёж ниже":"Переплата ниже";
+  return '<article class="option '+(index===0?"featured":"")+'"><div class="option-top"><h2>'+label+'</h2><span class="term">'+termText(offer.months)+'</span></div>'+
+    '<p class="big">'+money(offer.payment)+' <small>/ мес.</small></p>'+
+    metrics(offer)+budgetSignal(offer)+
+    '<button class="'+(index===0?"primary":"outline")+' full" type="button" data-select="'+offer.months+'">Выбрать на '+termText(offer.months)+'</button></article>';
+}
+
+function resultScreen(){
+  const [a,b]=calculateOptions();
+  const amount=money(Number(state.amount));
+  const subtitle=products[state.product].name+" · "+amount;
+  const details=state.context.trim();
+  return heading("Ваши варианты",subtitle)+
+    '<span class="mode">Предварительный расчёт</span>'+
+    (details?'<p class="context-line">Ваш комментарий: '+esc(details)+'</p>':'')+
+    '<div class="stack">'+optionCard(a,b,0)+optionCard(b,a,1)+'</div>'+
+    '<div class="action-row"><button class="outline" type="button" data-compare="terms">Сравнить сроки</button><button class="outline" type="button" data-back="2">Изменить параметры</button></div>'+
+    (state.product==="refi"?'<button class="outline full" type="button" data-compare="debt">Сравнить с текущим кредитом</button>':'')+
+    '<details><summary>Сравнить с другими условиями</summary><div class="stack">'+
+      '<button class="outline" type="button" data-compare="insurance">Со страховкой и без</button><button class="outline" type="button" data-compare="bank">С другим банком</button><button class="outline" type="button" data-compare="early">Досрочное погашение</button></div></details>'+
+    '<p class="fine">Расчётная ставка '+percent(a.rate)+'. '+(state.insurance?'Страховка учтена. ':'Без страховки. ')+'ПСК и итоговые условия определяет банк.</p>';
+}
+
+function selectionScreen(){
+  const offer=estimate(state.selected);
+  const product=products[state.product];
+  return heading("Вариант выбран",product.name)+
+    '<article class="option featured"><div class="option-top"><h2>'+money(Number(state.amount))+'</h2><span class="term">'+termText(offer.months)+'</span></div>'+
+    '<p class="big">'+money(offer.payment)+' <small>/ мес.</small></p>'+metrics(offer)+budgetSignal(offer)+
+    '<p class="fine">Предварительный расчёт. Актуальные условия и заявка доступны на сайте банка.</p>'+
+    '<a class="primary full" href="'+product.source+'" target="_blank" rel="noopener">Перейти на сайт Альфа-Банка ↗</a>'+
+    '<button class="outline full" type="button" data-back="3">Вернуться к вариантам</button></article>';
+}
+
+function modal(title,html){
+  $("dialog-title").textContent=title;
+  $("dialog-body").innerHTML=html;
+  if(!popup.open)popup.showModal();
+}
+
 function table(left,right,rows){
-  return '<table class="comparison"><thead><tr><th scope="col">Параметр</th><th scope="col">'+left+'</th><th scope="col">'+right+'</th></tr></thead><tbody>'+rows.map(row=>'<tr><th scope="row">'+row[0]+'</th><td>'+row[1]+'</td><td>'+row[2]+'</td></tr>').join("")+'</tbody></table>';
+  return '<table class="comparison"><thead><tr><th scope="col">Параметр</th><th scope="col">'+left+'</th><th scope="col">'+right+'</th></tr></thead><tbody>'+
+    rows.map(([label,a,b])=>'<tr><th scope="row">'+label+'</th><td>'+a+'</td><td>'+b+'</td></tr>').join("")+'</tbody></table>';
 }
-function insuranceCompare(){
-  const base=quote(), opt=quote(true), diff=opt.total-base.total;
-  const verdict=Math.abs(diff)<.5?"Итоговые выплаты в этом расчёте почти одинаковы.":"Вариант со страховкой "+(diff>0?"дороже":"дешевле")+" на "+money(Math.abs(diff))+" по общей сумме выплат.";
-  openModal("Со страховкой и без неё", '<p>Сумма на руки и срок одинаковые. В примере стоимость страховки добавляется к сумме кредита.</p>'+
-    table("Без страховки","Со страховкой",[
-      [state.product==="refi"?"На погашение долга":"На руки",money(state.amount),money(state.amount)],["Сумма кредита",money(state.amount),money(state.amount+opt.fee)],["Стоимость страховки","0 ₽",money(opt.fee)],["Ставка в примере",percent(base.rate),percent(opt.rate)],["Платёж в месяц",money(base.payment),money(opt.payment)],["Всего к выплате",money(base.total),money(opt.total)]
-    ])+'<p><strong>'+verdict+'</strong> Стоимость и условия страховки приведены для расчёта.</p>'+
-    '<label class="check"><input id="consent" type="checkbox">Учесть страховку в расчёте</label><div class="dialog-actions"><button class="secondary" data-modal="without">Оставить без страховки</button><button id="applyInsurance" class="primary" data-modal="with" disabled>Применить с опцией</button></div>');
-  $("consent").addEventListener("change",e=>{$("applyInsurance").disabled=!e.target.checked;});
+
+function tradeoff(shorter,longer){
+  return "На "+termText(longer.months)+" платёж ниже на "+money(shorter.payment-longer.payment)+
+    " в месяц. Общая сумма выплат выше на "+money(longer.total-shorter.total)+".";
 }
-function compareTerms(shorter=false){
-  const next=shorter?(terms.findLast(n=>n<state.term)??state.term):(terms.find(n=>n>state.term && (!state.budget || Math.round(quote(state.insurance,n).payment)<=state.budget))??terms[terms.length-1]);
-  if(next===state.term){
-    bubble(shorter?"Уже выбран самый короткий срок из доступных в расчёте. Можно уменьшить сумму или узнать о досрочном погашении.":"Уже выбран самый длинный срок из доступных в расчёте. Можно уменьшить сумму или изменить ориентир по платежу.");
-    chips([["budget","Указать другой платёж"]]);return;
-  }
-  const a=activeQuote(),b=quote(state.insurance,next);
-  openModal("Как срок влияет на платёж",table(termText(a.months),termText(b.months),[
-    ["Платёж в месяц",money(a.payment),money(b.payment)],["Переплата",money(a.total-state.amount),money(b.total-state.amount)],["Всего к выплате",money(a.total),money(b.total)]
-  ])+'<p>Платёж '+(shorter?'вырастет':'снизится')+' на '+money(Math.abs(a.payment-b.payment))+', а общая сумма выплат '+(shorter?'снизится':'вырастет')+' на '+money(Math.abs(b.total-a.total))+'.</p><div class="dialog-actions"><button class="primary" data-modal="set-term" data-term="'+next+'">Выбрать '+termText(next)+'</button></div>');
-}
-function comparison(){
-  if(state.product==="refi"){
-    if(state.current)compareDebt();
-    else {bubble("Укажите действующий платёж и остаток срока, чтобы сравнить графики.");refinanceForm();scrollLog();showChatOnMobile();focusForm();}
-  } else insuranceCompare();
-}
-function compareDebt(){
-  const c=state.current,q=activeQuote(),baseline=c.payment*c.months,diff=q.total-baseline,monthly=q.payment-c.payment;
-  const effect=(Math.abs(monthly)<.5?"Платёж почти совпадает":(monthly<0?"Платёж ниже":"Платёж выше")+" на "+money(Math.abs(monthly)))+". "+(Math.abs(diff)<.5?"Общая сумма выплат почти совпадает.":"За весь оставшийся срок "+(diff>0?"заплатите больше":"заплатите меньше")+" на "+money(Math.abs(diff))+".");
-  openModal("Сравнение с текущим кредитом",'<p>Сравнение для полного закрытия долга на '+money(state.amount)+'.</p>'+table("Текущий кредит","Рефинансирование",[
-    ["Платёж в месяц",money(c.payment),money(q.payment)],["Срок",termText(c.months),termText(q.months)],["Всего к выплате",money(baseline),money(q.total)]
-  ])+'<p><strong>'+effect+'</strong></p><p>При оформлении нужно проверить точную сумму закрытия и какие долги входят в условия выбранного предложения.</p><div class="dialog-actions"><button class="secondary" data-modal="edit-debt">Изменить данные</button><button class="primary" data-modal="close">Вернуться к расчёту</button></div>');
-}
-function otherBankForm(){
-  const q=activeQuote();
-  bubble("Сравним на одинаковых сумме и сроке — "+money(state.amount)+" на "+termText(state.term)+". Укажите ставку и разовые расходы предложения другого банка.");
-  const formFields=[numericField("rate","Ставка годовых, %",Math.max(0,q.rate-3),0,100,.01),numericField("fee","Разовые расходы, ₽",0,0,7500000)];
-  formFields[0].querySelector("input").step="any";
-  formInChat("competitor",formFields,"Сравнить предложения","Разовые расходы считаются оплаченными отдельно. Сравнение предполагает равные ежемесячные платежи.");
-}
-function compareBank(rate,fee){
-  const a=activeQuote(), monthly=annuity(state.amount,rate,state.term),total=monthly*state.term+fee,diff=total-a.total;
-  const verdict=Math.abs(diff)<.5?"Общие выплаты почти одинаковы.":"По указанным данным "+(diff<0?"предложение другого банка":"вариант Альфы")+" дешевле на "+money(Math.abs(diff))+".";
-  openModal("Сравнение с другим банком",'<p>'+money(state.amount)+' на '+termText(state.term)+'.</p>'+table("Расчёт Альфы","Другой банк",[
-    ["Ставка",percent(a.rate),percent(rate)],["Платёж в месяц",money(a.payment),money(monthly)],["Допрасходы",a.fee?money(a.fee)+" в сумме кредита":"0 ₽",money(fee)+" отдельно"],["Всего к выплате",money(a.total),money(total)]
-  ])+'<p><strong>'+verdict+'</strong> Сверьте график, обязательные расходы и правила досрочного погашения по обоим предложениям.</p>');
-}
-function early(){
-  const p=bubble("Уточните дату и порядок досрочного погашения для конкретного договора. Частичное погашение может уменьшить будущий платёж или срок. Подробности — в условиях продукта.");
-  const a=document.createElement("a");a.href=products[state.product].source;a.textContent=" Условия на сайте банка ↗";a.target="_blank";a.rel="noopener";p.append(a);
-}
-function handle(action){
-  clearForms();
-  if(action==="other"){askOtherGoal();return;}
-  if(Object.hasOwn(products,action)){choose(action);return;}
-  switch(action){
-    case "existing": state.awaitingGoal=false;explainQuote();openView("calc");break;
-    case "payment": compareTerms();break;
-    case "overpay": compareTerms(true);break;
-    case "competitor": otherBankForm();break;
-    case "insurance": insuranceCompare();break;
-    case "early": early();break;
-    case "limit":
-      if(state.product==="cash")bubble("Ориентир по сумме — "+money(limit)+". На какую сумму пересчитать?");
-      else bubble("Для этого продукта доступный лимит определит банк после проверки. Какую сумму хотите рассчитать?");
-      formInChat("amount",[numericField("amount","Нужная сумма, ₽",state.product==="cash"?Math.max(limit+50000,state.amount):state.amount,30000,7500000)],"Пересчитать");break;
-    case "use-limit": state.amount=limit;explainQuote();break;
-    case "recheck":{
-      const message=bubble("Доступную сумму можно уточнить на сайте банка. ");
-      const link=document.createElement("a");
-      Object.assign(link,{href:products.cash.source,target:"_blank",rel:"noopener",textContent:"Проверить условия ↗"});
-      message.append(link);
+
+function showComparison(kind){
+  const [a,b]=calculateOptions();
+  switch(kind){
+    case "terms":{
+      const [shorter,longer]=[a,b].sort((x,y)=>x.months-y.months);
+      modal("Сравнение сроков",table(termText(shorter.months),termText(longer.months),[
+        ["В месяц",money(shorter.payment),money(longer.payment)],["Переплата",money(shorter.over),money(longer.over)],["Всего",money(shorter.total),money(longer.total)]
+      ])+'<p>'+tradeoff(shorter,longer)+'</p><div class="action-row">'+[shorter,longer].map(item=>'<button class="outline" type="button" data-select="'+item.months+'">На '+termText(item.months)+'</button>').join("")+'</div>');
       break;
     }
-    case "budget":
-      formInChat("budget",[numericField("budget","Платёж до, ₽",state.budget??25000,1000,7500000)],"Применить");break;
-    case "date": bubble("Если для конкретного предложения доступен выбор даты, её можно выбрать перед оформлением. Условия зависят от продукта. Например, Альфа-Банк указывает такую возможность для кредита на авто у дилера.");break;
+    case "debt": compareDebt(a);break;
+    case "insurance": compareInsurance(a.months);break;
+    case "bank":
+      modal("Сравнение с другим банком",'<p>Расчёт на ту же сумму '+money(Number(state.amount))+' и срок '+termText(a.months)+'.</p><form class="stack" id="bank-form">'+
+        numberField("rate","Ставка другого банка, %","",0,100,true,true)+numberField("fee","Разовые расходы, ₽","",0,maxAmount)+
+        '<p class="hint">Укажите расходы, которые оплачиваются отдельно.</p><button class="primary" type="submit">Сравнить</button></form>');
+      break;
+    case "early":
+      modal("Досрочное погашение",'<p>Частичное погашение может уменьшить будущий платёж или срок. Дата, порядок списания и доступные варианты зависят от договора.</p><a href="'+products[state.product].source+'" target="_blank" rel="noopener">Посмотреть условия на сайте банка ↗</a>');
+      break;
   }
 }
-function formValues(form){
-  const data=new FormData(form);
-  return Object.fromEntries(Array.from(data,([key,value])=>[key,Number(value)]));
-}
-function focusForm(){
-  if(!matchMedia("(pointer: coarse), (max-width: 790px)").matches){
-    log.querySelector("form input")?.focus({preventScroll:true});
-  }
-}
-log.addEventListener("click",event=>{
-  const button=event.target.closest("[data-action]");
-  if(!button)return;
-  if(button.dataset.action==="calculation"){openView("calc");return;}
-  bubble(button.textContent.replace(/^[⌂↺◇+]/,""),true);
-  handle(button.dataset.action);scrollLog();focusForm();
-});
-log.addEventListener("submit",event=>{
-  event.preventDefault();
-  const form=event.target;
-  const v=formValues(form);
-  const kind=form.dataset.form;
-  if(kind==="goal"){
-    const field=form.elements.namedItem("goal");
-    const goal=field.value.trim();
-    if(!goal){field.value="";field.reportValidity();field.focus();return;}
-    clearForms();
-    bubble(goal+" · "+money(v.amount)+(v.budget?" · платёж до "+money(v.budget):""),true);
-    choose(productForGoal(goal)??"cash",v);
-    scrollLog();
-    focusForm();
+
+function compareDebt(offer){
+  if(!state.payment||!state.remaining){
+    modal("Действующий кредит",'<p>Добавьте текущий платёж и оставшийся срок, чтобы сопоставить его с новым графиком.</p><button class="primary" data-back="2" data-debt type="button">Добавить данные</button>');
     return;
   }
-  if(kind==="debts" && v.payment*v.months<v.balance){
-    const note=form.querySelector("p");note.textContent="Сумма оставшихся платежей меньше остатка долга. Проверьте данные.";return;
-  }
-  if(kind==="competitor"){compareBank(v.rate,v.fee);return;}
-  clearForms();
-  if(kind==="debts"){
-    state.current={payment:v.payment,months:v.months};state.amount=v.balance;
-    bubble("Остаток "+money(v.balance)+", сейчас плачу "+money(v.payment)+" в месяц.",true);
-    explainQuote();compareDebt();
-  }else{
-    if(v.amount!==undefined){
-      if(state.product==="refi"&&v.amount!==state.amount)state.current=null;
-      state.amount=v.amount;
-    }
-    if(v.budget!==undefined)state.budget=v.budget;
-    bubble([v.amount?"Нужно "+money(v.amount):"",v.budget?"Платёж до "+money(v.budget):""].filter(Boolean).join(". "),true);
-    explainQuote();
-  }
-  scrollLog();
-});
-function extractFigures(text){
-  const tokens = [...text.matchAll(/(\d{1,3}(?:[\s\u00a0\u202f]\d{3})+|\d+(?:[,.]\d+)?)\s*(млн|тыс(?:яч[аи]?)?|k|к(?![а-я]))?/gi)];
-  const result={};
-  for(const match of tokens){
-    const suffix=match[2]??"";
-    let value=Number(match[1].replace(/\s/g,"").replace(",","."));
-    if(suffix)value*=suffix==="млн"?1e6:1e3;
-    const after=text.slice(match.index+match[0].length).trim();
-    const before=text.slice(Math.max(0,match.index-30),match.index);
-    if(!suffix && /^(год[а-я]*|лет(?:$|\s|[.,])|мес)/.test(after)){
-      const months=after.startsWith("мес")?value:value*12;
-      if(terms.includes(months))result.term=months;
-    }else if(/^(₽|руб)?\s*(в\s+месяц|ежемесячно)/.test(after)||/плат[её]ж[а-я]*\s*(до|не больше|около|в)?\s*$/.test(before)){
-      if(value>=1000&&value<=7500000)result.budget=Math.round(value);
-    }else if(value>=30000&&value<=7500000&&result.amount===undefined)result.amount=Math.round(value);
-  }
-  return result;
+  const payment=Number(state.payment);
+  const total=payment*Number(state.remaining);
+  const monthlyDiff=offer.payment-payment;
+  const totalDiff=offer.total-total;
+  modal("Сравнение с текущим кредитом",table("Сейчас","Рефинансирование",[
+    ["В месяц",money(payment),money(offer.payment)],["Срок",termText(state.remaining),termText(offer.months)],["Всего",money(total),money(offer.total)]
+  ])+'<p>'+differenceText("Платёж",monthlyDiff)+' '+differenceText("Общая сумма выплат",totalDiff)+'</p><p class="hint">Для точного сравнения проверьте остаток на дату закрытия.</p>');
 }
-$("composer").addEventListener("submit",event=>{
-  event.preventDefault();
-  const input=$("chat-input"), message=input.value.trim();
-  if(!message)return;
-  input.value="";bubble(message,true);
-  const t=message.toLowerCase().replaceAll("ё","е"),numbers=extractFigures(t);
-  const intent=productForGoal(t);
-  const action=/другом банк|конкурент|ставка.{0,16}(ниже|дешевле)/.test(t)?"competitor":/страхов/.test(t)?"insurance":/досроч/.test(t)?"early":/дат[ауеы].{0,15}платеж/.test(t)?"date":/переплат/.test(t)?"overpay":/платеж.{0,14}(высок|больш)|снизить платеж|меньше.{0,8}платеж/.test(t)?"payment":/больше денег|не хватает|большая сумма|сумм[ау] побольше|нужна сумма больше|увеличить сумму/.test(t)?"limit":null;
-  if(/не нужен|передумал|пока не|не хочу брать/.test(t)){
-    state.awaitingGoal=false;clearForms();bubble("Хорошо. Можно вернуться к расчёту позже.");
-  }else if(action && (!Object.keys(numbers).length || ["competitor","insurance","early","date"].includes(action))){
-    handle(action);
-  }else if(intent || state.awaitingGoal || /^(?:мне )?(?:нужно|хочу|на)[\s,]/.test(t)){
-    clearForms();choose(intent??"cash",numbers);
-  }else if(Object.keys(numbers).length){
-    if(state.product==="refi"&&numbers.amount && numbers.amount!==state.amount)state.current=null;
-    Object.assign(state,numbers);clearForms();explainQuote();
-  }else{
-    bubble("Напишите цель и сумму, например «300 000 ₽ на обучение». Если нужен только расчёт, укажите сумму.");
-    chips([["other",topics.other],["existing","Посмотреть платёж и условия"]]);
+
+function differenceText(label,diff){
+  return Math.abs(diff)<.5 ? label+" почти совпадает." : label+(diff>0?" выше на ":" ниже на ")+money(Math.abs(diff))+".";
+}
+
+function compareInsurance(months){
+  const without=estimate(months,false);
+  const withOption=estimate(months,true);
+  modal("Со страховкой и без неё",'<p>Срок '+termText(months)+'. В расчёте цена страховки добавляется к сумме кредита.</p>'+
+    table("Без страховки","Со страховкой",[
+    ["Стоимость страховки",money(0),money(withOption.fee)],["Расчётная ставка",percent(without.rate),percent(withOption.rate)],
+    ["В месяц",money(without.payment),money(withOption.payment)],["Всего",money(without.total),money(withOption.total)]])+
+    '<p>'+differenceText("Со страховкой общая сумма выплат",withOption.total-without.total)+'</p>'+
+    '<div class="action-row"><button class="outline" data-insurance="no" type="button">Без страховки</button><button class="outline" data-insurance="yes" type="button">Учесть страховку</button></div>');
+}
+
+function compareBank(rate,fee){
+  const [offer]=calculateOptions();
+  const otherPayment=annuity(Number(state.amount),rate,offer.months);
+  const otherTotal=otherPayment*offer.months+fee;
+  const diff=otherTotal-offer.total;
+  const verdict=Math.abs(diff)<.5?"Общая сумма выплат почти совпадает.":(diff<0?"Предложение другого банка":"Расчёт Альфы")+" дешевле на "+money(Math.abs(diff))+" по общей сумме выплат.";
+  modal("Сравнение с другим банком",table("Расчёт Альфы","Другой банк",[
+    ["Ставка",percent(offer.rate),percent(rate)],["В месяц",money(offer.payment),money(otherPayment)],["Допрасходы",offer.fee?money(offer.fee)+" в кредите":"0 ₽",fee?money(fee)+" отдельно":"0 ₽"],["Всего",money(offer.total),money(otherTotal)]
+  ])+'<p>'+verdict+'</p><p class="hint">Сравнение предварительное и предполагает одинаковую сумму и равные ежемесячные платежи.</p>');
+}
+
+function updateAmount(amount){
+  state.amount=amount;
+  document.querySelectorAll("[data-amount]").forEach(button=>button.setAttribute("aria-pressed",String(Number(button.dataset.amount)===Number(amount))));
+}
+
+function chooseGoal(product){
+  const next=product==="other"?"cash":product;
+  if(next!==state.product){
+    state.payment="";
+    state.remaining="";
   }
-  scrollLog();
-});
-$("amount").addEventListener("change",e=>{
-  if(!e.target.checkValidity()){e.target.reportValidity();e.target.value=state.amount;return;}
-  if(state.product==="refi" && +e.target.value!==state.amount)state.current=null;
-  state.amount=+e.target.value;render();
-});
-$("term").addEventListener("change",e=>{state.term=+e.target.value;render();});
-$("compare").addEventListener("click",comparison);
-$("review").addEventListener("click",()=>{
-  if(state.product==="cash"&&state.amount>limit){
-    bubble("Сумма выше ориентира. Можно сравнить платежи при меньшей сумме или уточнить доступную сумму у банка.");
-    chips([["use-limit","Рассчитать до "+money(limit)],["recheck","Что с большей суммой?"]]);scrollLog();showChatOnMobile();return;
+  state.product=next;
+  state.goal=goals.find(item=>item[0]===product)[1];
+  go(2);
+}
+
+function submitOpening(form){
+  const text=form.elements.opening.value.trim();
+  if(!text){form.elements.opening.value="";form.elements.opening.reportValidity();return;}
+  const parsed=parseContext(text);
+  const product=productForGoal(text);
+  if(product!==state.product){
+    state.payment="";
+    state.remaining="";
   }
-  const q=activeQuote(),product=products[state.product];
-  openModal("Проверка перед оформлением",'<p><strong>'+product.name+'</strong></p><p>'+money(state.amount)+' на '+termText(state.term)+' · '+money(q.payment)+' в месяц</p><p>Всего к выплате '+money(q.total)+'. '+(q.fee?"В расчёте учтена страховка "+money(q.fee)+".":"Без страховки.")+'</p><p>Расчёт предварительный. Актуальные условия и заявка доступны на сайте Альфа-Банка.</p><div class="dialog-actions"><button class="secondary" data-modal="close">Вернуться к расчёту</button><a class="primary" href="'+product.source+'" target="_blank" rel="noopener">Перейти на сайт банка ↗</a></div>');
+  state.product=product;
+  state.opening=text;
+  state.goal=text;
+  if(parsed.amount)state.amount=String(parsed.amount);
+  if(parsed.budget)state.budget=String(parsed.budget);
+  if(parsed.priority)state.priority=parsed.priority;
+  if(parsed.months||parsed.insurance!==undefined)state.context=text;
+  go(2);
+}
+
+function submitDetails(form){
+  const data=new FormData(form);
+  for(const name of ["amount","budget","context","payment","remaining"]){
+    state[name]=String(data.get(name)??"").trim();
+  }
+  const error=$("parameter-error");
+  const baseline=Number(state.payment)*Number(state.remaining);
+  if(state.product==="refi"&&((!!state.payment!==!!state.remaining)||(state.payment&&baseline<Number(state.amount)))){
+    error.textContent=baseline?"Проверьте сумму долга и оставшиеся платежи.":"Укажите текущий платёж и оставшийся срок.";
+    error.hidden=false;
+    return;
+  }
+  const context=parseContext(state.context);
+  if(state.goal==="Другая цель"&&state.context)state.product=productForGoal(state.context);
+  if(context.insurance!==undefined)state.insurance=context.insurance;
+  go(3);
+}
+
+$("navigation").addEventListener("click",()=>go(step-1));
+$("close").addEventListener("click",()=>popup.close());
+main.addEventListener("input",event=>{
+  const {name,value}=event.target;
+  if(!Object.hasOwn(state,name))return;
+  if(name==="amount")updateAmount(value);
+  else state[name]=value;
 });
-$("modal").addEventListener("click",event=>{
-  const button=event.target.closest("[data-modal]");
+document.addEventListener("click",event=>{
+  const button=event.target.closest("button");
   if(!button)return;
-  $("modal").close();
-  switch(button.dataset.modal){
-    case "with": state.insurance=true;render();bubble("Учёл страховку. Новый платёж и общая сумма выплат видны в карточке расчёта.");break;
-    case "without": state.insurance=false;render();bubble("Показываю расчёт без страховки.");break;
-    case "set-term": state.term=Number(button.dataset.term);explainQuote();break;
-    case "edit-debt": refinanceForm();showChatOnMobile();focusForm();break;
+  const data=button.dataset;
+  if(data.product)chooseGoal(data.product);
+  if(data.amount){
+    updateAmount(data.amount);
+    main.querySelector('[name="amount"]').value=data.amount;
   }
-  scrollLog();
+  if(data.priority){
+    state.priority=state.priority===data.priority?"":data.priority;
+    main.querySelectorAll("[data-priority]").forEach(pill=>pill.setAttribute("aria-pressed",String(pill.dataset.priority===state.priority)));
+  }
+  if(data.compare)showComparison(data.compare);
+  if(data.select){state.selected=Number(data.select);go(4);}
+  if(data.back){
+    go(Number(data.back));
+    if(data.debt!==undefined)main.querySelector('[name="payment"]').closest("details").open=true;
+  }
+  if(data.insurance){
+    state.insurance=data.insurance==="yes";
+    go(3);
+  }
 });
-$("close").addEventListener("click",()=>$("modal").close());
-$("reset").addEventListener("click",reset);
-reset();
+document.addEventListener("submit",event=>{
+  const form=event.target;
+  event.preventDefault();
+  if(form.id==="goal-form")submitOpening(form);
+  if(form.id==="parameters-form")submitDetails(form);
+  if(form.id==="bank-form")compareBank(Number(form.elements.rate.value),Number(form.elements.fee.value));
+});
+render(false);
 </script>
 </body>
 </html>
