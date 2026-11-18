@@ -10,35 +10,35 @@
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
 button,input,select{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:var(--purple);text-underline-offset:3px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a779c2;outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.46}[hidden]{display:none!important}
 .wrap{width:min(1120px,calc(100% - 56px));margin:auto}.site-header{background:#fff;border-bottom:1px solid var(--line)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand,.header-actions,.agent,.stage{display:flex;align-items:center;gap:12px}.brand{font-weight:760;letter-spacing:-.025em}.brand-mark{background:#e32e50;color:#fff;width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-size:17px}.link-button{border:0;padding:6px 0;background:none;color:var(--muted);font-weight:630;font-size:13px}.link-button:hover{text-decoration:underline}
-.hero{position:relative;isolation:isolate;overflow:hidden;margin-top:29px;min-height:247px;border-radius:25px;background:radial-gradient(ellipse at 91% 91%,#59304e 0%,transparent 57%),#201528;color:#fff;display:flex;align-items:center;padding:33px 46px}.hero::after{content:"";z-index:-1;position:absolute;inset:0;background:linear-gradient(90deg,#201528 15%,rgba(32,21,40,.98) 33%,rgba(32,21,40,.53) 57%,transparent 75%);pointer-events:none}.hero-art{position:absolute;z-index:-2;width:58%;height:100%;object-fit:cover;object-position:center;right:0;top:0}.hero-copy{max-width:580px}.eyebrow{margin:0 0 12px;color:#e9a5c4;font-size:11px;letter-spacing:.15em;font-weight:800}.hero h1{margin:0;font-size:clamp(35px,5.15vw,63px);line-height:1.02;letter-spacing:-.065em;font-weight:790}.hero p:last-child{margin:15px 0 0;color:#e1d4e4;font-size:15px}
-.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:26px 0 13px}.section-head h2{font-size:23px;letter-spacing:-.04em;margin:0}.section-head p{margin:0;color:var(--muted);font-size:13px}.workspace{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);align-items:stretch;gap:17px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:21px;min-width:0;box-shadow:0 4px 14px #22142f06}.chat{display:flex;flex-direction:column;min-height:510px}.panel-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}.avatar{border-radius:12px;background:#fbe8ef;color:#bd2552;width:39px;height:39px;display:grid;place-items:center;font-size:24px;flex-shrink:0}.agent strong,.agent small{display:block}.agent small{font-size:12px;color:var(--muted);margin-top:1px}.stage{gap:4px}.stage span{display:block;width:14px;height:4px;border-radius:99px;background:#ede4f0}.stage span.done{background:#ad74bd}
+.intro{margin:24px 0 17px}.intro h1{font-size:clamp(28px,4vw,42px);line-height:1.12;letter-spacing:-.042em;margin:0;font-weight:780}.intro p{color:var(--muted);font-size:15px;margin:7px 0 0}
+.workspace{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);align-items:stretch;gap:17px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:21px;min-width:0;box-shadow:0 4px 14px #22142f06}.chat{display:flex;flex-direction:column;min-height:510px}.panel-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}.avatar{border-radius:12px;background:#fbe8ef;color:#bd2552;width:39px;height:39px;display:grid;place-items:center;font-size:24px;flex-shrink:0}.agent strong,.agent small{display:block}.agent small{font-size:12px;color:var(--muted);margin-top:1px}.stage{gap:4px}.stage span{display:block;width:14px;height:4px;border-radius:99px;background:#ede4f0}.stage span.done{background:#ad74bd}
 .log{flex:1;min-height:356px;max-height:480px;overflow:auto;padding:18px 20px 12px;scrollbar-width:thin;overscroll-behavior:contain}.msg{display:block;width:fit-content;max-width:92%;margin:0 0 11px;padding:11px 14px;background:var(--soft);border-radius:4px 14px 14px;color:#372c3f;font-size:14px;overflow-wrap:anywhere}.msg.user{margin-left:auto;color:white;background:#593b6e;border-radius:14px 4px 14px 14px}.msg a{font-weight:650}.starter,.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.starter button{display:flex;align-items:center;gap:9px;min-height:44px;text-align:left;padding:9px 12px;background:#fff;border:1px solid #e5dbea;border-radius:12px;color:var(--ink);font-weight:660;font-size:13px}.starter{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:430px}.starter button{width:100%}.starter button.other-goal{background:#f8f0f9;border-color:#ddcbe2;color:#52395e}.starter button.other-goal:hover{background:#f2e5f5}.starter button span{flex-shrink:0;display:grid;place-items:center;color:var(--accent);font-size:16px}.starter button:hover,.chip:hover,.secondary:hover{background:#faf2f7;border-color:#d8b3d1}.chip,.secondary{border:1px solid #e8dce9;background:#fff;color:#52395e;font-weight:650;border-radius:10px;padding:8px 11px;font-size:13px}.chat-bottom{margin-top:auto;padding:13px 18px 12px;border-top:1px solid var(--line)}.composer{display:flex;gap:7px;align-items:center;background:#f8f5f9;border:1px solid #eee6f0;border-radius:13px;padding:4px}.composer input{min-width:0;width:100%;border:none;background:transparent;padding:8px 9px;color:var(--ink);font-size:14px}.send{flex:0 0 36px;height:36px;border-radius:9px;border:0;color:#fff;background:#c62249;font-size:18px}
-.calc{padding:19px 20px 17px}.calc-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.calc h3{margin:0;font-size:20px;letter-spacing:-.035em}.sample{color:#6f4d7a;background:#f6eff8;border-radius:6px;padding:3px 7px;font-size:11px;font-weight:700;white-space:nowrap}.offer{font-size:13px;margin:5px 0 14px;color:var(--muted)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field{display:grid;gap:4px;font-size:12px;font-weight:650;color:var(--muted);min-width:0}.field input,.field select{width:100%;min-width:0;color:var(--ink);background:#fff;border:1px solid #e6deeb;border-radius:10px;padding:8px 9px;height:40px;font-weight:670;font-size:14px}.payment{margin-top:12px;background:#f6eff8;border:1px solid #f0e7f5;border-radius:13px;padding:10px 13px}.payment small{display:block;color:#654a72;font-size:12px}.payment strong{font-size:31px;letter-spacing:-.045em;line-height:1.17;font-variant-numeric:tabular-nums}.payment em{font-size:12px;font-style:normal;color:var(--muted);margin-left:5px}.figures{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin:12px 0}.figures div{display:grid;gap:1px}.figures div:nth-child(n+3){padding-top:7px;border-top:1px solid var(--line)}.figures dt{font-size:11px;color:var(--muted)}.figures dd{font-weight:720;font-size:14px;margin:0;font-variant-numeric:tabular-nums}.status{background:#fff2e5;color:#703b19;border-radius:8px;padding:8px 10px;font-size:12px;margin:8px 0}.status.good{background:#eaf7f0;color:var(--positive)}.calc-actions{display:grid;gap:7px}.primary{background:#c82249;color:#fff;border:0;border-radius:11px;padding:11px 14px;font-weight:730;font-size:14px}.primary:hover,.send:hover{background:#a6193b}.calc-note{color:var(--muted);font-size:11px;line-height:1.4;margin:9px 0 0}.inline-form{display:grid;gap:9px;max-width:100%;padding:12px;margin:0 0 12px;border:1px solid var(--line);border-radius:13px}.inline-form .fields{grid-template-columns:repeat(auto-fit,minmax(122px,1fr))}.inline-form .field-wide{grid-column:1/-1}.inline-form .primary{justify-self:start}.inline-form p{font-size:12px;color:var(--muted);margin:0}.check{display:flex;gap:8px;align-items:flex-start;font-size:14px}.check input{accent-color:var(--accent);margin-top:4px}
+.calc{padding:19px 20px 17px}.calc-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.calc h2{margin:0;font-size:20px;letter-spacing:-.035em}.sample{color:#6f4d7a;background:#f6eff8;border-radius:6px;padding:3px 7px;font-size:11px;font-weight:700;white-space:nowrap}.offer{font-size:13px;margin:5px 0 14px;color:var(--muted)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field{display:grid;gap:4px;font-size:12px;font-weight:650;color:var(--muted);min-width:0}.field input,.field select{width:100%;min-width:0;color:var(--ink);background:#fff;border:1px solid #e6deeb;border-radius:10px;padding:8px 9px;height:40px;font-weight:670;font-size:14px}.payment{margin-top:12px;background:#f6eff8;border:1px solid #f0e7f5;border-radius:13px;padding:10px 13px}.payment small{display:block;color:#654a72;font-size:12px}.payment strong{font-size:31px;letter-spacing:-.045em;line-height:1.17;font-variant-numeric:tabular-nums}.payment em{font-size:12px;font-style:normal;color:var(--muted);margin-left:5px}.figures{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin:12px 0}.figures div{display:grid;gap:1px}.figures div:nth-child(n+3){padding-top:7px;border-top:1px solid var(--line)}.figures dt{font-size:11px;color:var(--muted)}.figures dd{font-weight:720;font-size:14px;margin:0;font-variant-numeric:tabular-nums}.status{background:#fff2e5;color:#703b19;border-radius:8px;padding:8px 10px;font-size:12px;margin:8px 0}.status.good{background:#eaf7f0;color:var(--positive)}.calc-actions{display:grid;gap:7px}.primary{background:#c82249;color:#fff;border:0;border-radius:11px;padding:11px 14px;font-weight:730;font-size:14px}.primary:hover,.send:hover{background:#a6193b}.calc-note{color:var(--muted);font-size:11px;line-height:1.4;margin:9px 0 0}.inline-form{display:grid;gap:9px;max-width:100%;padding:12px;margin:0 0 12px;border:1px solid var(--line);border-radius:13px}.inline-form .fields{grid-template-columns:repeat(auto-fit,minmax(122px,1fr))}.inline-form .field-wide{grid-column:1/-1}.inline-form .primary{justify-self:start}.inline-form p{font-size:12px;color:var(--muted);margin:0}.check{display:flex;gap:8px;align-items:flex-start;font-size:14px}.check input{accent-color:var(--accent);margin-top:4px}
 footer{margin:17px 0 28px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:12px}.sources{display:flex;gap:13px;flex-wrap:wrap}dialog{width:min(600px,calc(100% - 26px));max-height:calc(100dvh - 30px);overflow:auto;border:1px solid var(--line);border-radius:20px;padding:19px;color:var(--ink);box-shadow:0 18px 60px #170d2d45}dialog::backdrop{background:#2b173775}dialog h2{font-size:22px;letter-spacing:-.03em;margin:0}dialog p{font-size:14px;margin:10px 0}.dialog-head,.dialog-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}.dialog-actions .primary{text-decoration:none;text-align:center}.dialog-actions{margin-top:15px;flex-wrap:wrap;justify-content:flex-end}.dismiss{border:0;border-radius:9px;background:var(--soft);width:34px;height:34px;color:var(--ink);font-size:20px;flex-shrink:0}.comparison{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}.comparison th,.comparison td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}.comparison th{color:#52395e}.comparison td:not(:first-child){font-weight:650}.comparison tbody tr:last-child{background:var(--soft)}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.skip{position:absolute;left:-9999px}.skip:focus{left:10px;top:10px;z-index:5;background:#fff;padding:8px}
-@media(max-width:790px){.wrap{width:min(610px,calc(100% - 28px))}.workspace{grid-template-columns:1fr;gap:13px}.section-head{margin-top:20px}.hero{margin-top:16px;padding:24px;min-height:208px}.hero-art{width:64%;opacity:.72}.hero::after{background:linear-gradient(90deg,#201528 10%,rgba(32,21,40,.95) 37%,transparent 91%)}.chat{min-height:410px}.log{min-height:241px;max-height:370px}.section-head p{display:none}}
-@media(max-width:420px){.nav{min-height:57px}.brand,.header-actions{gap:7px}.brand{font-size:14px}.nav .link-button{font-size:11px}.hero{padding:21px 17px}.hero h1{font-size:36px}.hero p:last-child{font-size:13px;max-width:240px}.hero-art{object-position:44% center}.panel-head,.log,.calc{padding-left:14px;padding-right:14px}.chat-bottom{padding-left:12px;padding-right:12px}.msg{max-width:97%}}
 
 .mobile-only,.short-reset{display:none}
 @media(max-width:790px){
   .mobile-only{display:inline-flex;align-items:center;justify-content:center}
-  .jump{min-height:44px;border:1px solid #e8dce9;border-radius:10px;padding:7px 10px;background:#fff;color:var(--purple);font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap}
-  .jump:hover{background:var(--soft)}
-  .workspace{gap:14px}
+  .wrap{width:min(610px,calc(100% - 28px))}
+  .nav{min-height:57px}
+  .intro{margin:16px 0 12px}
+  .intro p{font-size:14px}
+  .workspace{grid-template-columns:minmax(0,1fr);gap:9px}
+  .view-switch{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#eee8f1;border:1px solid #e5ddeb;border-radius:12px;padding:4px}
+  .view-switch button{min-height:44px;border:1px solid transparent;border-radius:8px;background:transparent;color:#52395e;font-size:14px;font-weight:690}
+  .view-switch button[aria-pressed="true"]{border-color:#e5ddeb;background:#fff;color:#36213e;box-shadow:0 1px 4px #2819360e}
+  .workspace[data-view="chat"] .calc,.workspace[data-view="calc"] .chat{display:none}
+  .result-link{width:100%;margin-bottom:4px}
   .panel{border-radius:17px}
   .panel-head,.log,.calc{padding-left:15px;padding-right:15px}
   .stage{display:none}
   .chat{min-height:0}
-  .log{min-height:220px;max-height:340px;max-height:clamp(200px,44svh,360px)}
+  .log{min-height:0;max-height:400px;max-height:clamp(220px,56svh,460px)}
+  .msg{max-width:97%}
   .chat-bottom{margin-top:0}
   .composer input,.field input,.field select{font-size:16px}
   .field input,.field select,.starter button,.chip,.secondary,.primary,.send,.dismiss{min-height:44px}
   .send{flex-basis:44px}
-  .hero{border-radius:18px;min-height:174px;padding-top:20px;padding-bottom:21px}
-  .hero h1{font-size:clamp(27px,7.25vw,48px)}
-  .hero-copy .eyebrow{margin-bottom:8px;font-size:10px}
-  .hero p:last-child{margin-top:9px;max-width:270px}
-  .section-head{margin:16px 0 10px}
-  .section-head h2{font-size:20px}
   .calc-head{flex-wrap:wrap}
   .calc-note{font-size:12px}
   .check{min-height:44px;align-items:center}
@@ -50,9 +50,8 @@ footer{margin:17px 0 28px;display:flex;justify-content:space-between;flex-wrap:w
 }
 @media(max-width:380px){
   .wrap{width:calc(100% - 20px)}
-  .hero{min-height:150px;padding-block:14px}
-  .section-head{display:none}
-  .workspace{margin-top:14px}
+  .intro h1{font-size:26px}
+  .brand{font-size:14px}
   .nav{gap:8px}
   .brand{white-space:nowrap}
   .long-reset{display:none}
@@ -69,19 +68,25 @@ footer{margin:17px 0 28px;display:flex;justify-content:space-between;flex-wrap:w
 <a class="skip" href="#chat-input">К диалогу</a>
 <header class="site-header"><div class="wrap nav"><div class="brand"><span class="brand-mark" aria-hidden="true">✦</span> Альфа-Банк</div><div class="header-actions"><button id="reset" class="link-button" aria-label="Начать заново" type="button"><span class="long-reset">Начать заново</span><span class="short-reset" aria-hidden="true">Сбросить</span></button></div></div></header>
 <main class="wrap">
-<section class="hero" aria-labelledby="hero-title"><img class="hero-art" id="hero-art" src="hero.webp" alt=""><div class="hero-copy"><p class="eyebrow">КРЕДИТНЫЙ ПОМОЩНИК</p><h1 id="hero-title">Подберите кредит<br>под свою задачу</h1><p>Сравните платёж и общую сумму выплат до оформления</p></div></section>
-<div class="section-head"><h2>Подбор и расчёт</h2></div>
-<div class="workspace">
-<section class="panel chat" id="chat-panel" tabindex="-1" aria-label="Диалог с помощником"><div class="panel-head"><div class="agent"><div class="avatar" aria-hidden="true">✦</div><div><strong>ИИ-помощник</strong><small id="stage-text">Выбор цели</small></div></div><div class="stage" id="stage" aria-hidden="true"><span></span><span></span><span></span></div><a class="jump mobile-only" href="#calculator">К расчёту ↓</a></div>
+<header class="intro">
+  <h1>Кредитный помощник</h1>
+  <p>Подберите кредит и сравните платёж и общую сумму выплат.</p>
+</header>
+<div class="workspace" id="workspace" data-view="chat">
+<nav class="view-switch mobile-only" aria-label="Разделы кредитного помощника">
+  <button type="button" data-view-target="chat" aria-controls="chat-panel" aria-pressed="true">Диалог</button>
+  <button type="button" data-view-target="calc" aria-controls="calculator" aria-pressed="false">Ваш расчёт</button>
+</nav>
+<section class="panel chat" id="chat-panel" tabindex="-1" aria-label="Диалог с помощником"><div class="panel-head"><div class="agent"><div class="avatar" aria-hidden="true">✦</div><div><strong>ИИ-помощник</strong><small id="stage-text">Выбор цели</small></div></div><div class="stage" id="stage" aria-hidden="true"><span></span><span></span><span></span></div></div>
 <div class="log" id="log" role="log" aria-label="История диалога"></div>
 <div class="chat-bottom"><form id="composer" class="composer"><label class="sr" for="chat-input">Сообщение помощнику</label><input id="chat-input" maxlength="250" autocomplete="off" placeholder="Напишите цель и сумму"><button class="send" type="submit" aria-label="Отправить">↑</button></form></div></section>
-<section class="panel calc" id="calculator" tabindex="-1" aria-labelledby="calc-title"><div class="calc-head"><h3 id="calc-title">Ваш расчёт</h3><span class="sample">Предварительно</span></div>
+<section class="panel calc" id="calculator" tabindex="-1" aria-labelledby="calc-title"><div class="calc-head"><h2 id="calc-title">Ваш расчёт</h2><span class="sample">Предварительно</span></div>
 <p class="offer" id="offer"></p>
 <div class="fields"><label class="field"><span id="amount-label">Сумма, ₽</span><input id="amount" type="number" min="30000" max="7500000" step="1" required></label><label class="field">Срок<select id="term"><option value="12">1 год</option><option value="18">1 год 6 мес.</option><option value="24">2 года</option><option value="30">2 года 6 мес.</option><option value="36">3 года</option><option value="48">4 года</option><option value="60">5 лет</option></select></label></div>
 <div class="payment" aria-live="polite"><small>Ежемесячный платёж</small><strong id="payment"></strong><em>в месяц</em></div>
 <dl class="figures"><div><dt>Расчётная ставка</dt><dd id="rate"></dd></div><div><dt>Общая сумма выплат</dt><dd id="total"></dd></div><div><dt>Переплата</dt><dd id="over"></dd></div><div><dt>Страховка</dt><dd id="insurance"></dd></div></dl>
 <p id="status" class="status" hidden></p>
-<div class="calc-actions"><button class="secondary" id="compare" type="button">Сравнить варианты</button><button class="primary" id="review" type="button">Проверить перед оформлением</button><a class="jump mobile-only" href="#chat-panel">К диалогу ↑</a></div>
+<div class="calc-actions"><button class="secondary" id="compare" type="button">Сравнить варианты</button><button class="primary" id="review" type="button">Проверить перед оформлением</button></div>
 <p class="calc-note">Платёж рассчитан по примерной ставке. ПСК, доступную сумму и итоговые условия определяет банк.</p></section>
 </div>
 <footer><div class="sources" aria-label="Продукты на сайте Альфа-Банка"><a href="https://alfabank.ru/get-money/credit/credit-cash/" target="_blank" rel="noopener">Кредит наличными ↗</a><a href="https://alfabank.ru/get-money/credit/refinancing/" target="_blank" rel="noopener">Рефинансирование ↗</a><a href="https://alfabank.ru/get-money/autocredit/" target="_blank" rel="noopener">Кредит на авто ↗</a></div></footer>
@@ -127,14 +132,33 @@ function bubble(value,isUser=false){
   return el;
 }
 function scrollLog(){log.scrollTop=log.scrollHeight;}
-function showChatOnMobile(){
-  if(matchMedia("(max-width: 790px)").matches) $("chat-panel").scrollIntoView({block:"start"});
+const mobileLayout=matchMedia("(max-width: 790px)");
+const workspace=$("workspace");
+const viewButtons=workspace.querySelectorAll("[data-view-target]");
+function selectView(view){
+  workspace.dataset.view=view;
+  for(const button of viewButtons)button.setAttribute("aria-pressed",String(button.dataset.viewTarget===view));
 }
-function showCalculation(){
-  const panel=$("calculator");
+function openView(view){
+  selectView(view);
+  const panel=$(view==="calc"?"calculator":"chat-panel");
   panel.focus({preventScroll:true});
-  panel.scrollIntoView({block:"nearest"});
+  if(mobileLayout.matches){
+    if(workspace.getBoundingClientRect().top<0)workspace.scrollIntoView({block:"start"});
+    if(view==="chat")scrollLog();
+  }else{
+    panel.scrollIntoView({block:"nearest"});
+  }
 }
+function showChatOnMobile(){
+  if(mobileLayout.matches)openView("chat");
+}
+for(const button of viewButtons)button.addEventListener("click",()=>openView(button.dataset.viewTarget));
+document.querySelector(".skip").addEventListener("click",event=>{
+  event.preventDefault();
+  openView("chat");
+  $("chat-input").focus();
+});
 function chips(options,starter=false){
   const row=document.createElement("div");
   row.className=starter?"starter":"chips";
@@ -180,6 +204,7 @@ function reset(){
   if($("modal").open)$("modal").close();
   state={product:"cash",amount:600000,term:36,budget:null,insurance:false,current:null,awaitingGoal:false};
   log.replaceChildren();
+  selectView("chat");
   setStage(0);
   bubble("На что вам нужны деньги? Выберите цель или напишите своими словами.");
   chips([["cash",topics.cash,"⌂"],["refi",topics.refi,"↺"],["auto",topics.auto,"◇"],["other",topics.other,"+"]],true);
@@ -265,6 +290,12 @@ function explainQuote(){
     bubble(message);
   }
   chips(primaryChips);
+  const link=document.createElement("button");
+  link.type="button";
+  link.className="primary mobile-only result-link";
+  link.dataset.action="calculation";
+  link.textContent="Открыть расчёт";
+  log.append(link);
 }
 function openModal(title,html){
   $("modal-title").textContent=title;$("modal-body").innerHTML=html;
@@ -330,7 +361,7 @@ function handle(action){
   if(action==="other"){askOtherGoal();return;}
   if(Object.hasOwn(products,action)){choose(action);return;}
   switch(action){
-    case "existing": state.awaitingGoal=false;explainQuote();showCalculation();break;
+    case "existing": state.awaitingGoal=false;explainQuote();openView("calc");break;
     case "payment": compareTerms();break;
     case "overpay": compareTerms(true);break;
     case "competitor": otherBankForm();break;
@@ -365,6 +396,7 @@ function focusForm(){
 log.addEventListener("click",event=>{
   const button=event.target.closest("[data-action]");
   if(!button)return;
+  if(button.dataset.action==="calculation"){openView("calc");return;}
   bubble(button.textContent.replace(/^[⌂↺◇+]/,""),true);
   handle(button.dataset.action);scrollLog();focusForm();
 });
@@ -468,7 +500,7 @@ $("modal").addEventListener("click",event=>{
     case "with": state.insurance=true;render();bubble("Учёл страховку. Новый платёж и общая сумма выплат видны в карточке расчёта.");break;
     case "without": state.insurance=false;render();bubble("Показываю расчёт без страховки.");break;
     case "set-term": state.term=Number(button.dataset.term);explainQuote();break;
-    case "edit-debt": refinanceForm();focusForm();break;
+    case "edit-debt": refinanceForm();showChatOnMobile();focusForm();break;
   }
   scrollLog();
 });
