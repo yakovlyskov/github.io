@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Восемь занятий для знакомства с книгами, видео, идеями и проектами Валерия Уварова.">
+<meta name="theme-color" content="#eee9df">
+<title>Валерий Уваров · Вводный курс</title>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f5f1e9;
+  --surface: #fcfaf6;
+  --ink: #28231e;
+  --muted: #635a50;
+  --line: #d9d0c1;
+  --accent: #853b27;
+  --accent-dark: #692e1e;
+  --soft: #efe3d5;
+  --serif: Georgia, 'Times New Roman', serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.65 var(--sans); }
+a { color: var(--accent-dark); text-underline-offset: .2em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid #a4472f; outline-offset: 4px; }
+button { font: inherit; }
+h1, h2, h3, p, figure { margin: 0; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.13; }
+.wrap { width: min(1280px, calc(100% - 64px)); margin-inline: auto; }
+.skip { position: absolute; left: 1rem; top: .5rem; background: var(--surface); padding: .5rem 1rem; transform: translateY(-150%); z-index: 5; }
+.skip:focus { transform: translateY(0); }
+.top { border-bottom: 1px solid var(--line); }
+.top .wrap { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.brand { color: var(--ink); font-family: var(--serif); font-size: 1.16rem; text-decoration: none; }
+.top nav { display: flex; gap: clamp(12px, 3vw, 32px); align-items: center; }
+.top nav a { color: var(--muted); font-size: .91rem; font-weight: 600; text-decoration: none; }
+.top nav a:hover { color: var(--accent-dark); text-decoration: underline; }
+.hero { margin-block: 36px 48px; display: grid; grid-template-columns: 1.02fr 1fr; min-height: 438px; background: #28231e; color: #fbf3e7; overflow: hidden; }
+.hero-copy { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(2rem, 5.4vw, 5rem); }
+.kicker { color: #efbf98; font-size: .82rem; font-weight: 670; letter-spacing: .14em; text-transform: uppercase; }
+h1 { margin-block: .57rem 1rem; font-size: clamp(3.4rem, 6.8vw, 6.3rem); line-height: .98; letter-spacing: -.055em; }
+.hero-copy p { max-width: 37ch; color: #e7dacc; font-size: clamp(1rem, 1.5vw, 1.18rem); }
+.hero-meta { margin-block: 1.22rem 1.65rem; color: #eac7aa; font-size: .9rem; }
+.button { display: inline-flex; align-items: center; justify-content: center; padding: .65rem .97rem; min-height: 44px; border: 1px solid transparent; border-radius: 4px; background: var(--accent); color: #fff9f0; font-weight: 650; font-size: .95rem; text-decoration: none; cursor: pointer; }
+.button:hover { background: var(--accent-dark); }
+.hero .button { background: #e7aa80; color: #241a13; }
+.hero .button:hover { background: #f4c7a8; }
+.hero-art { position: relative; min-height: 260px; background: #6a5140; isolation: isolate; }
+.hero-art img { position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: 51% center; }
+.hero-art::after { content: ''; position: absolute; inset: 50% 0 0; background: linear-gradient(transparent, #1d120bc7); pointer-events: none; }
+.hero-art figcaption { position: absolute; bottom: .86rem; right: 1.1rem; z-index: 1; text-align: right; font-size: .8rem; }
+.hero-art a { color: #fff7ee; }
+.section-intro { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 1.25rem 3rem; padding-bottom: 1.32rem; border-bottom: 1px solid var(--line); }
+h2 { font-size: clamp(2.35rem, 5vw, 3.7rem); letter-spacing: -.04em; }
+.section-intro p { color: var(--muted); max-width: 54ch; justify-self: end; }
+.course-grid { display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: clamp(1.75rem, 4vw, 4.25rem); margin-top: 1.5rem; align-items: start; }
+.side { position: sticky; top: 1rem; }
+.side h3 { font-size: 1.33rem; margin-block: .2rem .76rem; }
+.side ol { margin: 0; padding-left: 1.55rem; color: var(--muted); font-size: .92rem; }
+.side li a { display: block; padding: .42rem .15rem; color: var(--ink); text-decoration: none; line-height: 1.42; }
+.side li a:hover { color: var(--accent-dark); text-decoration: underline; }
+.progress-wrap { margin-top: 1.2rem; border-top: 1px solid var(--line); padding-top: .7rem; color: var(--muted); font-size: .89rem; }
+progress { display: block; width: 100%; height: .67rem; margin-top: .5rem; accent-color: var(--accent); }
+.lessons { display: grid; gap: .79rem; }
+.lesson { border: 1px solid var(--line); background: var(--surface); border-radius: 5px; scroll-margin-top: .9rem; min-width: 0; }
+.lesson summary { list-style: none; display: grid; grid-template-columns: auto 1fr auto; column-gap: .9rem; align-items: start; padding: clamp(1rem, 2.4vw, 1.5rem); cursor: pointer; }
+.lesson summary::-webkit-details-marker { display: none; }
+.lesson summary:hover { background: #f1e9de; }
+.lesson[open] summary { border-bottom: 1px solid var(--line); }
+.lesson:target { border-color: #a05a3e; }
+.number { color: var(--accent); font: 1.15rem/1.3 var(--serif); font-variant-numeric: tabular-nums; padding-top: .17rem; min-width: 1.5rem; }
+.summary-title { display: block; font: clamp(1.35rem, 3vw, 1.95rem)/1.13 var(--serif); letter-spacing: -.025em; }
+.summary-description { display: block; font-size: .91rem; margin-top: .3rem; color: var(--muted); line-height: 1.45; }
+.summary-meta { display: flex; align-items: center; gap: .65rem; color: var(--muted); white-space: nowrap; font-size: .84rem; }
+.toggle { display: inline-grid; place-content: center; border: 1px solid var(--line); border-radius: 50%; width: 28px; height: 28px; color: var(--accent-dark); font-size: 1.15rem; }
+.toggle::before { content: '+'; }
+.lesson[open] .toggle::before { content: '−'; }
+.lesson-body { padding: clamp(1rem, 3vw, 2.13rem); }
+.lesson-body > * + * { margin-top: 1rem; }
+.lesson-body h3 { font-size: 1.42rem; margin-top: 1.43rem; }
+.lesson-body ul, .lesson-body ol { padding-left: 1.35rem; margin-bottom: 0; }
+.lesson-body li + li { margin-top: .53rem; }
+.reading { display: grid; gap: .6rem; padding: 0 !important; list-style: none; }
+.reading li { margin: 0 !important; padding: .8rem .9rem; background: var(--paper); border-left: 2px solid var(--line); }
+.reading a { font-weight: 650; }
+.reading span { display: block; color: var(--muted); margin-top: .12rem; font-size: .93rem; }
+.exercise { border-left: 3px solid #aa6545; padding: .8rem .9rem; background: var(--soft); }
+.exercise strong { display: block; margin-bottom: .22rem; }
+.lesson-actions { display: flex; justify-content: space-between; gap: .5rem 1rem; align-items: center; flex-wrap: wrap; margin-top: 1.25rem; }
+.complete { display: inline-flex; gap: .55rem; align-items: center; min-height: 44px; cursor: pointer; font-size: .94rem; }
+.complete input { margin: 0; width: 1.1rem; height: 1.1rem; accent-color: var(--accent); }
+.next { font-size: .94rem; font-weight: 650; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; text-align: left; font-size: .94rem; }
+th, td { border-bottom: 1px solid var(--line); vertical-align: top; padding: .66rem .7rem; }
+th { background: var(--soft); }
+tbody th { background: transparent; }
+.paths { margin-block: 3.3rem 3.7rem; padding: clamp(1.2rem, 4vw, 2.5rem); background: #e9dfd1; }
+.paths > p { margin-block: .58rem 1.1rem; max-width: 66ch; color: var(--muted); }
+.path-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+.path { padding: 1rem; background: var(--surface); border: 1px solid var(--line); }
+.path h3 { font-size: 1.38rem; }
+.path p { margin-block: .43rem .7rem; font-size: .94rem; }
+footer { border-top: 1px solid var(--line); padding-block: 1.15rem 2.2rem; color: var(--muted); font-size: .87rem; }
+footer .wrap { display: flex; justify-content: space-between; gap: .55rem 2rem; align-items: start; }
+footer p { max-width: 78ch; }
+@media (max-width: 840px) {
+  .wrap { width: calc(100% - 36px); }
+  .course-grid { grid-template-columns: 1fr; gap: 1.15rem; }
+  .side { position: static; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+  .side ol { columns: 2; column-gap: 2rem; }
+  .side li { break-inside: avoid; }
+  .hero-copy { padding: 2rem; }
+}
+@media (max-width: 590px) {
+  .wrap { width: calc(100% - 28px); }
+  .top .wrap { min-height: 57px; }
+  .brand { font-size: 1rem; }
+  .top nav { gap: .85rem; }
+  .top nav a { font-size: .82rem; }
+  .hero { grid-template-columns: 1fr; margin-block: 18px 30px; min-height: 0; }
+  .hero-copy { padding: 1.45rem 1.25rem 1.55rem; }
+  h1 { font-size: clamp(3.1rem, 13vw, 4.75rem); }
+  .hero-art { min-height: 180px; }
+  .hero-meta { margin-block: .8rem 1rem; }
+  .section-intro { grid-template-columns: 1fr; gap: .55rem; }
+  .section-intro p { justify-self: start; }
+  .lesson summary { gap: .24rem .53rem; }
+  .summary-meta { flex-direction: column-reverse; gap: .19rem; font-size: .76rem; }
+  .number { min-width: 1rem; font-size: .96rem; }
+  .path-grid { grid-template-columns: 1fr; }
+  footer .wrap { display: grid; }
+  th, td { padding: .5rem .32rem; overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body id="top">
+<a class="skip" href="#program">К программе</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">Валерий Уваров</a>
+    <nav aria-label="Навигация по странице">
+      <a href="#program">Программа</a>
+      <a href="#next">Что дальше</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="title">
+    <div class="hero-copy">
+      <span class="kicker">Вводный курс</span>
+      <h1 id="title">Валерий<br>Уваров</h1>
+      <p>Книги, видео и проекты. От первого знакомства до выбора темы для самостоятельного изучения.</p>
+      <div class="hero-meta">8 занятий · около 2,5 часа · без покупок</div>
+      <a class="button" href="#books">Начать с книг</a>
+    </div>
+    <figure class="hero-art">
+      <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Giza_Pyramids_Panorama.jpg/1280px-Giza_Pyramids_Panorama.jpg" width="1280" height="722" alt="Три пирамиды Гизы на фоне неба" fetchpriority="high" referrerpolicy="no-referrer">
+      <figcaption>Гиза · <a href="https://commons.wikimedia.org/wiki/File:Giza_Pyramids_Panorama.jpg">Benjamin Inbar</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></figcaption>
+    </figure>
+  </section>
+
+  <section id="program" aria-labelledby="program-heading">
+    <div class="section-intro">
+      <h2 id="program-heading">Программа</h2>
+      <p>В каждом занятии — тезисы, материалы для чтения или просмотра и короткое задание. Можно идти по порядку или сразу открыть нужную тему.</p>
+    </div>
+    <div class="course-grid">
+      <aside class="side">
+        <nav aria-labelledby="contents-heading">
+          <h3 id="contents-heading">Оглавление</h3>
+          <ol>
+            <li><a href="#books">С какой книги начать</a></li>
+            <li><a href="#videos">Что посмотреть сначала</a></li>
+            <li><a href="#pyramids">Пирамиды и цивилизации</a></li>
+            <li><a href="#space">Космос и уфология</a></li>
+            <li><a href="#insoles">Стельки БА-КА</a></li>
+            <li><a href="#caduceus">Кадуцеи Гора</a></li>
+            <li><a href="#gadgets">«Гаджеты Богов»</a></li>
+            <li><a href="#courses">Курсы и встречи</a></li>
+          </ol>
+        </nav>
+        <div class="progress-wrap" id="progress-wrap" hidden>
+          <label for="progress">Пройдено <output id="progress-text" aria-live="polite">0 из 8</output></label>
+          <progress id="progress" max="8" value="0"></progress>
+        </div>
+      </aside>
+      <div class="lessons">
+        <details class="lesson" id="books" open>
+          <summary><span class="number" aria-hidden="true">01</span><span><span class="summary-title" role="heading" aria-level="3">С какой книги начать</span><span class="summary-description">Две книги для знакомства с общей картиной и с историей жезлов.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <div class="lesson-body">
+            <p>Если вас привели кадуцеи, начните с «Жезлов Гора». Если интереснее древние цивилизации и назначение пирамид, откройте описание «Книги Откровений» и посмотрите её презентацию.</p>
+            <ul class="reading">
+              <li><a href="https://disk.yandex.ru/i/eW8GBm0R3X778g">«Жезлы Гора» · электронное издание 2004 года</a><span>Уваров описывает пару цилиндров и связывает её с жреческими практиками, представлениями о внутреннем времени и связи человека с природой. Для начала прочитайте вступление и найдите объяснение назначения жезлов.</span></li>
+              <li><a href="https://valeryuvarovbooks.ru/">«Пирамиды. Наследие Богов. Книга Откровений» · издание 2023 года</a><span>Центральный вопрос книги — зачем разные общества возводили пирамиды. Ответ Уварова связывает архитектуру, посвящение и его представления о происхождении цивилизации.</span></li>
+            </ul>
+            <h3>Как связаны книги</h3>
+            <p>В обеих книгах автор предполагает, что древние сооружения и предметы могли влиять на состояние и восприятие человека. Книга о жезлах рассматривает отдельный инструмент. Книга о пирамидах развивает эту мысль на уровне сооружений и истории.</p>
+            <p>Для библиографии пригодятся <a href="https://валерийуваров.рф/books">каталог автора</a>, <a href="https://search.rsl.ru/ru/record/01003015213">«Пирамиды» 2007 года в РГБ</a> и <a href="https://rusneb.ru/catalog/005289_000028_LIBNET%7C%7C%7C0000381292/">издание 2013 года в НЭБ</a>. Название «Иерофанты» упоминается в <a href="https://valeryuvarov.com/course">биографии</a>. Доступное отдельное издание подтвердить не удалось.</p>
+            <div class="exercise"><strong>Задание</strong>Запишите один вопрос после чтения. Например, зачем в объяснении жезлов Уваров обращается к пирамидам?</div>
+          </div>
+        </details>
+
+        <details class="lesson" id="videos">
+          <summary><span class="number" aria-hidden="true">02</span><span><span class="summary-title" role="heading" aria-level="3">Что посмотреть сначала</span><span class="summary-description">Два видео для знакомства и подборки для продолжения.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <div class="lesson-body">
+            <p>В <a href="https://valeryuvarov.com/">биографии на своём сайте</a> Уваров описывает путь от уфологических встреч к экспедициям, книгам и современным изделиям. Этот путь объясняет, почему в одной лекции могут соседствовать Египет, Солнечная система и духовные практики.</p>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=lgo5WYkv7Gg">Вступление к «Наследию Богов»</a>. Обратите внимание на вопросы, которыми автор открывает курс, и на то, зачем он предлагает изучать древние памятники.</li>
+              <li><a href="https://rutube.ru/video/d57064a16fd455dc121b64765c95be99/">«Пирамиды. Наследие Богов» на RUTUBE, часть 1</a>. Начните с 10–15 минут. Если тема увлечёт, есть <a href="https://rutube.ru/video/eca46f9e9591bc6352b88ce84be4929e/">часть 2</a> и <a href="https://rutube.ru/video/b4a271ac4c5a0efa82a1ac08664a3318/">часть 3</a>.</li>
+              <li><a href="https://rutube.ru/plst/513400/">Подборка о кадуцеях</a>. Откройте её, когда возникнет вопрос о конкретной серии или об использовании изделия.</li>
+            </ol>
+            <p>Другие выпуски собраны на <a href="https://www.youtube.com/channel/UCh_WfR1HMu46SPoA6lPrP-Q">YouTube</a> и <a href="https://rutube.ru/channel/40879316/">RUTUBE</a>. Для конкретного вопроса также пригодится <a href="https://valeryuvarov.com/articles">указатель статей</a>.</p>
+            <div class="exercise"><strong>Задание</strong>Остановите любую лекцию после первого развёрнутого примера. Сформулируйте своими словами, какой вопрос автор обсуждал, какой пример привёл и к какому выводу пришёл.</div>
+          </div>
+        </details>
+
+        <details class="lesson" id="pyramids">
+          <summary><span class="number" aria-hidden="true">03</span><span><span class="summary-title" role="heading" aria-level="3">Пирамиды и древние цивилизации</span><span class="summary-description">Гиза, пещеры Аджанты и современный проект под Томском.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <div class="lesson-body">
+            <ul class="reading">
+              <li><a href="https://www.valeryuvarov.com/correct-pyramid">Что, по Уварову, определяет свойства пирамиды</a><span>В его объяснении фигурируют форма, пропорции, ориентация и материалы. С этого удобно начать разбор того, как он переходит от наблюдаемой геометрии к предполагаемым энергетическим и ритуальным функциям.</span></li>
+              <li><a href="https://egymonuments.gov.eg/monuments/the-great-pyramid/">Великая пирамида в каталоге египетских древностей</a><span>Министерство туризма и древностей Египта описывает сооружение как гробницу Хуфу. Сопоставьте, какие вопросы поднимает официальная карточка памятника и какие ставит Уваров.</span></li>
+              <li><a href="https://www.youtube.com/watch?v=zQG7_CoJKlM">Аджанта в отчёте Уварова</a><span>Уваров предлагает энергетическую трактовку пещер. В <a href="https://whc.unesco.org/en/list/242">описании ЮНЕСКО</a> Аджанта представлена как комплекс буддийских пещерных памятников с росписями и скульптурой.</span></li>
+              <li><a href="https://newpyramids.store/tomsk">Современный комплекс в Томске</a><span>Страница проекта показывает, как команда переносит авторские идеи о форме пирамид в современное строительство.</span></li>
+            </ul>
+            <div class="exercise"><strong>Задание</strong>Выберите Гизу или Аджанту. Назовите одну деталь, которую можно сверить по фотографии или каталогу. Затем выпишите одно объяснение Уварова и подумайте, какие данные потребовались бы, чтобы его проверить.</div>
+          </div>
+        </details>
+
+        <details class="lesson" id="space">
+          <summary><span class="number" aria-hidden="true">04</span><span><span class="summary-title" role="heading" aria-level="3">Космос и уфология</span><span class="summary-description">Солнечная система, рассказы очевидцев и авторские гипотезы.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <div class="lesson-body">
+            <p>В версии Уварова космические события и предполагаемые контакты с внеземными цивилизациями помогают объяснить, откуда на Земле могли появиться древние знания. Духовные идеи, например посвящение и реинкарнация, дополняют эту картину и встречаются в его материалах о человеке и жезлах.</p>
+            <h3>Пример разбора. Тунгусское событие</h3>
+            <p>Факт, с которого начинается разговор, — мощный взрыв в Сибири в 1908 году. <a href="https://www.valeryuvarov.com/tunguska">Уваров предлагает</a> объяснение с участием древней защитной технологии. <a href="https://science.nasa.gov/earth/earth-observatory/a-cosmic-explosion-over-siberia-154488/">Материал NASA</a> описывает вероятный взрыв космического тела в атмосфере. При чтении полезно выписать, какие следы и свидетельства обсуждают оба источника и какие из них позволяют различить версии.</p>
+            <ul class="reading">
+              <li><a href="https://наследиебогов.рф/modul1">Открытые лекции первого модуля</a><span>Начните с фрагмента «История Солнечной Системы» или выберите соседний урок. На вводном маршруте достаточно одного фрагмента.</span></li>
+            </ul>
+            <div class="exercise"><strong>Задание</strong>Выберите одно утверждение из лекции. Запишите, опирается ли оно на документ, рассказ очевидца, наблюдение или интерпретацию. Укажите, какой независимый источник помог бы его проверить.</div>
+          </div>
+        </details>
+
+        <details class="lesson" id="insoles">
+          <summary><span class="number" aria-hidden="true">05</span><span><span class="summary-title" role="heading" aria-level="3">Стельки БА-КА</span><span class="summary-description">Что внутри, как устроена носка и что проверить в карточке товара.</span></span><span class="summary-meta"><span>15 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <div class="lesson-body">
+            <p>БА-КА — стельки с медно-цинковыми вкладышами. Проект объясняет их предполагаемое действие через разность электрических потенциалов и авторское понятие «энергосистемы». В материалах, проверенных для курса, не нашлось надёжного независимого клинического подтверждения лечебных эффектов стелек и кадуцеев.</p>
+            <h3>Перед заказом и первой ноской</h3>
+            <ul>
+              <li>Проверьте маркировку размеров, материал, состав комплекта и текущую цену конкретной пары. Переход на Wildberries есть на <a href="https://valeryuvarov.com/insoles">странице стелек</a>.</li>
+              <li>Согласно <a href="https://стелькибака.рф/">инструкции проекта</a>, отверстия вкладышей направляют к стопе. Выберите обувь, в которой стелька лежит ровно и не давит. Проект рекомендует сухой уход и предостерегает от стирки.</li>
+              <li>Если стелька вызывает раздражение, снимите её. При сохраняющемся зуде или сыпи обратитесь к врачу. <a href="https://www.aad.org/public/everyday-care/itchy-skin/rash/itchy-rash-contact-dermatitis">Справка Американской академии дерматологии о контактном дерматите</a>.</li>
+            </ul>
+            <p>Для авторского объяснения есть <a href="https://rutube.ru/video/3f0aae2ce66c54dc171800cd3d119d58/">отдельное видео о стельках</a>. Удобство посадки можно оценить самостоятельно. Вопросы лечения заболеваний адресуйте врачу.</p>
+            <div class="exercise"><strong>Задание</strong>Откройте инструкцию и карточку пары своего размера. Найдите состав, способ ухода и условия возврата. Сформулируйте, что именно хочется проверить при знакомстве с изделием.</div>
+          </div>
+        </details>
+
+        <details class="lesson" id="caduceus">
+          <summary><span class="number" aria-hidden="true">06</span><span><span class="summary-title" role="heading" aria-level="3">Кадуцеи Гора</span><span class="summary-description">Устройство, сравнение серий и вопросы для консультации.</span></span><span class="summary-meta"><span>25 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <div class="lesson-body">
+            <p>В этом проекте «жезлы» и «кадуцеи» — названия одной линейки. Базовая пара состоит из медного и цинкового цилиндров. Серии различаются наполнением, обработкой кристаллов и комплектацией. Связь современной конструкции с предметами на древнеегипетских изображениях — трактовка Уварова. <a href="https://кадуцеигора.рф/wandsofhorus">Описание проекта</a>.</p>
+            <div class="table-wrap">
+              <table aria-label="Наполнители основных серий кадуцеев">
+                <thead><tr><th scope="col">Серия</th><th scope="col">Что указано в каталоге</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">КВАРЦ *, **, ***</th><td>Мелкая, средняя и крупная фракции кварца.</td></tr>
+                  <tr><th scope="row">КРИСТАЛЛ и МОНО</th><td>Кварцевые монокристаллы. Для МОНО указаны варианты огранки 6, 9 и 12. Есть отдельные варианты серии «Аджанта».</td></tr>
+                  <tr><th scope="row">КОНТ и КОНТ-8</th><td>В описании КОНТ фигурируют уголь и ферромагнетики. Для КОНТ-8 указан восьмигранный монокристалл магнетита.</td></tr>
+                  <tr><th scope="row">БЬЯ и БЬЯ ФАРАОН</th><td>Самородное железо у БЬЯ, метеоритное железо у БЬЯ ФАРАОН.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <h3>Как разобраться перед заказом</h3>
+            <ol>
+              <li>Откройте <a href="https://valeryuvarov.com/caduceus">каталог</a> и выберите две серии для сравнения. Проверьте наполнитель, размеры, аксессуары, цену и инструкцию именно к этой комплектации.</li>
+              <li>Проект указывает медный цилиндр для правой руки, цинковый для левой. Крепления, торцевые магнитные насадки и накожные аппликаторы имеют разное назначение. При наличии кардиостимулятора или другого имплантированного электронного устройства уточните совместимость магнитных принадлежностей у лечащей команды. <a href="https://кадуцеигора.рф/">Каталог и инструкции проекта</a> · <a href="https://www.nccih.nih.gov/health/magnets-for-pain-what-you-need-to-know">NCCIH о магнитах</a>.</li>
+              <li>Если описание серий оставило вопросы, в каталоге есть персональная консультация Уварова по подбору. Уточните цену, что входит в услугу и как автор объясняет различия между интересующими сериями.</li>
+            </ol>
+            <div class="exercise"><strong>Задание</strong>Сравните КОНТ и КОНТ-8 по двум наблюдаемым характеристикам. Сформулируйте один вопрос к продавцу о составе комплекта и один вопрос автору о логике подбора.</div>
+          </div>
+        </details>
+
+        <details class="lesson" id="gadgets">
+          <summary><span class="number" aria-hidden="true">07</span><span><span class="summary-title" role="heading" aria-level="3">«Гаджеты Богов» и смежные проекты</span><span class="summary-description">Древние изображения, аксессуары и отдельные проекты.</span></span><span class="summary-meta"><span>10 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <div class="lesson-body">
+            <p>На сайте <a href="https://гаджетыбогов.рф/">«Гаджеты Богов»</a> Уваров описывает предметы на древних рельефах, включая браслеты и локтевые кольца. Он приписывает им практические функции. Интересно посмотреть, как автор строит объяснение от формы и расположения предмета к его предполагаемому применению.</p>
+            <p>Для современного ассортимента перейдите в <a href="https://кадуцеигора.рф/">каталог изделий</a>. Там размещены медные аппликаторы, магнитные насадки и янтарные изделия. В материалах канала встречается <a href="https://www.youtube.com/watch?v=_9evYSMMZCk">«Синтезит» Владислава Карабанова</a>, а в <a href="https://valeryuvarov.com/projects">каталоге проектов</a> — Cosmic Baby, связанный с авторской идеей выбора времени зачатия. Эти темы можно оставить для самостоятельного знакомства.</p>
+            <div class="exercise"><strong>Задание</strong>Найдите на рельефе один предмет. Опишите его форму и положение, затем кратко запишите трактовку автора. Отметьте, где в каталоге искать современные принадлежности, если вас заинтересовала конкретная вещь.</div>
+          </div>
+        </details>
+
+        <details class="lesson" id="courses">
+          <summary><span class="number" aria-hidden="true">08</span><span><span class="summary-title" role="heading" aria-level="3">Курсы, лекции и встречи</span><span class="summary-description">Где начать бесплатно и что посмотреть перед записью.</span></span><span class="summary-meta"><span>15 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <div class="lesson-body">
+            <p><a href="https://valeryuvarov.com/course">«Наследие Богов»</a> — отдельная авторская программа, куда можно перейти после этого знакомства. На разных страницах проекта названия и нумерация модулей отличаются. Сверяйте тему, формат и условия доступа на форме записи.</p>
+            <ul class="reading">
+              <li><a href="https://наследиебогов.рф/modul1">Открытые лекции первого модуля</a><span>Дают представление о подаче. На <a href="https://horuswands.ru/step1">странице доступа к платформе</a> указан взнос 1 555 ₽ за год. Перед оплатой проверьте, какие записи входят.</span></li>
+              <li><a href="https://horuswands.ru/stupen2">«Уфологические встречи»</a><span>На странице записи указаны вводная часть за 0 ₽ и основная за 7 777 ₽. Уточняйте состав встреч и срок доступа для выбранного варианта.</span></li>
+              <li><a href="https://valeryuvarovseminars.ru/">Календарь мероприятий</a><span>Сверьте город, дату и формат. Для знакомства подойдут <a href="https://rutube.ru/plst/886737/">архив открытых встреч</a> и <a href="https://t.me/kaduceys">канал анонсов</a>.</span></li>
+              <li><a href="https://valeryuvarov.com/projects">«Жреческий Университет» в каталоге проектов</a><span>Проверенные страницы ведут к архивным программам поездок. <a href="https://horuswands.ru/adjanta">Программа Аджанты</a> показывает формат. Действующий набор уточняйте у организаторов.</span></li>
+            </ul>
+            <p>Цены на страницах записи сверены 20 ноября 2026 года. Актуальные условия указаны у организаторов.</p>
+            <div class="exercise"><strong>Задание</strong>Выберите одну тему, по которой остался вопрос. Найдите конкретный открытый урок, встречу или главу книги, с которой начнёте углубление.</div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="paths" id="next" aria-labelledby="next-heading">
+    <h2 id="next-heading">Что дальше</h2>
+    <p>Выберите один шаг, который отвечает на ваш вопрос после курса.</p>
+    <div class="path-grid">
+      <div class="path"><h3>Читать и смотреть</h3><p>Возьмите одну главу о пирамидах или открытый урок о Солнечной системе.</p><a href="https://наследиебогов.рф/modul1">Открытые уроки</a></div>
+      <div class="path"><h3>Разобраться в изделиях</h3><p>Посмотрите инструкцию к стелькам или сравните две серии кадуцеев перед консультацией.</p><a href="#insoles">Стельки БА-КА</a> · <a href="#caduceus">Кадуцеи Гора</a></div>
+      <div class="path"><h3>Послушать обсуждение</h3><p>Откройте запись встречи или выберите предстоящее событие.</p><a href="https://valeryuvarovseminars.ru/">Календарь встреч</a></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Самостоятельный обзор публичных материалов Валерия Уварова. Авторские трактовки приведены с указанием источников. Закрытые занятия описаны по открытым программам.</p>
+    <a href="#top">К началу страницы</a>
+  </div>
+</footer>
+
+<script>
+  const lessons = [...document.querySelectorAll('.lesson')];
+  const progress = document.getElementById('progress');
+  const progressText = document.getElementById('progress-text');
+  const storageKey = 'valery-uvarov-course-progress-v1';
+  let completed = new Set();
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    if (Array.isArray(saved)) completed = new Set(saved.filter(id => lessons.some(lesson => lesson.id === id)));
+  } catch {}
+
+  function updateProgress() {
+    progress.value = completed.size;
+    progressText.value = completed.size + ' из ' + lessons.length;
+  }
+
+  lessons.forEach((lesson, index) => {
+    const actions = document.createElement('div');
+    actions.className = 'lesson-actions';
+
+    const label = document.createElement('label');
+    label.className = 'complete';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = completed.has(lesson.id);
+    checkbox.setAttribute('aria-label', 'Отметить занятие «' + lesson.querySelector('.summary-title').textContent + '» пройденным');
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) completed.add(lesson.id);
+      else completed.delete(lesson.id);
+      try { localStorage.setItem(storageKey, JSON.stringify([...completed])); } catch {}
+      updateProgress();
+    });
+    label.append(checkbox, 'Занятие пройдено');
+
+    const next = document.createElement('a');
+    next.className = 'next';
+    next.href = '#' + (lessons[index + 1]?.id || 'next');
+    next.textContent = lessons[index + 1] ? 'Следующее занятие' : 'Что дальше';
+    actions.append(label, next);
+    lesson.querySelector('.lesson-body').append(actions);
+  });
+
+  function openLesson(hash) {
+    const lesson = lessons.find(item => '#' + item.id === hash);
+    if (lesson) lesson.open = true;
+  }
+
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href^="#"]');
+    if (link) openLesson(link.hash);
+  });
+  window.addEventListener('hashchange', () => openLesson(window.location.hash));
+  openLesson(window.location.hash);
+  updateProgress();
+  document.getElementById('progress-wrap').hidden = false;
+</script>
+</body>
+</html>
