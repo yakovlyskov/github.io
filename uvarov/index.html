@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Восемь занятий для знакомства с книгами, видео, идеями и проектами Валерия Уварова.">
+<meta name="description" content="С чего начать знакомство с Валерием Уваровым и как выбрать, что читать, смотреть или изучать дальше. Восемь занятий с материалами и заданиями.">
 <meta name="theme-color" content="#eee9df">
-<title>Валерий Уваров · Вводный курс</title>
+<title>С чего начать знакомство с Валерием Уваровым</title>
 <style>
 :root {
   color-scheme: light;
@@ -42,7 +42,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.13; }
 .hero { margin-block: 36px 48px; display: grid; grid-template-columns: 1.02fr 1fr; min-height: 438px; background: #28231e; color: #fbf3e7; overflow: hidden; }
 .hero-copy { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(2rem, 5.4vw, 5rem); }
 .kicker { color: #efbf98; font-size: .82rem; font-weight: 670; letter-spacing: .14em; text-transform: uppercase; }
-h1 { margin-block: .57rem 1rem; font-size: clamp(3.4rem, 6.8vw, 6.3rem); line-height: .98; letter-spacing: -.055em; }
+h1 { margin-block: .57rem 1rem; font-size: clamp(3rem, 5.5vw, 5.2rem); line-height: .98; letter-spacing: -.055em; }
 .hero-copy p { max-width: 37ch; color: #e7dacc; font-size: clamp(1rem, 1.5vw, 1.18rem); }
 .hero-meta { margin-block: 1.22rem 1.65rem; color: #eac7aa; font-size: .9rem; }
 .button { display: inline-flex; align-items: center; justify-content: center; padding: .65rem .97rem; min-height: 44px; border: 1px solid transparent; border-radius: 4px; background: var(--accent); color: #fff9f0; font-weight: 650; font-size: .95rem; text-decoration: none; cursor: pointer; }
@@ -81,6 +81,7 @@ progress { display: block; width: 100%; height: .67rem; margin-top: .5rem; accen
 .lesson[open] .toggle::before { content: '−'; }
 .lesson-body { padding: clamp(1rem, 3vw, 2.13rem); }
 .lesson-body > * + * { margin-top: 1rem; }
+.lesson-purpose { font-size: 1.06rem; line-height: 1.62; }
 .lesson-body h3 { font-size: 1.42rem; margin-top: 1.43rem; }
 .lesson-body ul, .lesson-body ol { padding-left: 1.35rem; margin-bottom: 0; }
 .lesson-body li + li { margin-top: .53rem; }
@@ -124,7 +125,7 @@ footer p { max-width: 78ch; }
   .top nav a { font-size: .82rem; }
   .hero { grid-template-columns: 1fr; margin-block: 18px 30px; min-height: 0; }
   .hero-copy { padding: 1.45rem 1.25rem 1.55rem; }
-  h1 { font-size: clamp(3.1rem, 13vw, 4.75rem); }
+  h1 { font-size: clamp(2.65rem, 11vw, 4.4rem); }
   .hero-art { min-height: 180px; }
   .hero-meta { margin-block: .8rem 1rem; }
   .section-intro { grid-template-columns: 1fr; gap: .55rem; }
@@ -154,9 +155,9 @@ footer p { max-width: 78ch; }
 <main class="wrap">
   <section class="hero" aria-labelledby="title">
     <div class="hero-copy">
-      <span class="kicker">Вводный курс</span>
-      <h1 id="title">Валерий<br>Уваров</h1>
-      <p>Книги, видео и проекты. От первого знакомства до выбора темы для самостоятельного изучения.</p>
+      <span class="kicker">Вводный курс о Валерии Уварове</span>
+      <h1 id="title">С чего начать знакомство</h1>
+      <p>Книги помогают понять основные идеи, видео показывают, как Уваров их объясняет. Затем можно подробнее изучить древние цивилизации в трактовке Уварова, его уфологические гипотезы или современные проекты.</p>
       <div class="hero-meta">8 занятий · около 2,5 часа · без покупок</div>
       <a class="button" href="#books">Начать с книг</a>
     </div>
@@ -168,22 +169,22 @@ footer p { max-width: 78ch; }
 
   <section id="program" aria-labelledby="program-heading">
     <div class="section-intro">
-      <h2 id="program-heading">Программа</h2>
-      <p>В каждом занятии — тезисы, материалы для чтения или просмотра и короткое задание. Можно идти по порядку или сразу открыть нужную тему.</p>
+      <h2 id="program-heading">Как устроен курс</h2>
+      <p>Сначала разберёмся, как Уваров связывает пирамиды, историю цивилизаций и космос. Затем посмотрим, как эти идеи появляются в описаниях стелек, кадуцеев и других изделий. В конце станет проще выбрать книгу, курс, встречу или консультацию под свой вопрос.</p>
     </div>
     <div class="course-grid">
       <aside class="side">
         <nav aria-labelledby="contents-heading">
-          <h3 id="contents-heading">Оглавление</h3>
+          <h3 id="contents-heading">Маршрут по курсу</h3>
           <ol>
-            <li><a href="#books">С какой книги начать</a></li>
-            <li><a href="#videos">Что посмотреть сначала</a></li>
-            <li><a href="#pyramids">Пирамиды и цивилизации</a></li>
-            <li><a href="#space">Космос и уфология</a></li>
-            <li><a href="#insoles">Стельки БА-КА</a></li>
-            <li><a href="#caduceus">Кадуцеи Гора</a></li>
-            <li><a href="#gadgets">«Гаджеты Богов»</a></li>
-            <li><a href="#courses">Курсы и встречи</a></li>
+            <li><a href="#books">Начать с книг</a></li>
+            <li><a href="#videos">Найти свою тему в видео</a></li>
+            <li><a href="#pyramids">Понять роль пирамид</a></li>
+            <li><a href="#space">Понять роль уфологии</a></li>
+            <li><a href="#insoles">Начать со стелек БА-КА</a></li>
+            <li><a href="#caduceus">Разобраться в кадуцеях</a></li>
+            <li><a href="#gadgets">Понять связь с другими гаджетами</a></li>
+            <li><a href="#courses">Выбрать курс или встречу</a></li>
           </ol>
         </nav>
         <div class="progress-wrap" id="progress-wrap" hidden>
@@ -193,14 +194,15 @@ footer p { max-width: 78ch; }
       </aside>
       <div class="lessons">
         <details class="lesson" id="books" open>
-          <summary><span class="number" aria-hidden="true">01</span><span><span class="summary-title" role="heading" aria-level="3">С какой книги начать</span><span class="summary-description">Две книги для знакомства с общей картиной и с историей жезлов.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <summary><span class="number" aria-hidden="true">01</span><span><span class="summary-title" role="heading" aria-level="3">Почему стоит начать с книг</span><span class="summary-description">Две книги помогут понять, как у автора связаны пирамиды, жезлы и древние цивилизации.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
           <div class="lesson-body">
+            <p class="lesson-purpose">Книги дают контекст для следующих занятий. Например, жезлы Уваров описывает в связи с древними практиками, а в каталоге показывает как современную линейку изделий. Прочитав вступление к одной из книг, проще понять, какие вопросы автор обсуждает в видео и почему возвращается к одним и тем же понятиям.</p>
             <p>Если вас привели кадуцеи, начните с «Жезлов Гора». Если интереснее древние цивилизации и назначение пирамид, откройте описание «Книги Откровений» и посмотрите её презентацию.</p>
             <ul class="reading">
               <li><a href="https://disk.yandex.ru/i/eW8GBm0R3X778g">«Жезлы Гора» · электронное издание 2004 года</a><span>Уваров описывает пару цилиндров и связывает её с жреческими практиками, представлениями о внутреннем времени и связи человека с природой. Для начала прочитайте вступление и найдите объяснение назначения жезлов.</span></li>
               <li><a href="https://valeryuvarovbooks.ru/">«Пирамиды. Наследие Богов. Книга Откровений» · издание 2023 года</a><span>Центральный вопрос книги — зачем разные общества возводили пирамиды. Ответ Уварова связывает архитектуру, посвящение и его представления о происхождении цивилизации.</span></li>
             </ul>
-            <h3>Как связаны книги</h3>
+            <h3>От отдельного предмета к истории цивилизаций</h3>
             <p>В обеих книгах автор предполагает, что древние сооружения и предметы могли влиять на состояние и восприятие человека. Книга о жезлах рассматривает отдельный инструмент. Книга о пирамидах развивает эту мысль на уровне сооружений и истории.</p>
             <p>Для библиографии пригодятся <a href="https://валерийуваров.рф/books">каталог автора</a>, <a href="https://search.rsl.ru/ru/record/01003015213">«Пирамиды» 2007 года в РГБ</a> и <a href="https://rusneb.ru/catalog/005289_000028_LIBNET%7C%7C%7C0000381292/">издание 2013 года в НЭБ</a>. Название «Иерофанты» упоминается в <a href="https://valeryuvarov.com/course">биографии</a>. Доступное отдельное издание подтвердить не удалось.</p>
             <div class="exercise"><strong>Задание</strong>Запишите один вопрос после чтения. Например, зачем в объяснении жезлов Уваров обращается к пирамидам?</div>
@@ -208,8 +210,9 @@ footer p { max-width: 78ch; }
         </details>
 
         <details class="lesson" id="videos">
-          <summary><span class="number" aria-hidden="true">02</span><span><span class="summary-title" role="heading" aria-level="3">Что посмотреть сначала</span><span class="summary-description">Два видео для знакомства и подборки для продолжения.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <summary><span class="number" aria-hidden="true">02</span><span><span class="summary-title" role="heading" aria-level="3">Как выбрать первые видео</span><span class="summary-description">Вступление даст общую картину, а фрагмент лекции покажет, как Уваров разбирает конкретную тему.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
           <div class="lesson-body">
+            <p class="lesson-purpose">После чтения послушайте, как Уваров формулирует вопросы вслух и какие примеры приводит. Вступление показывает, зачем он создал курс. Лекция о пирамидах даёт попробовать его подход на одном сюжете. По этим двум видео можно решить, хочется ли вам продолжить тему древних памятников или перейти к уфологии и изделиям.</p>
             <p>В <a href="https://valeryuvarov.com/">биографии на своём сайте</a> Уваров описывает путь от уфологических встреч к экспедициям, книгам и современным изделиям. Этот путь объясняет, почему в одной лекции могут соседствовать Египет, Солнечная система и духовные практики.</p>
             <ol>
               <li><a href="https://www.youtube.com/watch?v=lgo5WYkv7Gg">Вступление к «Наследию Богов»</a>. Обратите внимание на вопросы, которыми автор открывает курс, и на то, зачем он предлагает изучать древние памятники.</li>
@@ -222,8 +225,9 @@ footer p { max-width: 78ch; }
         </details>
 
         <details class="lesson" id="pyramids">
-          <summary><span class="number" aria-hidden="true">03</span><span><span class="summary-title" role="heading" aria-level="3">Пирамиды и древние цивилизации</span><span class="summary-description">Гиза, пещеры Аджанты и современный проект под Томском.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <summary><span class="number" aria-hidden="true">03</span><span><span class="summary-title" role="heading" aria-level="3">Почему пирамиды занимают центральное место</span><span class="summary-description">Гиза, Аджанта и томский проект показывают, как автор связывает историю, архитектуру и современные разработки.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
           <div class="lesson-body">
+            <p class="lesson-purpose">По пирамидам проще всего проследить общую логику Уварова. Он начинает с вопросов о форме и назначении древних сооружений, предлагает своё объяснение и переносит часть этих идей в современные проекты. Поэтому после вводных материалов полезно разобрать один памятник и один современный пример.</p>
             <ul class="reading">
               <li><a href="https://www.valeryuvarov.com/correct-pyramid">Что, по Уварову, определяет свойства пирамиды</a><span>В его объяснении фигурируют форма, пропорции, ориентация и материалы. С этого удобно начать разбор того, как он переходит от наблюдаемой геометрии к предполагаемым энергетическим и ритуальным функциям.</span></li>
               <li><a href="https://egymonuments.gov.eg/monuments/the-great-pyramid/">Великая пирамида в каталоге египетских древностей</a><span>Министерство туризма и древностей Египта описывает сооружение как гробницу Хуфу. Сопоставьте, какие вопросы поднимает официальная карточка памятника и какие ставит Уваров.</span></li>
@@ -235,10 +239,11 @@ footer p { max-width: 78ch; }
         </details>
 
         <details class="lesson" id="space">
-          <summary><span class="number" aria-hidden="true">04</span><span><span class="summary-title" role="heading" aria-level="3">Космос и уфология</span><span class="summary-description">Солнечная система, рассказы очевидцев и авторские гипотезы.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <summary><span class="number" aria-hidden="true">04</span><span><span class="summary-title" role="heading" aria-level="3">Зачем Уваров обращается к космосу и уфологии</span><span class="summary-description">От древних сооружений переходим к вопросу о том, откуда, по версии Уварова, пришли знания для их строительства.</span></span><span class="summary-meta"><span>20 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
           <div class="lesson-body">
+            <p class="lesson-purpose">Этот урок продолжает разговор о древних цивилизациях. Там мы смотрели, какие функции Уваров приписывает сооружениям. Здесь разберём, как он объясняет происхождение знаний, которые, по его мнению, стояли за их строительством. Эта связь также помогает понять, почему в «Наследии Богов» появляется отдельный модуль об истории Солнечной системы.</p>
             <p>В версии Уварова космические события и предполагаемые контакты с внеземными цивилизациями помогают объяснить, откуда на Земле могли появиться древние знания. Духовные идеи, например посвящение и реинкарнация, дополняют эту картину и встречаются в его материалах о человеке и жезлах.</p>
-            <h3>Пример разбора. Тунгусское событие</h3>
+            <h3>Как Уваров объясняет Тунгусское событие</h3>
             <p>Факт, с которого начинается разговор, — мощный взрыв в Сибири в 1908 году. <a href="https://www.valeryuvarov.com/tunguska">Уваров предлагает</a> объяснение с участием древней защитной технологии. <a href="https://science.nasa.gov/earth/earth-observatory/a-cosmic-explosion-over-siberia-154488/">Материал NASA</a> описывает вероятный взрыв космического тела в атмосфере. При чтении полезно выписать, какие следы и свидетельства обсуждают оба источника и какие из них позволяют различить версии.</p>
             <ul class="reading">
               <li><a href="https://наследиебогов.рф/modul1">Открытые лекции первого модуля</a><span>Начните с фрагмента «История Солнечной Системы» или выберите соседний урок. На вводном маршруте достаточно одного фрагмента.</span></li>
@@ -248,10 +253,11 @@ footer p { max-width: 78ch; }
         </details>
 
         <details class="lesson" id="insoles">
-          <summary><span class="number" aria-hidden="true">05</span><span><span class="summary-title" role="heading" aria-level="3">Стельки БА-КА</span><span class="summary-description">Что внутри, как устроена носка и что проверить в карточке товара.</span></span><span class="summary-meta"><span>15 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <summary><span class="number" aria-hidden="true">05</span><span><span class="summary-title" role="heading" aria-level="3">Почему знакомство с изделиями удобно начать со стелек БА-КА</span><span class="summary-description">Привычная форма помогает разобраться в составе, инструкции и посадке перед знакомством с более сложными изделиями.</span></span><span class="summary-meta"><span>15 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
           <div class="lesson-body">
+            <p class="lesson-purpose">Со стелек удобно начать практическую часть. Их формат знаком, а состав, размер и правила ухода легко найти в инструкции и карточке товара. На этом примере разберёмся, где указана комплектация, как автор объясняет предполагаемое действие и что можно оценить при обычной носке.</p>
             <p>БА-КА — стельки с медно-цинковыми вкладышами. Проект объясняет их предполагаемое действие через разность электрических потенциалов и авторское понятие «энергосистемы». В материалах, проверенных для курса, не нашлось надёжного независимого клинического подтверждения лечебных эффектов стелек и кадуцеев.</p>
-            <h3>Перед заказом и первой ноской</h3>
+            <h3>Что можно узнать о стельках до заказа</h3>
             <ul>
               <li>Проверьте маркировку размеров, материал, состав комплекта и текущую цену конкретной пары. Переход на Wildberries есть на <a href="https://valeryuvarov.com/insoles">странице стелек</a>.</li>
               <li>Согласно <a href="https://стелькибака.рф/">инструкции проекта</a>, отверстия вкладышей направляют к стопе. Выберите обувь, в которой стелька лежит ровно и не давит. Проект рекомендует сухой уход и предостерегает от стирки.</li>
@@ -263,8 +269,9 @@ footer p { max-width: 78ch; }
         </details>
 
         <details class="lesson" id="caduceus">
-          <summary><span class="number" aria-hidden="true">06</span><span><span class="summary-title" role="heading" aria-level="3">Кадуцеи Гора</span><span class="summary-description">Устройство, сравнение серий и вопросы для консультации.</span></span><span class="summary-meta"><span>25 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <summary><span class="number" aria-hidden="true">06</span><span><span class="summary-title" role="heading" aria-level="3">Что понять о кадуцеях Гора до выбора</span><span class="summary-description">Здесь история жезлов из первой книги переходит в каталог конкретных серий, наполнителей и комплектаций.</span></span><span class="summary-meta"><span>25 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
           <div class="lesson-body">
+            <p class="lesson-purpose">Кадуцеи связывают книжную и практическую части курса. В первой книге Уваров объясняет, какой смысл приписывает жезлам. Теперь можно понять, что именно продаётся под этим названием и почему при выборе важно уточнить конкретную серию. Это поможет прочитать инструкцию к своему комплекту или подготовить предметные вопросы к продавцу и автору.</p>
             <p>В этом проекте «жезлы» и «кадуцеи» — названия одной линейки. Базовая пара состоит из медного и цинкового цилиндров. Серии различаются наполнением, обработкой кристаллов и комплектацией. Связь современной конструкции с предметами на древнеегипетских изображениях — трактовка Уварова. <a href="https://кадуцеигора.рф/wandsofhorus">Описание проекта</a>.</p>
             <div class="table-wrap">
               <table aria-label="Наполнители основных серий кадуцеев">
@@ -277,7 +284,7 @@ footer p { max-width: 78ch; }
                 </tbody>
               </table>
             </div>
-            <h3>Как разобраться перед заказом</h3>
+            <h3>Что сравнить в карточках и спросить на консультации</h3>
             <ol>
               <li>Откройте <a href="https://valeryuvarov.com/caduceus">каталог</a> и выберите две серии для сравнения. Проверьте наполнитель, размеры, аксессуары, цену и инструкцию именно к этой комплектации.</li>
               <li>Проект указывает медный цилиндр для правой руки, цинковый для левой. Крепления, торцевые магнитные насадки и накожные аппликаторы имеют разное назначение. При наличии кардиостимулятора или другого имплантированного электронного устройства уточните совместимость магнитных принадлежностей у лечащей команды. <a href="https://кадуцеигора.рф/">Каталог и инструкции проекта</a> · <a href="https://www.nccih.nih.gov/health/magnets-for-pain-what-you-need-to-know">NCCIH о магнитах</a>.</li>
@@ -288,8 +295,9 @@ footer p { max-width: 78ch; }
         </details>
 
         <details class="lesson" id="gadgets">
-          <summary><span class="number" aria-hidden="true">07</span><span><span class="summary-title" role="heading" aria-level="3">«Гаджеты Богов» и смежные проекты</span><span class="summary-description">Древние изображения, аксессуары и отдельные проекты.</span></span><span class="summary-meta"><span>10 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <summary><span class="number" aria-hidden="true">07</span><span><span class="summary-title" role="heading" aria-level="3">Как «Гаджеты Богов» продолжают тему жезлов</span><span class="summary-description">Разбор рельефов показывает, как Уваров применяет похожий подход к браслетам, кольцам и другим предметам.</span></span><span class="summary-meta"><span>10 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
           <div class="lesson-body">
+            <p class="lesson-purpose">После знакомства с кадуцеями стоит посмотреть, как тот же способ толкования древних изображений Уваров применяет к другим предметам. Этот урок помогает понять, зачем у проекта отдельный сайт с рельефами и где искать сведения о современных аксессуарах, которые встречаются в каталоге.</p>
             <p>На сайте <a href="https://гаджетыбогов.рф/">«Гаджеты Богов»</a> Уваров описывает предметы на древних рельефах, включая браслеты и локтевые кольца. Он приписывает им практические функции. Интересно посмотреть, как автор строит объяснение от формы и расположения предмета к его предполагаемому применению.</p>
             <p>Для современного ассортимента перейдите в <a href="https://кадуцеигора.рф/">каталог изделий</a>. Там размещены медные аппликаторы, магнитные насадки и янтарные изделия. В материалах канала встречается <a href="https://www.youtube.com/watch?v=_9evYSMMZCk">«Синтезит» Владислава Карабанова</a>, а в <a href="https://valeryuvarov.com/projects">каталоге проектов</a> — Cosmic Baby, связанный с авторской идеей выбора времени зачатия. Эти темы можно оставить для самостоятельного знакомства.</p>
             <div class="exercise"><strong>Задание</strong>Найдите на рельефе один предмет. Опишите его форму и положение, затем кратко запишите трактовку автора. Отметьте, где в каталоге искать современные принадлежности, если вас заинтересовала конкретная вещь.</div>
@@ -297,8 +305,9 @@ footer p { max-width: 78ch; }
         </details>
 
         <details class="lesson" id="courses">
-          <summary><span class="number" aria-hidden="true">08</span><span><span class="summary-title" role="heading" aria-level="3">Курсы, лекции и встречи</span><span class="summary-description">Где начать бесплатно и что посмотреть перед записью.</span></span><span class="summary-meta"><span>15 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
+          <summary><span class="number" aria-hidden="true">08</span><span><span class="summary-title" role="heading" aria-level="3">Как выбрать курс, лекцию или встречу</span><span class="summary-description">Подберите формат под вопрос, который остался после знакомства с книгами, идеями и изделиями.</span></span><span class="summary-meta"><span>15 мин</span><span class="toggle" aria-hidden="true"></span></span></summary>
           <div class="lesson-body">
+            <p class="lesson-purpose">К этому занятию обычно уже понятно, какая тема вызывает больше всего вопросов. Для последовательного изучения есть авторская программа, для знакомства с подачей — открытая лекция, для обсуждения — встреча. Начните с формата, который поможет ответить на ваш вопрос, и проверьте программу конкретной записи.</p>
             <p><a href="https://valeryuvarov.com/course">«Наследие Богов»</a> — отдельная авторская программа, куда можно перейти после этого знакомства. На разных страницах проекта названия и нумерация модулей отличаются. Сверяйте тему, формат и условия доступа на форме записи.</p>
             <ul class="reading">
               <li><a href="https://наследиебогов.рф/modul1">Открытые лекции первого модуля</a><span>Дают представление о подаче. На <a href="https://horuswands.ru/step1">странице доступа к платформе</a> указан взнос 1 555 ₽ за год. Перед оплатой проверьте, какие записи входят.</span></li>
@@ -315,12 +324,12 @@ footer p { max-width: 78ch; }
   </section>
 
   <section class="paths" id="next" aria-labelledby="next-heading">
-    <h2 id="next-heading">Что дальше</h2>
-    <p>Выберите один шаг, который отвечает на ваш вопрос после курса.</p>
+    <h2 id="next-heading">Куда углубиться после курса</h2>
+    <p>Вспомните, на какой теме хотелось задержаться. Выберите один материал или действие, которое поможет разобраться в оставшемся вопросе.</p>
     <div class="path-grid">
-      <div class="path"><h3>Читать и смотреть</h3><p>Возьмите одну главу о пирамидах или открытый урок о Солнечной системе.</p><a href="https://наследиебогов.рф/modul1">Открытые уроки</a></div>
-      <div class="path"><h3>Разобраться в изделиях</h3><p>Посмотрите инструкцию к стелькам или сравните две серии кадуцеев перед консультацией.</p><a href="#insoles">Стельки БА-КА</a> · <a href="#caduceus">Кадуцеи Гора</a></div>
-      <div class="path"><h3>Послушать обсуждение</h3><p>Откройте запись встречи или выберите предстоящее событие.</p><a href="https://valeryuvarovseminars.ru/">Календарь встреч</a></div>
+      <div class="path"><h3>Понять идеи глубже</h3><p>Если вас заинтересовала авторская версия древней истории, продолжите главой о пирамидах или одним открытым уроком о Солнечной системе.</p><a href="https://наследиебогов.рф/modul1">Открытые уроки</a></div>
+      <div class="path"><h3>Разобраться в конкретном изделии</h3><p>Если интересует посадка и уход, откройте урок о стельках. Если вопрос о наполнителе или комплектации, сравните две серии кадуцеев.</p><a href="#insoles">Стельки БА-КА</a> · <a href="#caduceus">Кадуцеи Гора</a></div>
+      <div class="path"><h3>Обсудить вопрос на встрече</h3><p>Проверьте, разбирали ли вашу тему в записи открытой встречи. Если хотите задать вопрос лично, посмотрите программу ближайших событий.</p><a href="https://valeryuvarovseminars.ru/">Календарь встреч</a></div>
     </div>
   </section>
 </main>
