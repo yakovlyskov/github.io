@@ -114,6 +114,16 @@ dl.breakdown{margin:0;display:grid;gap:6px}
 #tune-form .control-head input[type=number]{width:122px}
 #tune-form .control-head label{min-width:0}
 @media(max-width:360px){#picker-form{gap:6px}.flow-steps{margin-bottom:8px}}
+
+.purchase-filters{margin-top:0}
+.purchase-terms{font-size:13px}
+.purchase-card:first-child{border-color:#dcb6c4}
+.purchase-card.purchase-limited{border-color:var(--line)}
+.purchase-other summary{font-size:14px}
+.intent-shortcut{font:inherit;font-size:13px;font-weight:690;color:var(--ink);background:#fff;text-align:left;justify-content:space-between}
+.intent-shortcut:hover{background:var(--rose)}
+.intent-shortcut b{color:var(--red)}
+#purchase-form{margin-top:5px}
 </style>
 </head>
 <body>
@@ -194,6 +204,10 @@ const creditCatalog=[
   ]},
   {heading:"Жильё, автомобиль и залог",items:[
     {key:"mortgage",name:"Ипотека",desc:"На покупку жилья",url:"https://alfabank.ru/get-money/mortgage/",specialist:true,apply:true,note:"У специалиста можно уточнить тип программы, требования к взносу и объекту."},
+    {key:"mortgage-new",name:"Ипотека на новостройку",desc:"Квартира или апартаменты от застройщика",url:"https://alfabank.ru/get-money/mortgage/novostrojki/",specialist:true,apply:true},
+    {key:"mortgage-resale",name:"Ипотека на вторичное жильё",desc:"Квартира или апартаменты на вторичном рынке",url:"https://alfabank.ru/get-money/mortgage/vtorichnoe-zhile/",specialist:true,apply:true},
+    {key:"mortgage-house",name:"Ипотека на готовый дом",desc:"Частный дом или таунхаус с участком",url:"https://alfabank.ru/get-money/mortgage/ipoteka-na-dom/",specialist:true,apply:true},
+    {key:"mortgage-family",name:"Семейная ипотека",desc:"Льготная программа для семей, которые отвечают её требованиям",url:"https://alfabank.ru/get-money/mortgage/family/",specialist:true,apply:true},
     {id:"auto",name:products.auto.name,desc:"Покупка автомобиля без залога авто",apply:true},
     {key:"dealer",name:"Автокредит у дилера",desc:"Покупка машины в автосалоне",url:"https://alfabank.ru/get-money/auto-loan/dealers/",apply:true},
     {key:"property",name:"Кредит под залог недвижимости",desc:"Деньги под залог уже имеющейся недвижимости",url:"https://alfabank.ru/get-money/credit/pod-zalog/",specialist:true,apply:true},
@@ -243,10 +257,10 @@ function show(page){
   render(true);
 }
 function render(focus=false){
-  const views={calc:calculator,loan:loanScreen,picker:pickerScreen,tune:adjustmentScreen,matches:matchesScreen,product:productDetail,support:supportScreen};
+  const views={calc:calculator,loan:loanScreen,picker:pickerScreen,tune:adjustmentScreen,matches:matchesScreen,purchase:purchaseScreen,product:productDetail,support:supportScreen};
   app.innerHTML=views[state.page]();
   const nav=$("nav");
-  const navActions={picker:["Мой кредит","loan"],tune:["← К вопросам","picker"],matches:["← К параметрам","tune"],
+  const navActions={picker:["Мой кредит","loan"],tune:["← К вопросам","picker"],matches:["← К параметрам","tune"],purchase:["← К целям","picker"],
     calc:["← Назад","calc-back"],product:["← Назад","product-back"],support:["← Назад","support-back"]};
   const [label,destination]=navActions[state.page]??["← К подбору","picker"];
   nav.textContent=label;
@@ -434,7 +448,7 @@ const intents={
   refi:"Погасить кредиты",other:"Другая цель"
 };
 const pickerProducts=Object.fromEntries(creditCatalog.flatMap(group=>group.items.map(item=>[item.key??item.id,item])));
-const profile={goal:"",customGoal:"",amount:0,budget:0,requestedTerm:"",usage:"once",seller:"",down:"",homeDown:"",collateral:"",lender:"",debtType:"",difficulty:""};
+const profile={goal:"",customGoal:"",amount:0,budget:0,requestedTerm:"",usage:"once",collateral:"",lender:"",debtType:"",difficulty:""};
 const minCalcAmount=30000;
 const maxPickerAmount=100000000;
 const supportUrl="https://alfabank.ru/feedback/support/";
@@ -458,29 +472,27 @@ function chooseField(name,label,options){
 function pickerScreen(){
   const primary=["home","auto","shop","repair","refi","other"];
   const extra=Object.keys(intents).filter(id=>!primary.includes(id));
-  const goalButton=id=>'<label class="intent"><input type="radio" name="intent" value="'+id+'" '+(profile.goal===id?'checked':'')+'><span>'+intents[id]+'</span></label>';
-  return flowSteps(0)+heading("Подберите кредит","На что нужны деньги и сколько хотите занять?")+
+  const goalButton=id=>isPurchaseGoal(id)
+    ?'<button type="button" class="intent intent-shortcut" data-direct-goal="'+id+'"><span>'+intents[id]+'</span><b aria-hidden="true">›</b></button>'
+    :'<label class="intent"><input type="radio" name="intent" value="'+id+'" '+(profile.goal===id?'checked':'')+'><span>'+intents[id]+'</span></label>';
+  return flowSteps(0)+heading("Подберите кредит","Выберите, на что нужны деньги.")+
     '<form id="picker-form" class="card stack"><fieldset><legend>На что нужны деньги?</legend><div class="cols intent-grid">'+
     primary.map(goalButton).join("")+'</div></fieldset>'+
-    field("requested","Сколько нужно занять, ₽",profile.amount||"",1,maxPickerAmount,'id="requested" list="amount-options" required')+
+    field("requested","Сколько нужно занять, ₽",profile.amount||"",1,maxPickerAmount,'id="requested" list="amount-options"')+
     '<datalist id="amount-options"><option value="100000" label="100 тыс. ₽"><option value="7500000" label="7,5 млн ₽"><option value="30000000" label="30 млн ₽"></datalist>'+
     '<label class="field">Допишите цель или важную деталь<input class="input" name="customGoal" maxlength="120" value="'+esc(profile.customGoal)+'" placeholder="Например, переезд"></label>'+
     '<details class="details extra-intents" '+(extra.includes(profile.goal)?"open":"")+'><summary>Ещё цели</summary><div class="cols" role="group" aria-label="Другие цели">'+
     extra.map(goalButton).join("")+'</div></details>'+
-    chooseField("requestedTerm","На какой срок?",[["","Пока не знаю"],["1","До года"],["5","От 1 года до 5 лет"],["10","От 5 до 10 лет"],["30","От 10 до 30 лет"]])+
     '<fieldset id="debt-questions" class="stack" hidden><legend>Какой кредит хотите изменить?</legend>'+
     chooseField("lender","В каком банке?",[["","Выберите банк"],["alfa","В Альфа-Банке"],["other","В другом банке"],["mixed","В Альфа-Банке и других банках"]])+
     chooseField("debtType","Что хотите погасить?",[["","Выберите вид долга"],["loan","Потребительский кредит"],["card","Кредитную карту"],["mortgage","Ипотеку"]])+
     chooseField("difficulty","Как сейчас справляетесь с платежами?",[["","Выберите ответ"],["no","Плачу вовремя"],["yes","Уже есть просрочка или не хватает на платёж"],["skip","Предпочитаю не отвечать"]])+'</fieldset>'+
-    '<div class="stack" id="car-questions" hidden>'+
-    chooseField("seller","У кого покупаете авто?",[["","Пока не решил"],["dealer","У дилера"],["private","У частного продавца"]])+
-    chooseField("down","Какой первоначальный взнос на авто?",[["","Пока не знаю"],["enough","От 15%"],["less","Меньше 15% или без взноса"]])+'</div>'+
-    '<div id="home-question" hidden>'+chooseField("homeDown","Есть первоначальный взнос на жильё?",[["","Пока не знаю"],["yes","Да"],["no","Пока нет"]])+'</div>'+
+    '<details class="details" '+(profile.budget||profile.requestedTerm||profile.collateral||profile.usage==="repeat"?"open":"")+
+    '><summary>Указать срок и другие параметры</summary><div class="stack">'+
+    chooseField("requestedTerm","На какой срок?",[["","Пока не знаю"],["1","До года"],["5","От 1 года до 5 лет"],["10","От 5 до 10 лет"],["30","От 10 до 30 лет"]])+
     '<div id="usage-question">'+chooseField("usage","Как хотите пользоваться деньгами?",[["once","Нужна сумма один раз"],["repeat","Хочу пользоваться лимитом повторно"]])+'</div>'+
-    '<div id="property-question">'+chooseField("collateral","Готовы рассмотреть залог?",[["","Без залога"],["property","Есть недвижимость"],["car-pledge","Есть автомобиль"]])+'</div>'+
-    '<details class="details" '+(profile.budget?"open":"")+'><summary>Указать комфортный платёж</summary>'+
-    field("comfort","Максимальный платёж в месяц, ₽",profile.budget||"",1,maxPickerAmount)+'</details>'+
-    '<p class="hint">Для покупки с взносом укажите сумму кредита за вычетом взноса.</p>'+
+    chooseField("collateral","Готовы рассмотреть залог?",[["","Без залога"],["property","Есть недвижимость"],["car-pledge","Есть автомобиль"]])+
+    field("comfort","Максимальный платёж в месяц, ₽",profile.budget||"",1,maxPickerAmount)+'</div></details>'+
     '<p id="picker-error" class="error" role="alert" hidden></p><button class="btn primary full" type="submit">Уточнить параметры</button></form>'+
     '<div class="flow-footer">'+btn("catalog","Все продукты")+btn("ask","Задать вопрос")+
     (new URLSearchParams(location.search).has("metrics")?btn("metrics","События сессии"):"")+'</div>'+
@@ -489,8 +501,7 @@ function pickerScreen(){
 function togglePickerQuestions(){
   const form=$("picker-form");
   const goal=form.elements.intent.value;
-  const visibility={"car-questions":goal==="auto","home-question":goal==="home","debt-questions":goal==="refi",
-    "usage-question":!["home","auto","refi"].includes(goal),"property-question":goal!=="home"};
+  const visibility={"debt-questions":goal==="refi","usage-question":goal!=="refi"};
   for(const [id,visible] of Object.entries(visibility)){
     $(id).hidden=!visible;
     for(const input of $(id).querySelectorAll("select"))input.disabled=!visible;
@@ -520,17 +531,7 @@ function chooseProducts(p){
     :null;
   if(p.difficulty==="yes"||supportReason(p.customGoal||"")==="hardship")return out;
 
-  if(goal==="home"){
-    if(fitsPublished("mortgage",amount,months))out.push(pick("mortgage","Для покупки жилья есть ипотечные программы. Они зависят от объекта и взноса.",
-      p.homeDown==="no"?"Уточните минимальный взнос по вашей программе.":"Уточните программу, взнос, страхование и полную стоимость.",true));
-  }else if(goal==="auto"){
-    const dealer=p.seller!=="private"&&p.down!=="less"&&fitsPublished("dealer",amount,months);
-    const ready=p.seller==="dealer"&&p.down==="enough";
-    if(dealer&&ready)out.push(pick("dealer","Вы покупаете авто у дилера и готовы внести от 15%.","Проверьте срок, полную стоимость и расходы по договору."));
-    if(fitsPublished("auto",amount,months))out.push(pick("auto","Подходит для покупки у дилера или у частного продавца без залога автомобиля.","Сравните полную сумму выплат с условиями продавца."));
-    if(dealer&&!ready)out.push(pick("dealer","Вариант для покупки у дилера со взносом от 15%.","Проверьте точный срок и взнос по программе салона.",true));
-    if(secured)out.push(secured);
-  }else if(goal==="refi"){
+  if(goal==="refi"){
     const debtCheck="Сравните остаток всех выплат сейчас с общей суммой выплат по новому предложению.";
     if(p.debtType==="mortgage"){
       if(outside&&amount<=30000000)out.push(pick("mortgage-refi","Для пересмотра ипотеки другого банка есть отдельная программа.","Понадобится расчёт специалиста по объекту, остатку долга и сроку.",true));
@@ -595,18 +596,22 @@ function compareProducts(){
   modal("Сравните варианты",rows+
     '<p class="hint">Для сравнения стоимости возьмите из двух предложений банка полную сумму выплат.</p>'+btn("offers","Сравнить стоимость предложений"));
 }
-function handlePicker(form){
+function pickerError(message){
+  const error=$("picker-error");
+  error.textContent=message;
+  error.hidden=false;
+  error.scrollIntoView({block:"nearest"});
+}
+function handlePicker(form,directGoal=""){
   const data=new FormData(form);
   const customGoal=String(data.get("customGoal")).trim();
   if(hasPersonalData(customGoal)){
-    $("picker-error").textContent="Удалите телефон, номер документа или другие личные данные. Достаточно описания цели.";
-    $("picker-error").hidden=false;
+    pickerError("Удалите телефон, номер документа или другие личные данные. Достаточно описания цели.");
     return;
   }
-  const goal=String(data.get("intent")??"");
+  const goal=directGoal||String(data.get("intent")??"");
   if(!goal&&!customGoal){
-    $("picker-error").textContent="Выберите цель или опишите её своими словами.";
-    $("picker-error").hidden=false;
+    pickerError("Выберите цель или опишите её своими словами.");
     return;
   }
   selection=null;
@@ -614,7 +619,7 @@ function handlePicker(form){
   profile.customGoal=customGoal;
   profile.amount=Number(data.get("requested"));
   profile.budget=Number(data.get("comfort"));
-  for(const key of ["requestedTerm","usage","seller","down","homeDown","collateral","lender","debtType","difficulty"]){
+  for(const key of ["requestedTerm","usage","collateral","lender","debtType","difficulty"]){
     profile[key]=String(data.get(key)??"");
   }
   const concern=supportReason(customGoal);
@@ -629,27 +634,170 @@ function handlePicker(form){
   if(profile.goal==="other"){
     const value=normalize(customGoal);
     const detected=[["refi",/рефинанс|(?:погас|закры).{0,22}(?:кредит|долг|займ|карт)|(?:ден[ье]г|нужн).{0,30}(?:на|закрыть).{0,15}(?:кредит|долг|займ)/],
-      ["home",/ипотек|покуп.{0,18}(?:квартир|жиль|дом)|купить (?:квартир|жиль|дом)/],["auto",/машин|автомобил/],
+      ["home",/ипотек|новострой|вторич|таунхаус|(?:частн|загородн).{0,8}дом|(?:покуп|купить).{0,18}(?:квартир|жиль|дом)/],["auto",/машин|автомобил|автокредит|(?:^|[\s,])авто(?:$|[\s,.])/],
       ["study",/обучен|образован|курс|учеб/],["payday",/до зарплат/],["shop",/покупк|рассроч/]]
       .find(([,pattern])=>pattern.test(value))?.[0];
     if(detected){
       profile.goal=detected;
-      if(["home","auto","refi"].includes(detected)){
+      if(detected==="refi"){
         show("picker");
         return;
       }
     }
   }
+  if(isPurchaseGoal(profile.goal)){
+    const current=purchaseSettings[profile.goal];
+    if(profile.amount)current.amount=profile.amount;
+    if(!directGoal){
+      const text=normalize(profile.customGoal);
+      if(profile.goal==="home"){
+        current.filter=/семейн/.test(text)?"mortgage-family":/новострой|застройщик/.test(text)?"mortgage-new":
+          /вторич/.test(text)?"mortgage-resale":/частн.{0,8}дом|таунхаус/.test(text)?"mortgage-house":"";
+      }else{
+        current.filter=/дилер|автосалон/.test(text)?"dealer":/частни|частн.{0,10}продав/.test(text)?"private":"";
+      }
+    }
+    show("purchase");
+    return;
+  }
+  if(!profile.amount){pickerError("Укажите сумму, которую хотите занять.");return;}
   beginAdjustment();
+}
+
+const purchaseProducts={
+  "mortgage-new":{
+    reason:"Если покупаете квартиру или апартаменты у застройщика.",
+    maxAmount:100000000,maxYears:30,minDown:20.1
+  },
+  "mortgage-resale":{
+    reason:"Если выбрали квартиру или апартаменты на вторичном рынке.",
+    maxAmount:100000000,maxYears:30,minDown:20.1
+  },
+  "mortgage-house":{
+    reason:"Если покупаете готовый дом или таунхаус с участком.",
+    maxAmount:70000000,maxYears:30,minDown:20.1
+  },
+  "mortgage-family":{
+    reason:"Если вы уже проверили, что подходите под условия семейной программы. Сумма зависит от региона и состава семьи.",
+    maxYears:15,minDown:20.1
+  },
+  auto:{
+    reason:"Если покупаете машину у частного продавца или в салоне. Банк выдаёт деньги без взноса и залога автомобиля.",
+    minAmount:minCalcAmount,maxAmount:7500000,maxYears:5
+  },
+  dealer:{
+    reason:"Если покупаете новую машину или авто с пробегом в автосалоне и готовы внести первоначальный взнос.",
+    maxAmount:13000000,maxYears:8,minDown:15
+  },
+  property:{
+    reason:"Если нужна сумма или срок больше, чем по кредиту на авто, и вы готовы заложить уже имеющуюся недвижимость.",
+    minAmount:500000,maxAmount:30000000,maxYears:15
+  }
+};
+const purchaseFilters={
+  home:[["","Все"],["mortgage-new","Новостройка"],["mortgage-resale","Вторичка"],["mortgage-house","Дом"],["mortgage-family","Семейная"]],
+  auto:[["","Любой продавец"],["dealer","Автосалон"],["private","Частник"]]
+};
+const purchaseSettings=Object.fromEntries(["home","auto"].map(goal=>[goal,{filter:"",amount:0,years:0,down:null,secured:false}]));
+const isPurchaseGoal=goal=>Object.hasOwn(purchaseSettings,goal);
+
+function purchaseOptions(goal,settings){
+  const {filter,amount,years,down,secured}=settings;
+  const standardHousing=["mortgage-new","mortgage-resale","mortgage-house"];
+  const ids=goal==="home"?(filter?[filter]:standardHousing):
+    [...(filter==="private"?["auto"]:filter==="dealer"?["dealer","auto"]:["auto","dealer"]),...(secured?["property"]:[])];
+  const variants=ids.map(id=>{
+    const config=purchaseProducts[id];
+    const issues=[];
+    if(amount&&config.minAmount&&amount<config.minAmount)issues.push("сумма от "+money(config.minAmount));
+    if(amount&&config.maxAmount&&amount>config.maxAmount)issues.push("сумма до "+money(config.maxAmount));
+    if(years>config.maxYears)issues.push("срок до "+config.maxYears+" лет");
+    if(config.minDown&&down!==null&&down<config.minDown)issues.push("взнос от "+percent(config.minDown));
+    const terms=[config.maxAmount?"до "+money(config.maxAmount):"", "до "+config.maxYears+" лет",
+      config.minDown?"взнос от "+percent(config.minDown):id==="auto"?"без взноса":id==="property"?"залог недвижимости":""]
+      .filter(Boolean).join(" · ");
+    return {id,reason:config.reason,check:terms,issues};
+  });
+  const fits=variants.filter(variant=>!variant.issues.length);
+  return {fits,others:variants.filter(variant=>variant.issues.length)};
+}
+function purchaseCard(item){
+  const product=pickerProducts[item.id];
+  const blocked=item.issues.length>0;
+  return '<article class="card stack purchase-card'+(blocked?' purchase-limited':'')+'">'+
+    '<h2>'+product.name+'</h2><p>'+item.reason+'</p>'+
+    '<p class="hint purchase-terms">'+item.check+'</p>'+
+    (blocked?'<p class="signal">Не совпадает с вашими параметрами: '+item.issues.join(", ")+'.</p>':"")+
+    '<div class="cols">'+productButton(item.id,"Подробнее")+
+    (blocked?'<button class="btn secondary" type="button" data-edit-purchase>Изменить параметры</button>':
+      '<a class="btn primary" data-bank-product="'+item.id+'" href="'+(product.url??products[item.id].source)+
+      '" target="_blank" rel="noopener">Условия банка ↗</a>')+'</div></article>';
+}
+function purchaseResults(goal,settings){
+  const {fits,others}=purchaseOptions(goal,settings);
+  const caption=[settings.amount?money(settings.amount):"",settings.years?settings.years+" лет":"",settings.down!==null?"взнос "+percent(settings.down):""]
+    .filter(Boolean).join(" · ");
+  const downNote=others.length&&others.every(item=>item.issues.some(issue=>issue.startsWith("взнос")));
+  return '<div class="stack">'+(caption?'<p class="hint">Ваши параметры · '+caption+'</p>':"")+
+    (fits.length?fits.map(purchaseCard).join(""):'<p class="signal" role="status">'+
+      (downNote?"С указанным взносом эти программы не подходят. Ниже указан взнос, с которого их можно рассмотреть.":
+        "С текущими параметрами совпадений нет. Ниже видно, что нужно изменить для каждой программы.")+'</p>')+
+    (others.length?'<details class="details purchase-other" '+(fits.length?"":"open")+'><summary>Варианты с другими условиями</summary><div class="stack">'+
+      others.map(purchaseCard).join("")+'</div></details>':"")+
+    (fits.length>1?btn("compare-purchases","Сравнить варианты"):"")+
+    '</div>';
+}
+function purchaseScreen(){
+  const goal=profile.goal;
+  const p=purchaseSettings[goal];
+  const housing=goal==="home";
+  const choices=purchaseFilters[goal].map(([value,label])=>'<button class="tag" type="button" data-purchase-filter="'+
+    value+'" aria-pressed="'+(p.filter===value)+'">'+label+'</button>').join("");
+  const down=p.down??"";
+  return heading(housing?"Ипотека для покупки жилья":"Кредит на покупку авто",
+    housing?"Выберите программу под жильё, которое хотите купить.":"Выберите вариант по тому, у кого покупаете машину.")+
+    '<div class="stack"><div class="tags purchase-filters" role="group" aria-label="'+(housing?"Тип жилья или программы":"Продавец автомобиля")+'">'+choices+'</div>'+
+    '<details class="details card" id="purchase-parameters"><summary>Уточнить сумму, срок и взнос</summary>'+
+    '<form class="stack" id="purchase-form">'+
+    field("amount","Сумма кредита, ₽",p.amount||"",1,1000000000)+
+    field("years","Срок, лет",p.years||"",1,50)+
+    '<label class="field">Первоначальный взнос, %<input class="input" type="number" name="down" inputmode="decimal" step="0.1" min="0" max="99.9" value="'+down+'" placeholder="Например, 20,1"></label>'+
+    (housing?"":'<label class="intent"><input type="checkbox" name="secured" '+(p.secured?"checked":"")+'><span>Готов рассмотреть залог недвижимости</span></label>')+
+    '<button class="btn primary full" type="submit">Обновить варианты</button></form></details>'+
+    '<section class="stack" id="purchase-results" tabindex="-1" aria-label="Рекомендации">'+purchaseResults(goal,p)+'</section>'+
+    '<p class="hint">Банк уточнит условия по вашей заявке.</p>'+
+    btn("ask","Задать вопрос")+btn("support","Связаться с оператором")+
+    rateAnswer("recommendation")+'</div>';
+}
+function updatePurchaseForm(form){
+  const data=new FormData(form);
+  const current=purchaseSettings[profile.goal];
+  const down=data.get("down");
+  Object.assign(current,{amount:Number(data.get("amount")),years:Number(data.get("years")),down:down===""?null:Number(down),secured:data.has("secured")});
+  $("purchase-parameters").open=false;
+  refreshPurchaseOptions();
+  $("purchase-results").focus();
+}
+function refreshPurchaseOptions(){
+  const goal=profile.goal;
+  const settings=purchaseSettings[goal];
+  for(const button of app.querySelectorAll("[data-purchase-filter]")){
+    button.setAttribute("aria-pressed",String(button.dataset.purchaseFilter===settings.filter));
+  }
+  $("purchase-results").innerHTML=purchaseResults(goal,settings);
+}
+function comparePurchases(){
+  const {fits}=purchaseOptions(profile.goal,purchaseSettings[profile.goal]);
+  const rows=fits.map(({id,reason,check})=>'<article class="card stack"><h3>'+pickerTitle(id)+'</h3>'+
+    '<p>'+reason+'</p><p class="hint">'+check+'</p>'+productButton(id,"Подробнее")+'</article>').join("");
+  modal("Сравните программы",rows+'<p class="hint">Для сравнения полной стоимости запросите расчёты по одной сумме и сроку.</p>');
 }
 
 const adjustments={
   cash:{minAmount:minCalcAmount,maxAmount,minMonths:12,maxMonths:60,info:"https://alfabank.ru/get-money/credit/bez-zaloga-i-poruchitelej/"},
   auto:{minAmount:minCalcAmount,maxAmount,minMonths:12,maxMonths:60,info:products.auto.tariff},
   refi:{minAmount:minCalcAmount,maxAmount:30000000,minMonths:12,maxMonths:180,info:"https://alfabank.ru/get-money/credit/refinancing/usloviya/"},
-  dealer:{minAmount:100000,maxAmount:13000000,minMonths:12,maxMonths:96,info:pickerProducts.dealer.url},
   cards:{maxAmount:1000000,kind:"limit",info:"https://alfabank.ru/get-money/credit-cards/s-bolshim-limitom/"},
-  mortgage:{maxAmount:100000000,maxMonths:360,info:pickerProducts.mortgage.url},
   "purchase-plan":{kind:"purchase"},
   "card-transfer":{kind:"debt"},
   "lower-card":{kind:"debt"}
@@ -816,18 +964,22 @@ function productDetail(){
   const id=state.detail;
   const item=pickerProducts[id];
   const criteria=adjustedProfile();
-  const match=chooseProducts(criteria).find(product=>product.id===id);
+  const fromPurchase=productReturn==="purchase";
+  const purchase=fromPurchase?purchaseOptions(profile.goal,purchaseSettings[profile.goal]):null;
+  const match=(purchase?[...purchase.fits,...purchase.others]:chooseProducts(criteria)).find(product=>product.id===id);
   const link=item.url??products[id]?.source;
   const available=!!(item.apply&&link);
-  const learnLink=link&&!available?'<a class="btn secondary full" href="'+link+'" target="_blank" rel="noopener">Информация на сайте банка ↗</a>':"";
+  const restricted=fromPurchase&&match?.issues.length>0;
+  const learnLink=link&&(!available||restricted)?'<a class="btn secondary full" href="'+link+'" target="_blank" rel="noopener">Информация на сайте банка ↗</a>':"";
   const canUseCalculator=criteria.amount>=minCalcAmount&&criteria.amount<=maxAmount&&
     (criteria.monthsExact||preferredMonths(criteria.requestedTerm))<=60;
-  const calc=products[id]&&(productReturn!=="matches"||canUseCalculator);
+  const calc=products[id]&&(fromPurchase?!restricted:productReturn!=="matches"||canUseCalculator);
   return heading(item.name,item.desc)+'<div class="stack"><section class="card stack">'+
     (match?'<p>'+match.reason+'</p><p>'+match.check+'</p>':'')+
+    (match?.issues?.length?'<p class="signal">Не совпадает с вашими параметрами: '+match.issues.join(", ")+'.</p>':'')+
     (item.note?'<p>'+item.note+'</p>':'')+
     '<p class="hint">'+(item.private?"Доступность предложения и условия проверьте в приложении или у оператора.":"Доступную сумму и условия банк определит при рассмотрении заявки.")+'</p></section>'+
-    (available?'<a id="product-apply" class="btn primary full" data-apply-link="'+id+'" href="'+link+'" target="_blank" rel="noopener">Оформить на сайте банка ↗</a>':learnLink)+
+    (available&&!restricted?'<a id="product-apply" class="btn primary full" data-apply-link="'+id+'" href="'+link+'" target="_blank" rel="noopener">Оформить на сайте банка ↗</a>':learnLink)+
     (calc?'<button class="btn secondary" type="button" data-detail-calc="'+id+'">Рассчитать платёж</button>':'')+
     (id==="refi"?btn("loan","Сравнить с действующим кредитом"):"")+
     btn(item.specialist?"specialist":"support","Связаться с оператором")+btn("product-back","Вернуться к выбору")+'</div>';
@@ -918,7 +1070,7 @@ const actions={
   calc:()=>show("calc"),"calc-back":()=>show(calcReturn),loan:()=>show("loan"),apply:()=>openProduct(state.product,true),
   picker:()=>show("picker"),tune:()=>show(selection?"tune":"picker"),
   ask:()=>{unanswered=0;showAsk()},
-  matches:()=>show(selection?"matches":"picker"),offers:()=>compareOfferForm(),"compare-products":compareProducts,metrics:showMetrics,
+  matches:()=>show(selection?"matches":"picker"),offers:()=>compareOfferForm(),"compare-products":compareProducts,"compare-purchases":comparePurchases,metrics:showMetrics,
   support:()=>showSupport(),specialist:()=>showSupport("personal"),"support-unknown":()=>showSupport("unknown"),
   "support-back":()=>show(state.supportReturn),"product-back":()=>show(productReturn),
   term:termComparison,cost,insurance,bank:otherBank,refinance:refinancing,catalog:openCatalog,
@@ -929,18 +1081,39 @@ const actions={
 document.addEventListener("click",event=>{
   const link=event.target.closest("a");
   if(link?.dataset.applyLink)track("application_started",{product:link.dataset.applyLink});
+  if(link?.dataset.bankProduct)track("product_opened",{product:link.dataset.bankProduct,origin:"purchase"});
   if(link?.hasAttribute("data-support-link"))track("support_opened",{reason:state.supportReason});
   const button=event.target.closest("button");
   if(!button)return;
   const {act,term,goal,productDetail,detailCalc,faq:topicId,feedback,scope}=button.dataset;
   if(act)actions[act]();
+  if(button.dataset.directGoal){
+    const form=button.form;
+    if(!form.elements.requested.value||form.elements.requested.reportValidity()){
+      handlePicker(form,button.dataset.directGoal);
+    }
+  }
+  if(button.hasAttribute("data-purchase-filter")){
+    purchaseSettings[profile.goal].filter=button.dataset.purchaseFilter;
+    refreshPurchaseOptions();
+  }
+  if(button.hasAttribute("data-edit-purchase")){
+    $("purchase-parameters").open=true;
+    $("purchase-form").elements.amount.focus();
+  }
   if(term){state.months=Number(term);popup.close();sync()}
   if(goal)updateGoal(button);
   if(productDetail)openProduct(productDetail,button.dataset.intentApply==="yes");
   if(detailCalc){
     state.product=detailCalc;
     state.goal=productGoals[detailCalc];
-    calcReturn=productReturn==="matches"?"matches":"picker";
+    calcReturn=productReturn==="matches"||productReturn==="purchase"?productReturn:"picker";
+    if(productReturn==="purchase"){
+      const p=purchaseSettings[profile.goal];
+      state.amount=p.amount||150000;
+      state.budget=0;
+      state.months=p.years?p.years*12:24;
+    }
     if(productReturn==="matches"){
       const criteria=adjustedProfile();
       state.amount=criteria.amount;
@@ -995,6 +1168,7 @@ document.addEventListener("submit",event=>{
   if(form.id==="ask-form")handleQuestion(form.elements.question.value.trim());
   if(form.id==="picker-form")handlePicker(form);
   if(form.id==="tune-form")handleAdjustment(form);
+  if(form.id==="purchase-form")updatePurchaseForm(form);
   if(form.id==="offers-form")showOfferComparison(form);
   if(form.id==="context-form")updateContext(form);
   if(form.id==="bank-form")compareBank(Number(form.elements.rate.value),Number(form.elements.fee.value));
