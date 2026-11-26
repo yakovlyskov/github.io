@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Кредитный помощник · Калькулятор</title>
-<meta name="description" content="Рассчитайте платёж, сравните сроки и посмотрите полную сумму выплат.">
+<title>Кредитный помощник Альфа-Банка</title>
+<meta name="description" content="Подберите кредит, уточните условия и сравните варианты.">
 <style>
 :root{--paper:#fbf9fa;--ink:#241b22;--dim:#625760;--line:#eae2e7;--rose:#fbeaf0;--red:#a91d46;--dark:#352437;--pale:#f3edf6;--green:#1a6048}
 *{box-sizing:border-box}
@@ -61,7 +61,14 @@ a{color:var(--red);text-underline-offset:3px}
 .intent{display:flex;gap:6px;align-items:center;min-height:44px;border:1px solid var(--line);border-radius:10px;padding:6px 7px;font-size:13px;font-weight:690;cursor:pointer}
 .intent:has(input:checked){background:var(--rose);border-color:#c56b88;color:var(--red)}
 .intent input{accent-color:var(--red);flex:0 0 auto;margin:0}
-.collateral{font-weight:600}
+.intent span{min-width:0;overflow-wrap:anywhere}
+.ask-link{justify-self:start;margin-block:-5px}
+.btn[aria-pressed=true]{color:var(--red);border-color:#c56b88;background:var(--rose)}
+#debt-questions legend{margin-bottom:4px}
+#picker-form + .hint{margin-top:9px}
+#picker-form legend{font-weight:700}
+#picker-form details summary{min-height:44px}
+.extra-intents{margin-top:5px}
 .result-label{color:var(--red);font-size:12px;font-weight:750}
 #offers-form legend{padding-inline:4px;font-size:13px;font-weight:750}
 .quote{display:grid;gap:7px;border-color:#dcb6c4;background:#fff9fb}
@@ -107,9 +114,9 @@ dl.breakdown{margin:0;display:grid;gap:6px}
 "use strict";
 const $ = id => document.getElementById(id);
 const products = {
-  cash:{name:"Кредит наличными",rate:28.9,source:"https://alfabank.ru/get-money/credit/credit-cash/"},
-  refi:{name:"Рефинансирование",rate:26.9,source:"https://alfabank.ru/get-money/credit/refinancing/"},
-  auto:{name:"Кредит наличными на автомобиль",rate:27.9,source:"https://alfabank.ru/get-money/autocredit/"}
+  cash:{name:"Кредит наличными",rate:55.39,tariff:"https://alfabank.ru/get-money/credit/credit-cash/",source:"https://alfabank.ru/get-money/credit/credit-cash/"},
+  refi:{name:"Рефинансирование",rate:55.39,tariff:"https://alfabank.ru/get-money/credit/refinancing/calculator/",source:"https://alfabank.ru/get-money/credit/refinancing/"},
+  auto:{name:"Кредит наличными на автомобиль",rate:55.39,tariff:"https://alfabank.ru/get-money/credit/calculator/autocredit/",source:"https://alfabank.ru/get-money/autocredit/"}
 };
 const formatMoney = new Intl.NumberFormat("ru-RU",{maximumFractionDigits:0});
 const formatRate = new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2});
@@ -123,13 +130,11 @@ function annuity(principal,rate,months){
   return monthlyRate ? principal*monthlyRate/(1-(1+monthlyRate)**-months) : principal/months;
 }
 
-function estimate(months,withInsurance=state.insurance,{amount,product}=state){
-  const fee=withInsurance?Math.round(amount*.13):0;
-  const rate=products[product].rate-(withInsurance?4:0);
-  const payment=annuity(amount+fee,rate,months);
-  return {months,fee,rate,payment,total:payment*months,over:payment*months-amount};
+function estimate(months,{amount,product}=state){
+  const rate=products[product].rate;
+  const payment=annuity(amount,rate,months);
+  return {months,rate,payment,total:payment*months,over:payment*months-amount};
 }
-
 function productForGoal(text){
   const value=normalize(text);
   if(/рефинанс|(?:закры|погас).{0,18}(?:кредит|долг|карт)/.test(value))return "refi";
@@ -165,25 +170,38 @@ function parseContext(text){
 
 const productGoals={cash:"Любая цель",auto:"Автомобиль",refi:"Погасить кредит"};
 const creditCatalog=[
-  {heading:"Посчитать платёж здесь",items:[
-    {id:"cash",name:products.cash.name,desc:"Деньги на любые цели"},
-    {id:"auto",name:products.auto.name,desc:"На покупку машины без залога авто"},
-    {id:"refi",name:products.refi.name,desc:"На погашение действующих кредитов"}
+  {heading:"Разовая сумма или деньги на покупки",items:[
+    {id:"cash",name:products.cash.name,desc:"Разовая сумма с графиком платежей",apply:true},
+    {key:"payday",name:"Деньги до зарплаты",desc:"Кредит для небольшой суммы",url:"https://alfabank.ru/get-money/credit/do-zarplaty/",apply:true,note:"По опубликованным условиям срок начинается от года. Если деньги нужны на несколько дней, уточните порядок и расходы при досрочном погашении."},
+    {key:"on-hand",name:"Деньги под рукой",desc:"Проверьте предложение в приложении",private:true},
+    {key:"any-goal",name:"Деньги на любые цели",desc:"Проверьте предложение в приложении",private:true},
+    {key:"limit-cash",name:"Наличные из доступного лимита",desc:"Проверьте, можно ли использовать ваш лимит для получения наличных",private:true,note:"Уточните комиссию и условия начисления процентов до операции."},
+    {key:"better-cash",name:"Выгодные наличные",desc:"Проверьте предложение в приложении",private:true},
+    {key:"purchase-plan",name:"Рассрочка на покупки",desc:"Оплата покупки частями, если доступно по условиям карты",url:"https://alfabank.ru/help/articles/credit-cards/rassrochka-po-kreditnoj-karte-v-alfa-banke/",note:"Проверьте, какие покупки подходят, срок рассрочки и общую сумму выплат."},
+    {key:"cards",name:"Кредитная карта",desc:"Возобновляемый лимит для повторных покупок",url:"https://alfabank.ru/get-money/credit-cards/",apply:true,note:"Лимитом можно пользоваться снова по мере погашения. Сверьте тариф карты и условия льготного периода."},
+    {key:"grace-150",name:"Карта с льготным периодом до 150 дней",desc:"Условия зависят от тарифа карты",url:"https://alfabank.ru/news/t/release/alfa-bank-vipustil-kreditnuyu-kartu-150-dnei-bez-protsentov/",private:true,note:"Проверьте в приложении, доступен ли переход по вашей карте и какие операции входят в льготный период."},
+    {key:"education",name:"Кредит на обучение",desc:"Оплата учёбы или курсов",url:"https://alfabank.ru/get-money/credit/na-obuchenie/",apply:true}
   ]},
-  {heading:"Условия на сайте Альфа-Банка",items:[
-    {key:"cards",name:"Кредитные карты",desc:"Карты с кредитным лимитом и льготным периодом",url:"https://alfabank.ru/get-money/credit-cards/"},
-    {key:"mortgage",name:"Ипотека",desc:"Новостройка, готовое жильё и другие программы",url:"https://alfabank.ru/get-money/mortgage/"},
-    {key:"dealer",name:"Автокредит у дилера",desc:"Покупка машины в автосалоне",url:"https://alfabank.ru/get-money/auto-loan/dealers/"},
-    {key:"property",name:"Кредит под залог недвижимости",desc:"Деньги под залог имеющейся недвижимости",url:"https://alfabank.ru/get-money/credit/pod-zalog/"},
-    {key:"refi-pledge",name:"Рефинансирование под залог недвижимости",desc:"Погашение действующих кредитов с обеспечением",url:"https://alfabank.ru/get-money/credit/refinansirovanie-pod-zalog/"},
-    {key:"education",name:"Кредит на обучение",desc:"Оплата учебы, курсов и повышения квалификации",url:"https://alfabank.ru/get-money/credit/na-obuchenie/"},
-    {key:"car-pledge",name:"Кредит под залог автомобиля",desc:"Общие условия по кредиту под залог имеющегося авто",url:"https://alfabank.ru/retail/tariffs/tab3/"}
+  {heading:"Жильё, автомобиль и залог",items:[
+    {key:"mortgage",name:"Ипотека",desc:"На покупку жилья",url:"https://alfabank.ru/get-money/mortgage/",specialist:true,apply:true,note:"У специалиста можно уточнить тип программы, требования к взносу и объекту."},
+    {id:"auto",name:products.auto.name,desc:"Покупка автомобиля без залога авто",apply:true},
+    {key:"dealer",name:"Автокредит у дилера",desc:"Покупка машины в автосалоне",url:"https://alfabank.ru/get-money/auto-loan/dealers/",apply:true},
+    {key:"property",name:"Кредит под залог недвижимости",desc:"Деньги под залог уже имеющейся недвижимости",url:"https://alfabank.ru/get-money/credit/pod-zalog/",specialist:true,apply:true},
+    {key:"car-pledge",name:"Кредит под залог автомобиля",desc:"Деньги под залог уже имеющегося автомобиля",url:"https://alfabank.ru/retail/tariffs/tab3/",specialist:true,note:"По вашему автомобилю нужен расчёт специалиста."}
+  ]},
+  {heading:"Действующие кредиты",items:[
+    {id:"refi",name:"Рефинансирование кредитов в других банках",desc:"Новый график для погашения действующих кредитов",apply:true},
+    {key:"mortgage-refi",name:"Рефинансирование ипотеки",desc:"Пересмотр условий действующей ипотеки",url:"https://alfabank.ru/get-money/mortgage/kalkulyator-refin-ipoteki/",specialist:true,apply:true},
+    {key:"alfa-refi",name:"Переоформление кредита Альфа-Банка",desc:"Уточните возможность изменить условия своего кредита",private:true,specialist:true},
+    {key:"lower-card",name:"Снизить платёж по кредитной карте",desc:"Рассрочка на долг по карте Альфа-Банка",url:"https://alfabank.ru/help/articles/credit-cards/rassrochka-po-kreditnoj-karte-v-alfa-banke/",private:true},
+    {key:"card-transfer",name:"Рефинансирование кредитной карты другого банка",desc:"Перевод задолженности с карты другого банка",url:"https://alfabank.ru/help/articles/credit-cards/pogasit-kreditku-drugoy-kreditkoy/",note:"Проверьте доступность услуги, требования к прежней карте, сроки её закрытия и стоимость перевода."},
+    {key:"refi-pledge",name:"Рефинансирование под залог недвижимости",desc:"Погашение кредитов с обеспечением",url:"https://alfabank.ru/get-money/credit/refinansirovanie-pod-zalog/",specialist:true,apply:true}
   ]}
 ];
 const app=$("app");
 const popup=$("modal");
 const maxAmount=7500000;
-const state={page:"calc",product:"cash",amount:150000,months:24,budget:0,insurance:false,goal:"",loan:{balance:150000,payment:11500,remaining:15,date:"2026-12-15"}};
+const state={page:"calc",product:"cash",amount:150000,months:24,budget:0,goal:"",loan:{balance:150000,payment:11500,remaining:15,date:"2026-12-15"}};
 const integer=(value,min,max)=>Number.isInteger(value)&&value>=min&&value<=max;
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 const loanTotal=()=>state.loan.payment*state.loan.remaining;
@@ -215,10 +233,10 @@ function show(page){
   render(true);
 }
 function render(focus=false){
-  const views={calc:calculator,loan:loanScreen,apply:application,picker:pickerScreen,matches:matchesScreen};
+  const views={calc:calculator,loan:loanScreen,picker:pickerScreen,matches:matchesScreen,product:productDetail,support:supportScreen};
   app.innerHTML=views[state.page]();
   const nav=$("nav");
-  const navActions={calc:["Мой кредит","loan"],matches:["← К вопросам","picker"]};
+  const navActions={calc:["Мой кредит","loan"],matches:["← К вопросам","picker"],product:["← Назад","product-back"],support:["← Назад","support-back"]};
   const [label,destination]=navActions[state.page]??["← К расчёту","calc"];
   nav.textContent=label;
   nav.dataset.act=destination;
@@ -240,11 +258,11 @@ function controls(){
 function result(){
   return '<section class="card quote" aria-label="Предварительный расчёт"><div class="quote-label"><span id="product-label">'+products[state.product].name+'</span><span>Предварительно</span></div>'+
     '<div><p class="hint">Ежемесячный платёж</p><p class="payment" id="monthly"></p></div>'+
-    '<dl class="metrics"><div><dt>Ставка для примера</dt><dd id="rate"></dd></div><div><dt>Сумма на руки</dt><dd id="quote-amount"></dd></div><div><dt>Переплата</dt><dd id="over"></dd></div><div><dt>Всего выплатите</dt><dd id="total"></dd></div></dl>'+
-    '<p class="signal" id="budget-note" hidden></p><p class="hint" id="insurance-note"></p></section>';
+    '<dl class="metrics"><div><dt>Верхняя опубликованная ставка</dt><dd id="rate"></dd></div><div><dt>Сумма на руки</dt><dd id="quote-amount"></dd></div><div><dt>Переплата</dt><dd id="over"></dd></div><div><dt>Всего выплатите</dt><dd id="total"></dd></div></dl>'+
+    '<p class="signal" id="budget-note" hidden></p><p class="hint">Ориентир без дополнительных расходов. Индивидуальные условия и ПСК покажет банк. <a id="tariff-source" target="_blank" rel="noopener">Источник ставки ↗</a></p></section>';
 }
 function calculator(){
-  return heading("Рассчитайте кредит","Измените сумму или срок. Платёж обновится сразу.")+
+  return heading("Кредитный помощник","Подберите кредит по цели или рассчитайте платёж.")+
     '<div class="stack">'+chooserEntry()+controls()+result()+(profile.goal?btn("matches","Вернуться к подбору"):"")+
     '<div class="cols">'+btn("term","Снизить платёж в месяц")+btn("cost","Разобрать переплату")+'</div>'+
     '<details class="details card"><summary>Указать цель и пожелания</summary><div class="stack">'+
@@ -252,32 +270,23 @@ function calculator(){
     [["cash","Любая цель"],["repair","Ремонт"],["refi","Погасить кредит"],["auto","Автомобиль"]].map(([id,label])=>'<button type="button" class="tag" data-goal="'+id+'" aria-pressed="'+(state.goal?state.goal===label:state.product===id)+'">'+label+'</button>').join("")+'</div></fieldset>'+
     '<form id="context-form" class="help-form"><label class="field">Допишите своими словами<input class="input" name="context" maxlength="250" placeholder="До 8 000 ₽ в месяц, без страховки" required></label><button class="btn secondary" type="submit">Применить</button><p id="context-feedback" class="context-note" role="status"></p></form></div></details>'+
     '<details class="details card"><summary>Сравнить другие условия</summary><div class="stack">'+btn("insurance","Со страховкой и без")+btn("bank","С другим банком")+'</div></details>'+
-    btn("apply","Продолжить к заявке","primary")+'<p class="hint">Сначала покажем, с какими условиями вы переходите. Ставка и расходы в расчёте условные, ПСК укажет банк в предложении.</p></div>';
+    btn("apply","Продолжить к заявке","primary")+(new URLSearchParams(location.search).has("metrics")?btn("metrics","События сессии"):"")+'</div>';
 }
 function catalogEntry(){
   return '<button class="catalog-entry" type="button" data-act="catalog" aria-haspopup="dialog">'+
     '<span class="catalog-text"><strong>Все продукты</strong><small>Карты, ипотека, авто</small></span><span class="catalog-arrow" aria-hidden="true">›</span></button>';
 }
 function catalogItem(item){
-  const text='<span class="catalog-text"><strong>'+item.name+'</strong><small>'+item.desc+'</small></span>';
-  const arrow='<span class="catalog-arrow" aria-hidden="true">'+(item.id?'›':'↗')+'</span>';
-  if(item.id)return '<button class="catalog-item" type="button" data-calc-product="'+item.id+'">'+text+arrow+'</button>';
-  return '<a class="catalog-item" href="'+item.url+'" target="_blank" rel="noopener">'+text+arrow+'</a>';
+  return '<button class="catalog-item" type="button" data-product-detail="'+(item.key??item.id)+'">'+
+    '<span class="catalog-text"><strong>'+item.name+'</strong><small>'+item.desc+'</small></span>'+
+    '<span class="catalog-arrow" aria-hidden="true">›</span></button>';
 }
 function openCatalog(){
   modal("Кредитные продукты",creditCatalog.map(group=>
     '<section class="catalog-group"><h3>'+group.heading+'</h3>'+group.items.map(catalogItem).join("")+'</section>'
   ).join("")+'<a class="btn secondary full" href="https://alfabank.ru/get-money/" target="_blank" rel="noopener">Все потребительские кредиты банка ↗</a>');
 }
-function selectCatalogProduct(product){
-  state.product=product;
-  state.goal=productGoals[product];
-  for(const tag of app.querySelectorAll("[data-goal]")){
-    tag.setAttribute("aria-pressed",String(tag.dataset.goal===product));
-  }
-  popup.close();
-  sync();
-}
+
 function sync(){
   const q=estimate(state.months);
   if(document.activeElement!==$("amount"))$("amount").value=state.amount;
@@ -296,7 +305,7 @@ function sync(){
   $("total").textContent=money(q.total);
   $("product-label").textContent=products[state.product].name;
   app.querySelector('[data-act="term"]').textContent=state.months===60?"Сравнить сроки":"Снизить платёж в месяц";
-  $("insurance-note").textContent=q.fee?"В расчёте учтена страховка "+money(q.fee)+".":"Без страховки. Комиссии в примере не заложены.";
+  $("tariff-source").href=products[state.product].tariff;
   const note=$("budget-note");
   note.hidden=!state.budget;
   if(state.budget){
@@ -322,17 +331,13 @@ function termComparison(){
 }
 function cost(){
   const q=estimate(state.months);
-  const interest=q.total-state.amount-q.fee;
   modal("Из чего складываются выплаты",'<dl class="breakdown">'+
-    breakdownRow("Сумма на руки",money(state.amount))+breakdownRow("Проценты",money(interest))+breakdownRow("Страховка",money(q.fee))+
-    breakdownRow("Комиссии в расчёте",money(0))+'<div class="line"></div>'+breakdownRow("Переплата",money(q.over))+breakdownRow("Всего выплатите",money(q.total))+'</dl>'+
-    '<p class="hint">При страховке её стоимость добавляется к сумме кредита. Проценты тогда начисляются и на эту часть. ПСК и состав платежей проверьте в предложении банка.</p>');
+    breakdownRow("Сумма на руки",money(state.amount))+breakdownRow("Проценты",money(q.over))+
+    breakdownRow("Всего выплатите",money(q.total))+'</dl>'+
+    '<p class="hint">Ориентир по верхней границе опубликованной ставки. Стоимость дополнительных услуг и обязательные расходы возьмите из предложения банка.</p>');
 }
 function insurance(){
-  const a=estimate(state.months,false),b=estimate(state.months,true);
-  modal("Со страховкой и без неё",'<p class="hint">Условные варианты на одинаковую сумму на руки и срок. Стоимость страховки включается в сумму кредита.</p>'+
-    columns("Без страховки","Со страховкой", [["Страховка",money(0),money(b.fee)],...compareRows(a,b)])+
-    '<div class="cols"><button class="btn secondary" type="button" data-insurance="no">Без страховки</button><button class="btn primary" type="button" data-insurance="yes">Учесть в расчёте</button></div>');
+  compareOfferForm("Со страховкой и без неё","Возьмите два предложения банка на одинаковую сумму на руки и срок. Введите платёж и полную сумму выплат по каждому.");
 }
 function otherBank(){
   modal("Сравнение с другим банком",'<p class="hint">Та же сумма '+money(state.amount)+' на '+termText(state.months)+'. Укажите ставку и отдельно оплачиваемые расходы.</p>'+
@@ -343,8 +348,8 @@ function compareBank(rate,fee){
   const a=estimate(state.months);
   const payment=annuity(state.amount,rate,state.months),total=payment*state.months+fee;
   const b={rate,payment,total,over:total-state.amount};
-  modal("Сравнение с другим банком",columns("Наш расчёт","Другой банк",compareRows(a,b))+
-    '<p>'+difference("Всего у другого банка",b.total-a.total)+'</p><p class="hint">Сравнение предполагает равные ежемесячные платежи и одинаковый срок.</p>');
+  modal("Сравнение с другим банком",columns("По верхней ставке","Другой банк",compareRows(a,b))+
+    '<p>'+difference("Всего у другого банка",b.total-a.total)+'</p><p class="hint">Вариант Альфа-Банка рассчитан по верхней границе опубликованной ставки. Для сравнения двух реальных предложений используйте полную сумму выплат по каждому.</p>');
 }
 function difference(label,value){
   return Math.abs(value)<.5?label+" — примерно столько же.":label+(value>0?" больше на ":" меньше на ")+money(Math.abs(value))+".";
@@ -363,27 +368,14 @@ function loanScreen(){
     '<label class="field">Дата платежа<input class="input" type="date" name="date" value="'+esc(l.date)+'"></label><p id="loan-error" class="error" role="alert" hidden></p><button class="btn secondary" type="submit">Обновить расчёт</button></form></details></div>';
 }
 function refinancing(){
-  const q=estimate(state.months,false,{amount:state.loan.balance,product:"refi"});
+  const q=estimate(state.months,{amount:state.loan.balance,product:"refi"});
   const l=state.loan;
   modal("Сравните со своим кредитом",columns("Сейчас","Новый расчёт",[
     ["В месяц",money(l.payment),money(q.payment)],["Срок",termText(l.remaining),termText(q.months)],["Всего осталось",money(loanTotal()),money(q.total)]])+
     '<p>'+difference("Платёж",q.payment-l.payment)+' '+difference("Всего выплатите",q.total-loanTotal())+'</p><p class="hint">Для точного сравнения проверьте сумму полного закрытия. В примере новый расчёт без страховки.</p>'+
     btn("refi-to-calc","Изменить срок в калькуляторе","primary"));
 }
-function application(){
-  const q=estimate(state.months);
-  return heading("Проверьте условия","Это предварительный расчёт. Актуальные условия и способ подтверждения покажет банк.")+
-    '<div class="stack"><section class="card quote"><h2>'+products[state.product].name+'</h2><dl class="breakdown">'+
-    breakdownRow("Сумма на руки",money(state.amount))+breakdownRow("Срок",termText(state.months))+
-    breakdownRow("Платёж в месяц",money(q.payment))+breakdownRow("Расчётная ставка",percent(q.rate))+
-    breakdownRow("Переплата",money(q.over))+breakdownRow("Всего выплатите",money(q.total))+
-    breakdownRow("Страховка",q.fee?money(q.fee):"Не учтена")+'</dl></section>'+
-    '<a class="btn primary full" href="'+products[state.product].source+'" target="_blank" rel="noopener">Открыть заявку на сайте банка ↗</a>'+
-    '<p class="hint">Можно перейти без подключения Госуслуг здесь. На сайте банка укажите нужную сумму и срок.</p>'+
-    '<details class="details card"><summary>Зачем могут понадобиться Госуслуги?</summary><div class="stack">'+
-    '<p>В некоторых заявках через Госуслуги можно подтвердить доход без отдельной справки. Перед согласием проверьте, какие сведения запрашивает банк.</p>'+
-    '<a href="https://alfabank.ru/help/articles/credit/kak-oformit-kredit-cherez-gosuslugi/" target="_blank" rel="noopener">Подробнее на сайте банка ↗</a></div></details></div>';
-}
+
 function updateGoal(button){
   state.goal=button.textContent;
   state.product=Object.hasOwn(products,button.dataset.goal)?button.dataset.goal:"cash";
@@ -392,12 +384,18 @@ function updateGoal(button){
 }
 function updateContext(form){
   const value=form.elements.context.value.trim();
+  if(hasPersonalData(value)){
+    $("context-feedback").textContent="Удалите личные данные. Для расчёта достаточно суммы, срока и цели.";
+    return;
+  }
+  const reason=supportReason(value);
+  if(reason){showSupport(reason);return;}
   const parsed=parseContext(value);
   const notes=[];
   if(parsed.amount){state.amount=parsed.amount;notes.push("сумма "+money(parsed.amount))}
   if(parsed.months){state.months=parsed.months;notes.push("срок "+termText(parsed.months))}
   if(parsed.budget){state.budget=parsed.budget;notes.push("платёж до "+money(parsed.budget))}
-  if(parsed.insurance!==undefined){state.insurance=parsed.insurance;notes.push(parsed.insurance?"со страховкой":"без страховки")}
+  if(parsed.insurance===false)notes.push("ориентир без стоимости дополнительных услуг");
   const goal=productForGoal(value);
   if(goal!=="cash"){
     state.product=goal;
@@ -413,54 +411,74 @@ function updateContext(form){
   }
   $("context-feedback").textContent=notes.length?"Учли: "+notes.join(", ")+".":"Можно указать сумму, срок, желаемый платёж или условие по страховке.";
   sync();
+  if(parsed.insurance===true)insurance();
 }
 const intents={
-  cash:"Разовая трата",
-  card:"Покупки по карте",
-  auto:"Купить автомобиль",
-  home:"Купить жильё",
-  refi:"Погасить кредиты",
-  study:"Оплатить обучение"
+  home:"Жильё",auto:"Автомобиль",shop:"Покупки",repair:"Ремонт",travel:"Путешествие",
+  study:"Образование",wedding:"Свадьба",health:"Лечение",payday:"До зарплаты",
+  refi:"Погасить кредиты",other:"Другая цель"
 };
 const pickerProducts=Object.fromEntries(creditCatalog.flatMap(group=>group.items.map(item=>[item.key??item.id,item])));
-const profile={goal:"",amount:0,budget:0,seller:"",down:"",homeDown:"",collateral:false};
+const profile={goal:"",customGoal:"",amount:0,budget:0,requestedTerm:"",usage:"once",seller:"",down:"",homeDown:"",collateral:"",lender:"",debtType:"",difficulty:""};
 const minCalcAmount=30000;
 const maxPickerAmount=100000000;
+const supportUrl="https://alfabank.ru/feedback/support/";
+const metrics=Object.fromEntries(["assistant_entered","answer_rated","product_opened","application_started","support_opened"].map(name=>[name,0]));
+let unanswered=0;
+let offerScope;
+let productReturn="calc";
 
+function track(event,detail={}){
+  metrics[event]++;
+  window.dispatchEvent(new CustomEvent("credit-assistant:analytics",{detail:{event,...detail}}));
+}
 function chooserEntry(){
-  return '<div class="cols first-actions">'+btn("picker","Подобрать кредит","primary")+catalogEntry()+'</div>';
+  return '<div class="cols first-actions">'+btn("picker","Подобрать кредит","primary")+catalogEntry()+'</div>'+
+    '<button type="button" class="quiet ask-link" data-act="ask">Задать вопрос о кредите</button>';
 }
 function chooseField(name,label,options){
   return '<label class="field">'+label+'<select class="input" name="'+name+'">'+options.map(([value,text])=>
     '<option value="'+value+'" '+(profile[name]===value?'selected':'')+'>'+text+'</option>').join("")+'</select></label>';
 }
 function pickerScreen(){
-  return heading("Подберите кредит","Укажите цель и сумму. Покажем подходящие продукты и что проверить перед выбором.")+
+  const primary=["home","auto","shop","repair","refi","other"];
+  const extra=Object.keys(intents).filter(id=>!primary.includes(id));
+  const goalButton=id=>'<label class="intent"><input type="radio" name="intent" value="'+id+'" '+(profile.goal===id?'checked':'')+'><span>'+intents[id]+'</span></label>';
+  return heading("Подберите кредит","Укажите цель и сумму. Покажем один или два подходящих варианта.")+
     '<form id="picker-form" class="card stack"><fieldset><legend>На что нужны деньги?</legend><div class="cols intent-grid">'+
-    Object.entries(intents).map(([id,label])=>'<label class="intent"><input type="radio" name="intent" value="'+id+'" '+(profile.goal===id?'checked':'')+' required><span>'+label+'</span></label>').join("")+
-    '</div></fieldset>'+
-    field("requested","Сколько нужно занять, ₽",profile.amount||state.amount,1,maxPickerAmount,"required")+
-    field("comfort","Максимальный платёж в месяц, ₽",profile.budget||state.budget||"",1,maxPickerAmount)+
-    '<p class="hint">Платёж можно пропустить. Для покупки с взносом укажите сумму кредита за вычетом взноса.</p>'+
+    primary.map(goalButton).join("")+'</div>'+
+    '<details class="details extra-intents" '+(extra.includes(profile.goal)?"open":"")+'><summary>Ещё цели</summary><div class="cols">'+
+    extra.map(goalButton).join("")+'</div></details></fieldset>'+
+    field("requested","Сколько нужно занять, ₽",profile.amount||state.amount,1,maxPickerAmount,'id="requested" list="amount-options" required')+
+    '<datalist id="amount-options"><option value="100000" label="100 тыс. ₽"><option value="7500000" label="7,5 млн ₽"><option value="30000000" label="30 млн ₽"></datalist>'+
+    '<label class="field">Допишите цель или важную деталь<input class="input" name="customGoal" maxlength="120" value="'+esc(profile.customGoal)+'" placeholder="Например, переезд"></label>'+
+    chooseField("requestedTerm","На какой срок?",[["","Пока не знаю"],["1","До года"],["5","От 1 года до 5 лет"],["10","От 5 до 10 лет"],["30","От 10 до 30 лет"]])+
+    '<fieldset id="debt-questions" class="stack" hidden><legend>Какой кредит хотите изменить?</legend>'+
+    chooseField("lender","В каком банке?",[["","Выберите банк"],["alfa","В Альфа-Банке"],["other","В другом банке"],["mixed","В Альфа-Банке и других банках"]])+
+    chooseField("debtType","Что хотите погасить?",[["","Выберите вид долга"],["loan","Потребительский кредит"],["card","Кредитную карту"],["mortgage","Ипотеку"]])+
+    chooseField("difficulty","Как сейчас справляетесь с платежами?",[["","Выберите ответ"],["no","Плачу вовремя"],["yes","Уже есть просрочка или не хватает на платёж"],["skip","Предпочитаю не отвечать"]])+'</fieldset>'+
     '<div class="stack" id="car-questions" hidden>'+
     chooseField("seller","У кого покупаете авто?",[["","Пока не решил"],["dealer","У дилера"],["private","У частного продавца"]])+
     chooseField("down","Какой первоначальный взнос на авто?",[["","Пока не знаю"],["enough","От 15%"],["less","Меньше 15% или без взноса"]])+'</div>'+
     '<div id="home-question" hidden>'+chooseField("homeDown","Есть первоначальный взнос на жильё?",[["","Пока не знаю"],["yes","Да"],["no","Пока нет"]])+'</div>'+
-    '<div class="stack" id="property-question" hidden><label class="intent collateral"><input type="checkbox" name="collateral" '+(profile.collateral?"checked":"")+'><span>Готов рассмотреть залог имеющейся недвижимости</span></label></div>'+
-    '<button class="btn primary full" type="submit">Показать подходящие продукты</button></form>';
+    '<div id="usage-question">'+chooseField("usage","Как хотите пользоваться деньгами?",[["once","Нужна сумма один раз"],["repeat","Хочу пользоваться лимитом повторно"]])+'</div>'+
+    '<div id="property-question">'+chooseField("collateral","Готовы рассмотреть залог?",[["","Без залога"],["property","Есть недвижимость"],["car-pledge","Есть автомобиль"]])+'</div>'+
+    '<details class="details"><summary>Указать комфортный платёж</summary>'+
+    field("comfort","Максимальный платёж в месяц, ₽",profile.budget||"",1,maxPickerAmount)+'</details>'+
+    '<p class="hint">Для покупки с взносом укажите сумму кредита за вычетом взноса.</p>'+
+    '<p id="picker-error" class="error" role="alert" hidden></p><button class="btn primary full" type="submit">Показать подходящие продукты</button></form>'+
+    '<p class="hint">'+btn("support","Связаться с оператором")+'</p>';
 }
 function togglePickerQuestions(){
   const form=$("picker-form");
   const goal=form.elements.intent.value;
-  const carBox=$("car-questions");
-  const property=$("property-question");
-  const home=$("home-question");
-  carBox.hidden=goal!=="auto";
-  home.hidden=goal!=="home";
-  form.elements.homeDown.disabled=home.hidden;
-  property.hidden=!["cash","auto","refi","study"].includes(goal);
-  for(const input of carBox.querySelectorAll("select"))input.disabled=carBox.hidden;
-  form.elements.collateral.disabled=property.hidden;
+  const visibility={"car-questions":goal==="auto","home-question":goal==="home","debt-questions":goal==="refi",
+    "usage-question":!["home","auto","refi"].includes(goal),"property-question":goal!=="home"};
+  for(const [id,visible] of Object.entries(visibility)){
+    $(id).hidden=!visible;
+    for(const input of $(id).querySelectorAll("select"))input.disabled=!visible;
+  }
+  for(const field of ["lender","debtType","difficulty"])form.elements[field].required=goal==="refi";
 }
 function pickerTitle(id){
   return pickerProducts[id].name;
@@ -470,90 +488,268 @@ function pick(id,reason,check,conditional=false){
 }
 function chooseProducts(p){
   const out=[];
-  const amount=p.amount;
-  const canUseQuick=amount>=minCalcAmount&&amount<=maxAmount;
-  const collateral=pick("property","Можно рассмотреть, если вы готовы оформить залог уже имеющейся недвижимости.","Проверьте, подходит ли объект и во сколько обойдутся оценка, страхование и другие расходы.",true);
-  switch(p.goal){
-    case "auto":{
-      const dealerAmount=amount>=100000&&amount<=13000000;
-      const readyDealer=p.seller==="dealer"&&p.down==="enough"&&dealerAmount;
-      const mayUseDealer=p.seller!=="private"&&p.down!=="less"&&dealerAmount;
-      const dealer=pick("dealer",readyDealer?"Вы покупаете машину у дилера и указали взнос от 15%.":"Вариант для покупки у дилера при взносе от 15%.","Сравните условия договора, первоначальный взнос и полную стоимость с другими вариантами.",!readyDealer);
-      if(readyDealer)out.push(dealer);
-      if(canUseQuick)out.push(pick("auto","Можно купить автомобиль у дилера или частного продавца. Банк описывает этот вариант без залога автомобиля и первоначального взноса.","Сравните итоговые выплаты с предложением автосалона, если оно у вас есть."));
-      if(mayUseDealer&&!readyDealer)out.push(dealer);
-      if(p.collateral)out.push(collateral);
-      break;
+  const {amount,goal}=p;
+  const band=Number(p.requestedTerm||5);
+  const short=band<=5;
+  const canUseQuick=amount>=minCalcAmount&&amount<=maxAmount&&short;
+  const outside=p.lender==="other"||p.lender==="mixed";
+  const inside=p.lender==="alfa"||p.lender==="mixed";
+  const cash=pick("cash","Вы получаете нужную сумму одним переводом и возвращаете её по графику.","Сверьте ежемесячный платёж, полную стоимость кредита и общую сумму выплат.");
+  const cardCheck="Проверьте размер лимита, на какие операции действует льготный период и сколько стоит обслуживание.";
+  const cards=pick("cards","Лимит восстанавливается по мере погашения. Его можно использовать снова.",cardCheck,true);
+  const installments=pick("purchase-plan","Если оплата покупки частями доступна, можно распределить её по графику.","До подключения проверьте срок, комиссию и итоговую стоимость.",true);
+  const secured=p.collateral&&amount<=30000000&&band<=10&&(p.collateral==="property"||short)
+    ?pick(p.collateral,"У вас уже есть имущество, которое вы готовы рассмотреть как залог.","Специалист уточнит, подходит ли имущество, и какие расходы появятся при оформлении.",true)
+    :null;
+  if(p.difficulty==="yes"||supportReason(p.customGoal||"")==="hardship")return out;
+
+  if(goal==="home"){
+    if(amount<=30000000)out.push(pick("mortgage","Для покупки жилья есть ипотечные программы. Они зависят от объекта и взноса.",
+      p.homeDown==="no"?"Уточните минимальный взнос по вашей программе.":"Уточните программу, взнос, страхование и полную стоимость.",true));
+  }else if(goal==="auto"){
+    const dealer=p.seller!=="private"&&p.down!=="less"&&amount>=100000&&amount<=13000000&&band<=10;
+    const ready=p.seller==="dealer"&&p.down==="enough"&&band<=5;
+    if(dealer&&ready)out.push(pick("dealer","Вы покупаете авто у дилера и готовы внести от 15%.","Проверьте срок, полную стоимость и расходы по договору."));
+    if(canUseQuick)out.push(pick("auto","Подходит для покупки у дилера или у частного продавца без залога автомобиля.","Сравните полную сумму выплат с условиями продавца."));
+    if(dealer&&!ready)out.push(pick("dealer","Вариант для покупки у дилера со взносом от 15%.","Проверьте точный срок и взнос по программе салона.",true));
+    if(secured)out.push(secured);
+  }else if(goal==="refi"){
+    const debtCheck="Сравните остаток всех выплат сейчас с общей суммой выплат по новому предложению.";
+    if(p.debtType==="mortgage"){
+      if(outside&&amount<=30000000)out.push(pick("mortgage-refi","Для пересмотра ипотеки другого банка есть отдельная программа.","Понадобится расчёт специалиста по объекту, остатку долга и сроку.",true));
+    }else if(p.debtType==="card"){
+      if(inside)out.push(pick("lower-card","По долгу по карте Альфа-Банка можно проверить, доступен ли переход на платежи по графику.","Сравните платёж, срок и стоимость по новому графику.",true));
+      if(outside&&short)out.push(pick("card-transfer","Для долга по кредитной карте другого банка есть вариант перевода задолженности.","Проверьте стоимость перевода и срок, в который нужно закрыть прежнюю карту.",true));
+      if(outside&&amount>=minCalcAmount&&amount<=30000000&&band<=10)out.push(pick("refi","Можно проверить, подходит ли ваш долг для рефинансирования кредитом с графиком.",debtCheck,true));
+    }else if(p.debtType==="loan"){
+      if(outside&&amount>=minCalcAmount&&amount<=30000000&&band<=10)out.push(pick("refi","Рефинансирование предназначено для кредитов в других банках.",debtCheck));
+      if(inside&&band<=10)out.push(pick("alfa-refi","Для потребительского кредита Альфа-Банка имеет смысл проверить возможность переоформления.",debtCheck,true));
+      if(outside&&p.collateral==="property"&&amount>=500000&&amount<=30000000&&band<=10)out.push(pick("refi-pledge","Вы готовы рассмотреть залог недвижимости для рефинансирования.","Сравните итоговую стоимость с учётом расходов на залог.",true));
     }
-    case "home":
-      out.push(pick("mortgage","Для покупки жилья начните с ипотечных программ: они учитывают тип недвижимости и первоначальный взнос.",
-        p.homeDown==="no"?"Сначала проверьте требование к взносу по подходящей программе.":"Проверьте программу, размер взноса, страхование и общую сумму выплат.",p.homeDown==="no"));
-      break;
-    case "refi":
-      out.push(pick("refi","Этот продукт предназначен для погашения действующих кредитов.","Сравните оставшуюся сумму выплат по текущим кредитам с полной суммой выплат по новому."));
-      if(p.collateral&&amount>=500000)out.push(pick("refi-pledge","Сумма от 500 000 ₽ и вы готовы рассмотреть залог недвижимости.","Уточните требования к объекту, расходы на залог и итоговую сумму выплат.",true));
-      break;
-    case "study":
-      if(canUseQuick)out.push(pick("education","Ваша цель — оплатить учёбу или курсы. У банка есть кредит на обучение.","Сравните полную сумму выплат и график с кредитом наличными."));
-      out.push(pick("cash","Кредит наличными можно рассмотреть для разовой оплаты.","Проверьте итоговые расходы и ежемесячный платёж по предложению банка.",!canUseQuick));
-      if(p.collateral)out.push(collateral);
-      break;
-    case "card":
-      out.push(pick("cards","Для повторных покупок подходит формат с возобновляемым лимитом.","Сверьте лимит, льготный период для ваших операций и стоимость после его окончания."));
-      if(canUseQuick)out.push(pick("cash","Если всю сумму нужно потратить один раз, можно сравнить с кредитом с фиксированным графиком.","Сравните общие выплаты и проверьте, комфортен ли платёж.",true));
-      break;
-    default:
-      out.push(pick("cash","Для разовой траты можно рассмотреть кредит с фиксированным графиком.","Сверьте платёж, переплату и полную стоимость предложения.",!canUseQuick));
-      if(p.collateral)out.push(collateral);
+  }else if(p.usage==="repeat"){
+    if(amount<=maxAmount&&short)out.push(cards);
+    if(goal==="shop"&&short&&amount<=maxAmount)out.push(installments);
+  }else{
+    if(goal==="study"&&canUseQuick)out.push(pick("education","Банк предлагает кредит для оплаты учёбы и курсов.","Сравните график и общую стоимость с кредитом наличными."));
+    if(goal==="payday"&&amount>=minCalcAmount&&amount<=100000&&(!p.requestedTerm||band===1)){
+      out.push(pick("payday","Можно проверить условия продукта для небольшой суммы.","На сайте срок начинается от года. Если деньги нужны на несколько дней, проверьте условия и расходы при досрочном погашении.",true));
+    }
+    if(goal==="shop"&&short&&amount<=maxAmount)out.push(installments);
+    if(canUseQuick)out.push(cash);
+    if(secured)out.push(secured);
   }
-  return out;
+  return out.slice(0,2);
+}
+function productButton(id,label,variant="secondary",apply=false){
+  return '<button type="button" class="btn '+variant+'" data-product-detail="'+id+'"'+(apply?' data-intent-apply="yes"':'')+'>'+label+'</button>';
 }
 function productCard(item,index){
   const data=pickerProducts[item.id];
-  const quick=item.id&&Object.hasOwn(products,item.id)&&profile.amount>=minCalcAmount&&profile.amount<=maxAmount;
-  const detailUrl=data.url??products[item.id].source;
-  let budgetLine="";
-  if(quick&&profile.budget){
-    const q=estimate(state.months,false,{amount:profile.amount,product:item.id});
-    const fits=Math.round(q.payment)<=profile.budget;
-    budgetLine='<p class="signal '+(fits?"good":"")+'">Пример на '+termText(state.months)+': '+money(q.payment)+' в месяц · '+(fits?"в пределах ориентира":"выше ориентира")+'</p>';
-  }
   return '<article class="card stack '+(!index&&!item.conditional?'quote':'')+'">'+
-    '<p class="result-label">'+(item.conditional?"При выполнении условий":index?"Ещё один вариант":"Подходит по вашим вводным")+'</p>'+
-    '<h2>'+data.name+'</h2><p>'+item.reason+'</p><p class="hint">'+item.check+'</p>'+budgetLine+
-    (quick?'<button type="button" class="btn '+(!index?"primary":"secondary")+'" data-match-calc="'+item.id+'">Рассчитать платёж</button>':
-    '<a class="btn secondary" href="'+detailUrl+'" target="_blank" rel="noopener">Посмотреть условия банка ↗</a>')+
-    (item.id==="refi"?btn("loan","Сравнить с действующим кредитом"):"")+'</article>';
+    '<p class="result-label">'+(item.conditional?"Проверьте условия":index?"Ещё один вариант":"Подходит по вашим вводным")+'</p>'+
+    '<h2>'+data.name+'</h2><p>'+item.reason+'</p><p class="hint">'+item.check+'</p>'+
+    (data.apply?'<div class="cols">'+productButton(item.id,"Подробнее")+productButton(item.id,"Оформить",index?"secondary":"primary",true)+'</div>':
+      productButton(item.id,"Подробнее"))+'</article>';
+}
+function rateAnswer(scope){
+  return '<section class="card stack"><p>Ответ помог?</p><div class="cols" data-rating-group>'+
+    '<button type="button" class="btn secondary" data-feedback="like" data-scope="'+scope+'" aria-pressed="false">Да</button>'+
+    '<button type="button" class="btn secondary" data-feedback="dislike" data-scope="'+scope+'" aria-pressed="false">Нет</button></div>'+
+    '<p class="hint" data-feedback-note role="status" hidden></p></section>';
 }
 function matchesScreen(){
   const matches=chooseProducts(profile);
-  const caption=intents[profile.goal]+" · "+money(profile.amount)+(profile.budget?" · до "+money(profile.budget)+" в месяц":"");
-  const noProduct='<article class="card stack"><h2>Нужно уточнить параметры покупки</h2><p>По указанной сумме, продавцу и взносу подходящий вариант среди проверенных программ не найден. Проверьте другие программы банка или измените параметры.</p><a class="btn secondary" href="https://alfabank.ru/get-money/auto-loan/" target="_blank" rel="noopener">Все программы на авто ↗</a></article>';
-  return heading(matches.some(item=>!item.conditional)?"Что вам подходит":"Уточните условия",caption)+'<div class="stack">'+
+  const caption=(profile.goal==="refi"?"Рефинансирование":intents[profile.goal])+" · "+money(profile.amount)+(profile.budget?" · до "+money(profile.budget)+" в месяц":"");
+  const noProduct='<article class="card stack"><h2>Нужно уточнить условия</h2><p>По этим параметрам подходящий продукт не найден. Измените ответы или проверьте варианты с оператором.</p></article>';
+  return heading(matches.some(item=>!item.conditional)?"Что вам подходит":"Что можно проверить",caption)+'<div class="stack">'+
+    (profile.goal==="refi"?'<p class="signal">Проверьте, меняется ли общая сумма выплат. Более низкий платёж при длинном сроке может увеличить итоговые расходы.</p>':'')+
     (matches.length?matches.map(productCard).join(""):noProduct)+
-    '<p class="hint">Подбор по цели и указанным параметрам. Доступную сумму и условия определяет банк.</p>'+
-    (matches.length?'<section class="card stack"><h2>Какой вариант дешевле?</h2><p>Если у вас уже есть два предложения, сравните платёж и общую сумму выплат по ним.</p>'+
-      btn("offers","Сравнить два предложения","primary")+'</section>':'')+
-    btn("picker","Изменить ответы")+'</div>';
+    '<p class="hint">Доступную сумму, ставку и решение по заявке определяет банк. '+(profile.budget?'Сравнить с вашим ориентиром можно по условиям банка.':'')+'</p>'+
+    (matches.length===2?btn("compare-products","Сравнить","primary"):"")+
+    btn("offers","Сравнить два предложения")+btn("ask","Задать вопрос")+btn("support","Связаться с оператором")+
+    rateAnswer("recommendation")+btn("picker","Изменить ответы")+'</div>';
+}
+function compareProducts(){
+  const [a,b]=chooseProducts(profile);
+  if(!b)return;
+  modal("Сравните варианты",columns(pickerTitle(a.id),pickerTitle(b.id),[
+    ["Как подходит",a.reason,b.reason],["Что проверить",a.check,b.check]
+  ])+'<p class="hint">Чтобы узнать, какой вариант дешевле для вас, сравните полную сумму выплат по двум предложениям банка.</p>'+btn("offers","Сравнить стоимость предложений"));
 }
 function handlePicker(form){
   const data=new FormData(form);
-  profile.goal=String(data.get("intent"));
+  const customGoal=String(data.get("customGoal")).trim();
+  if(hasPersonalData(customGoal)){
+    $("picker-error").textContent="Удалите телефон, номер документа или другие личные данные. Достаточно описания цели.";
+    $("picker-error").hidden=false;
+    return;
+  }
+  const goal=String(data.get("intent")??"");
+  if(!goal&&!customGoal){
+    $("picker-error").textContent="Выберите цель или опишите её своими словами.";
+    $("picker-error").hidden=false;
+    return;
+  }
+  profile.goal=goal||"other";
+  profile.customGoal=customGoal;
   profile.amount=Number(data.get("requested"));
   profile.budget=Number(data.get("comfort"));
-  if(profile.goal==="auto"){
-    profile.seller=String(data.get("seller")??"");
-    profile.down=String(data.get("down")??"");
+  for(const key of ["requestedTerm","usage","seller","down","homeDown","collateral","lender","debtType","difficulty"]){
+    profile[key]=String(data.get(key)??"");
   }
-  if(profile.goal==="home")profile.homeDown=String(data.get("homeDown")??"");
-  profile.collateral=data.has("collateral");
+  const concern=supportReason(customGoal);
+  if(profile.difficulty==="yes"||concern==="hardship"){
+    showSupport("hardship");
+    return;
+  }
+  if(concern){
+    showSupport(concern);
+    return;
+  }
+  if(profile.goal==="other"){
+    const value=normalize(customGoal);
+    const detected=[["refi",/рефинанс|(?:погас|закры).{0,22}(?:кредит|долг|займ|карт)|(?:ден[ье]г|нужн).{0,30}(?:на|закрыть).{0,15}(?:кредит|долг|займ)/],
+      ["home",/ипотек|покуп.{0,18}(?:квартир|жиль|дом)|купить (?:квартир|жиль|дом)/],["auto",/машин|автомобил/],
+      ["study",/обучен|образован|курс|учеб/],["payday",/до зарплат/],["shop",/покупк|рассроч/]]
+      .find(([,pattern])=>pattern.test(value))?.[0];
+    if(detected){
+      profile.goal=detected;
+      if(["home","auto","refi"].includes(detected)){
+        show("picker");
+        return;
+      }
+    }
+  }
   show("matches");
 }
-function compareOfferForm(){
-  modal("Сравните два предложения",'<p class="hint">Для одной суммы на руки — '+money(profile.amount)+'. Используйте общую сумму выплат из условий, включая обязательные расходы. Для карт с меняющимся долгом нужен расчёт на конкретную операцию и график.</p>'+
+
+const faq=[
+  {id:"format",label:"Разовая сумма или лимит?",pattern:/разов|лимит|отлич|в чем разниц|как (?:устроен|работает).{0,20}(?:кредит|карт)/,
+    answer:"Кредит наличными выдаётся одной суммой. Его возвращают по графику. По кредитной карте можно брать из лимита нужную сумму и снова пользоваться им по мере погашения. Льготный период зависит от вида операции и условий карты.",url:"https://alfabank.ru/get-money/credit-cards/"},
+  {id:"rate",label:"Ставка и полная стоимость",pattern:/ставк|процент|переплат|пск|полн.{0,10}стоимост|дорого/,
+    answer:"Ставка определяет проценты по кредиту. Полная стоимость кредита учитывает платежи, от которых зависят условия кредитования. Для выбора сравните полную стоимость, общую сумму выплат и график. Ваши условия банк покажет в предложении.",url:products.cash.source},
+  {id:"insurance",label:"Что меняет страховка?",pattern:/страхов|полис/,
+    answer:"Сравните предложения с услугой и без неё на одинаковые сумму и срок. Проверьте стоимость полиса, сумму на руки и все выплаты по графику. Условия страхования и его влияние на кредит указаны в предложении банка.",url:products.cash.source},
+  {id:"grace",label:"Льготный период по карте",pattern:/льгот|грейс|беспроцент|150/,
+    answer:"Льготный период зависит от тарифа карты и операции. Проверьте дату окончания периода, обязательные платежи и правила для переводов и снятия наличных.",url:"https://alfabank.ru/get-money/credit-cards/"},
+  {id:"refi",label:"Как работает рефинансирование?",pattern:/рефинанс/,
+    answer:"Рефинансирование позволяет заменить действующий кредит новым. Сравните остаток выплат сейчас с общей суммой выплат по новому графику и проверьте, как закрыть старый кредит.",url:products.refi.source},
+  {id:"approval",label:"От чего зависит одобрение?",pattern:/одобр|отказ|шанс|дадут/,
+    answer:"Решение, сумму и условия банк определяет после рассмотрения заявки. В подборе учитываются цель и параметры, которые вы указали.",url:products.cash.source},
+  {id:"early",label:"Как погасить досрочно?",pattern:/досроч/,
+    answer:"В приложении проверьте сумму полного или частичного досрочного погашения и дату списания. При частичном погашении посмотрите, как изменятся срок или платёж.",url:"https://alfabank.ru/help/t/retail/creditcash/kredit-nalichnimi/dosrochnoe-zakritie-kredita/kak-polnostyu-zakrit-kredit-dosrochno/"}
+];
+const supportCopy={
+  hardship:["Если платёж стал трудным","Обратитесь в чат банка. Специалист уточнит, какие варианты есть по вашему действующему долгу. Новый заём увеличивает долговую нагрузку."],
+  complaint:["Связаться с оператором","Опишите ситуацию в чате банка. Специалист сможет проверить детали вашего обращения."],
+  personal:["Нужен расчёт специалиста","Специалист поможет проверить индивидуальные условия, требования к имуществу и расходы по договору."],
+  unknown:["Уточните вопрос в поддержке","В базе знаний нет подтверждённого ответа. Уточните условия в чате банка."],
+  requested:["Связаться с оператором","Перейдите в чат поддержки Альфа-Банка. Сообщите специалисту, с каким продуктом нужна помощь."]
+};
+
+function supportReason(text){
+  const value=normalize(text);
+  if(/(?:нет|не хватает).{0,17}(?:денег|средств).{0,25}(?:на платеж|платить|погас)|нечем плат|не (?:могу|смогу|могу уже|успеваю|смог) (?:внести|оплатить|заплатить|платить|погасить)|просроч|пропуст.{0,15}платеж|не потян.{0,20}платеж/.test(value))return "hardship";
+  if(/жалоб|жалуюсь|мошен|списали ошибочно|незакон|плохой сервис/.test(value))return "complaint";
+  if(/живого|оператор|позовите|поговорить с (?:человеком|сотрудник)|поддержк/.test(value))return "requested";
+  if(/(?:личн|мо[яию]|индивидуальн|персональн).{0,25}(?:ставк|услови|решени)|(?:рассчита|расчет|одобрят|подойдет|подходят|примут|могу ли заложить).{0,35}(?:ипотек|залог|квартир)|(?:ипотек|залог).{0,30}(?:для меня|мне|оценк|услови|сколько|ставк)/.test(value))return "personal";
+  return "";
+}
+function hasPersonalData(text){
+  return /\+?\d(?:[\s().-]*\d){9,}|[\w.+-]+@[\w.-]+\.[a-zа-я]{2,}|(?:паспорт|снилс|инн|код из смс).{0,12}\d{4}/i.test(text);
+}
+function supportLink(){
+  return '<a class="btn primary full" data-support-link href="'+supportUrl+'" target="_blank" rel="noopener">Открыть поддержку Альфа-Банка ↗</a>';
+}
+function showSupport(reason="requested"){
+  state.supportReason=reason;
+  state.supportReturn=state.page;
+  show("support");
+}
+function supportScreen(){
+  const [title,description]=supportCopy[state.supportReason];
+  return heading(title,description)+'<div class="stack">'+supportLink()+
+    '<p class="hint">История этой переписки не передаётся в чат банка.</p>'+btn("support-back","Вернуться")+'</div>';
+}
+function openProduct(id,wantsToApply){
+  if(!pickerProducts[id])return;
+  productReturn=state.page;
+  state.detail=id;
+  track("product_opened",{product:id,origin:productReturn});
+  show("product");
+  if(wantsToApply)$("product-apply")?.focus();
+}
+function productDetail(){
+  const id=state.detail;
+  const item=pickerProducts[id];
+  const match=chooseProducts(profile).find(product=>product.id===id);
+  const link=item.url??products[id]?.source;
+  const available=!!(item.apply&&link);
+  const learnLink=link&&!available?'<a class="btn secondary full" href="'+link+'" target="_blank" rel="noopener">Информация на сайте банка ↗</a>':"";
+  const calc=products[id]&&(productReturn!=="matches"||(profile.amount>=minCalcAmount&&profile.amount<=maxAmount&&Number(profile.requestedTerm||5)<=5));
+  return heading(item.name,item.desc)+'<div class="stack"><section class="card stack">'+
+    (match?'<p>'+match.reason+'</p><p>'+match.check+'</p>':'')+
+    (item.note?'<p>'+item.note+'</p>':'')+
+    '<p class="hint">'+(item.private?"Доступность предложения и условия проверьте в приложении или у оператора.":"Доступную сумму и условия банк определит при рассмотрении заявки.")+'</p></section>'+
+    (available?'<a id="product-apply" class="btn primary full" data-apply-link="'+id+'" href="'+link+'" target="_blank" rel="noopener">Оформить на сайте банка ↗</a>':learnLink)+
+    (calc?'<button class="btn secondary" type="button" data-detail-calc="'+id+'">Рассчитать платёж</button>':'')+
+    (id==="refi"?btn("loan","Сравнить с действующим кредитом"):"")+
+    btn(item.specialist?"specialist":"support","Связаться с оператором")+btn("product-back","Вернуться к выбору")+'</div>';
+}
+
+function showAsk(answer="",url="",feedback=false,offerSupport=false){
+  modal("Вопрос о кредите",
+    '<div class="tags">'+faq.map(topic=>'<button type="button" class="tag" data-faq="'+topic.id+'">'+topic.label+'</button>').join("")+'</div>'+
+    (answer?'<section class="card stack"><p role="status">'+answer+'</p>'+
+      (url?'<a href="'+url+'" target="_blank" rel="noopener">Условия на сайте банка ↗</a>':'')+'</section>':'')+
+    (feedback?rateAnswer("faq"):'')+(offerSupport?btn("support-unknown","Связаться с оператором"):'')+
+    '<form id="ask-form" class="stack"><label class="field">Что хотите узнать?<input class="input" name="question" maxlength="240" required placeholder="Например, что входит в полную стоимость"></label>'+
+    '<p class="hint">Не указывайте телефон, документы, номера карт и коды.</p><button type="submit" class="btn primary">Спросить</button></form>'+
+    (offerSupport?'':btn("support","Связаться с оператором")));
+}
+function reply(topic){
+  unanswered=0;
+  showAsk(topic.answer,topic.url,true);
+}
+function handleQuestion(text){
+  if(hasPersonalData(text)){
+    showAsk("Удалите личные данные и повторите вопрос. Для ответа по общим условиям они не нужны.");
+    return;
+  }
+  const reason=supportReason(text);
+  if(reason){
+    showSupport(reason);
+    return;
+  }
+  const value=normalize(text);
+  const specific=/\b\d{2,}\b/.test(value)&&!(/150.{0,6}дн|дн.{0,6}150/.test(value));
+  const byId=id=>faq.find(item=>item.id===id);
+  const topic=/льгот|грейс|беспроцент|150/.test(value)?byId("grace"):
+    specific?null:faq.find(item=>item.pattern.test(value));
+  if(topic){
+    reply(topic);
+    return;
+  }
+  unanswered++;
+  if(unanswered>=2){
+    showSupport("unknown");
+    return;
+  }
+  showAsk("У меня нет подтверждённого ответа. Попробуйте уточнить вопрос или спросите оператора.","",false,true);
+}
+function showMetrics(){
+  modal("События за эту сессию",'<dl class="breakdown">'+Object.entries({
+    assistant_entered:"Входы в помощник",answer_rated:"Оценки ответов",product_opened:"Открытия первого экрана продукта",
+    application_started:"Переходы к оформлению",support_opened:"Открытия поддержки"
+  }).map(([key,label])=>breakdownRow(label,metrics[key])).join("")+
+  breakdownRow("Поданные заявки","Данные из банка недоступны")+'</dl>');
+}
+function compareOfferForm(title="Сравните два предложения",lead=""){
+  offerScope=state.page==="calc"?{amount:state.amount,budget:state.budget}:{amount:profile.amount,budget:profile.budget};
+  modal(title,'<p class="hint">'+(lead?lead+' ':'')+'Для одной суммы на руки — '+money(offerScope.amount)+'. Используйте общую сумму выплат из условий, включая обязательные расходы. Для карт с меняющимся долгом нужен расчёт на конкретную операцию и график.</p>'+
   '<form id="offers-form" class="stack">'+[1,2].map(n=>'<fieldset class="card stack"><legend>Предложение '+n+'</legend>'+
     field("monthly"+n,"Платёж в месяц, ₽","",1,maxPickerAmount,"required")+
-    field("total"+n,"Всего выплатите, ₽","",profile.amount,maxPickerAmount*10,"required")+'</fieldset>').join("")+
+    field("total"+n,"Всего выплатите, ₽","",offerScope.amount,maxPickerAmount*10,"required")+'</fieldset>').join("")+
     '<p class="error" id="offer-error" role="alert" hidden></p><button class="btn primary" type="submit">Сравнить стоимость</button></form>');
 }
 function showOfferComparison(form){
@@ -566,45 +762,64 @@ function showOfferComparison(form){
     error.hidden=false;
     return;
   }
-  const within=offer=>!profile.budget||offer.payment<=profile.budget;
+  const within=offer=>!offerScope.budget||offer.payment<=offerScope.budget;
   const cheaper=a.total===b.total?null:a.total<b.total?1:2;
   const fits=[a,b].flatMap((offer,i)=>within(offer)?[i+1]:[]);
   const difference=cheaper?'Меньше всего выплатите по предложению '+cheaper+'. Разница — '+money(Math.abs(a.total-b.total))+'.':'Общая сумма выплат одинаковая.';
   let budget="";
-  if(profile.budget){
+  if(offerScope.budget){
     if(!fits.length)budget="Оба платежа выше вашего ориентира.";
     else if(fits.length===1)budget="В ваш месячный ориентир укладывается только предложение "+fits[0]+".";
     else budget="Оба платежа укладываются в ваш ориентир.";
   }
   modal("Результат сравнения",columns("Вариант 1","Вариант 2",[
-    ["В месяц",money(a.payment),money(b.payment)],["Переплата",money(a.total-profile.amount),money(b.total-profile.amount)],["К выплате",money(a.total),money(b.total)]
+    ["В месяц",money(a.payment),money(b.payment)],["Переплата",money(a.total-offerScope.amount),money(b.total-offerScope.amount)],["К выплате",money(a.total),money(b.total)]
   ])+'<p><strong>'+difference+'</strong></p>'+(budget?'<p>'+budget+'</p>':"")+
     '<p class="hint">По введённым вами условиям. Отдельно проверьте залог, дополнительные услуги и правила досрочного погашения.</p>'+btn("offers","Сравнить другие условия"));
 }
 
 const actions={
-  calc:()=>show("calc"),loan:()=>show("loan"),apply:()=>show("apply"),picker:()=>show("picker"),matches:()=>show("matches"),offers:compareOfferForm,
+  calc:()=>show("calc"),loan:()=>show("loan"),apply:()=>openProduct(state.product,true),
+  picker:()=>{if(state.page==="calc")track("assistant_entered",{entry:"picker"});show("picker")},
+  ask:()=>{if(state.page==="calc")track("assistant_entered",{entry:"faq"});unanswered=0;showAsk()},
+  matches:()=>show("matches"),offers:()=>compareOfferForm(),"compare-products":compareProducts,metrics:showMetrics,
+  support:()=>showSupport(),specialist:()=>showSupport("personal"),"support-unknown":()=>showSupport("unknown"),
+  "support-back":()=>show(state.supportReturn),"product-back":()=>show(productReturn),
   term:termComparison,cost,insurance,bank:otherBank,refinance:refinancing,catalog:openCatalog,
-  "refi-to-calc":()=>{state.product="refi";state.goal="Погасить кредит";state.amount=state.loan.balance;state.insurance=false;show("calc")},
+  "refi-to-calc":()=>{state.product="refi";state.goal="Погасить кредит";state.amount=state.loan.balance;show("calc")},
   pay:()=>modal("Пополнение кредитного счёта",'<p>Пополните счёт, с которого списывается платёж. Проверьте, что деньги поступили до даты платежа, указанной в графике.</p><p class="hint">Действие доступно в приложении банка.</p>'),
   close:()=>popup.close()
 };
 document.addEventListener("click",event=>{
+  const link=event.target.closest("a");
+  if(link?.dataset.applyLink)track("application_started",{product:link.dataset.applyLink});
+  if(link?.hasAttribute("data-support-link"))track("support_opened",{reason:state.supportReason});
   const button=event.target.closest("button");
   if(!button)return;
-  const {act,term,insurance,goal,calcProduct,matchCalc}=button.dataset;
+  const {act,term,goal,productDetail,detailCalc,faq:topicId,feedback,scope}=button.dataset;
   if(act)actions[act]();
   if(term){state.months=Number(term);popup.close();sync()}
-  if(insurance){state.insurance=insurance==="yes";popup.close();sync()}
   if(goal)updateGoal(button);
-  if(calcProduct)selectCatalogProduct(calcProduct);
-  if(matchCalc){
-    state.product=matchCalc;
-    state.goal=productGoals[matchCalc];
-    state.amount=profile.amount;
-    state.budget=profile.budget;
-    state.insurance=false;
+  if(productDetail)openProduct(productDetail,button.dataset.intentApply==="yes");
+  if(detailCalc){
+    state.product=detailCalc;
+    state.goal=productGoals[detailCalc];
+    if(productReturn==="matches"){
+      state.amount=profile.amount;
+      state.budget=profile.budget;
+      if(profile.requestedTerm==="1")state.months=12;
+    }
     show("calc");
+  }
+  if(topicId)reply(faq.find(item=>item.id===topicId));
+  if(feedback&&button.getAttribute("aria-pressed")!=="true"){
+    const group=button.closest("[data-rating-group]");
+    const previous=group.querySelector('[aria-pressed="true"]')?.dataset.feedback;
+    for(const choice of group.querySelectorAll("button"))choice.setAttribute("aria-pressed",String(choice===button));
+    const note=group.nextElementSibling;
+    note.textContent=feedback==="like"?"Спасибо за оценку.":"Спасибо за оценку. Можете уточнить вопрос у оператора.";
+    note.hidden=false;
+    track("answer_rated",{value:feedback,scope,...(previous?{previous}:{})});
   }
 });
 app.addEventListener("input",event=>{
@@ -634,6 +849,7 @@ app.addEventListener("change",event=>{
 document.addEventListener("submit",event=>{
   const form=event.target;
   event.preventDefault();
+  if(form.id==="ask-form")handleQuestion(form.elements.question.value.trim());
   if(form.id==="picker-form")handlePicker(form);
   if(form.id==="offers-form")showOfferComparison(form);
   if(form.id==="context-form")updateContext(form);
