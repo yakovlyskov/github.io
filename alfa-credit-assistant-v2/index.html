@@ -124,6 +124,7 @@ dl.breakdown{margin:0;display:grid;gap:6px}
 .intent-shortcut:hover{background:var(--rose)}
 .intent-shortcut b{color:var(--red)}
 #purchase-form{margin-top:5px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
@@ -744,11 +745,11 @@ function purchaseResults({fits,others},settings){
     .filter(Boolean).join(" · ");
   const downNote=others.length&&others.every(item=>item.issues.some(issue=>issue.startsWith("взнос")));
   return '<div class="stack">'+(caption?'<p class="hint">Ваши параметры · '+caption+'</p>':"")+
-    (fits.length?fits.map(purchaseCard).join(""):'<p class="signal" role="status">'+
+    (fits.length?fits.map(item=>purchaseCard(item)).join(""):'<p class="signal" role="status">'+
       (downNote?"С указанным взносом эти программы не подходят. Ниже указан взнос, с которого их можно рассмотреть.":
         "С текущими параметрами совпадений нет. Ниже видно, что нужно изменить для каждой программы.")+'</p>')+
     (others.length?'<details class="details purchase-other" '+(fits.length?"":"open")+'><summary>Варианты с другими условиями</summary><div class="stack">'+
-      others.map(purchaseCard).join("")+'</div></details>':"")+
+      others.map(item=>purchaseCard(item)).join("")+'</div></details>':"")+
     (fits.length>1?btn("compare-products","Сравнить варианты"):"")+
     '</div>';
 }
@@ -769,37 +770,56 @@ function purchaseScreen(){
     '<div class="cols">'+field("years","Срок, лет",p.years||"",1,50)+
     '<label class="field">Взнос, %<input class="input" type="number" name="down" inputmode="decimal" step="0.1" min="0" max="99.9" value="'+down+'" placeholder="20,1"></label></div>'+
     (housing?"":'<label class="intent"><input type="checkbox" name="secured" '+(p.secured?"checked":"")+'><span>Готов рассмотреть залог недвижимости</span></label>')+
-    '<button class="btn primary full" id="purchase-submit" type="submit">'+(single?"Применить параметры":"Обновить варианты")+'</button></form></details>'+
-    '<section class="stack" id="purchase-results" tabindex="-1" aria-label="'+(single?"Условия продукта":"Варианты")+'">'+
+    '<p class="error" id="purchase-error" role="status" hidden></p></form></details>'+
+    '<p id="purchase-status" class="sr-only" role="status"></p>'+
+    '<section class="stack" id="purchase-results" aria-label="'+(single?"Условия продукта":"Варианты")+'">'+
     purchaseResults(options,p)+'</section>'+
     '<p class="hint">Банк уточнит условия по вашей заявке.</p>'+
     btn("ask","Задать вопрос")+btn("support","Связаться с оператором")+
     rateAnswer("recommendation")+'</div>';
 }
-function updatePurchaseForm(form,focusResults=true){
-  const data=new FormData(form);
-  const current=purchaseSettings[profile.goal];
-  const down=data.get("down");
-  Object.assign(current,{amount:Number(data.get("amount")),years:Number(data.get("years")),down:down===""?null:Number(down),secured:data.has("secured")});
-  const options=refreshPurchaseOptions();
-  if(focusResults&&options.fits.length!==1)$("purchase-results").focus();
-}
+const purchaseInputErrors={
+  amount:"Укажите сумму от 1 ₽ до 1 млрд ₽ целым числом или оставьте поле пустым.",
+  years:"Укажите срок от 1 до 50 лет целым числом или оставьте поле пустым.",
+  down:"Укажите взнос от 0 до 99,9% с точностью до десятых или оставьте поле пустым."
+};
 function refreshPurchaseOptions(){
   const goal=profile.goal;
   const settings=purchaseSettings[goal];
+  const {elements}=$("purchase-form");
+  const invalid=[elements.amount,elements.years,elements.down].find(field=>!field.validity.valid);
+  const error=$("purchase-error");
+  const results=$("purchase-results");
+  const status=$("purchase-status");
+  error.hidden=!invalid;
+  const message=invalid?purchaseInputErrors[invalid.name]:"";
+  if(error.textContent!==message)error.textContent=message;
+  results.hidden=Boolean(invalid);
   for(const button of app.querySelectorAll("[data-purchase-filter]")){
     button.setAttribute("aria-pressed",String(button.dataset.purchaseFilter===settings.filter));
   }
+  if(invalid){
+    status.textContent="";
+    return;
+  }
+
+  Object.assign(settings,{
+    amount:Number(elements.amount.value),
+    years:Number(elements.years.value),
+    down:elements.down.value===""?null:Number(elements.down.value),
+    secured:elements.secured?.checked??false
+  });
   const options=purchaseOptions(goal,settings);
   const [title,lead]=purchaseHeading(goal,options);
   const single=options.fits.length===1;
-  $("heading").textContent=title;
-  app.querySelector(".lead").textContent=lead;
-  $("purchase-submit").textContent=single?"Применить параметры":"Обновить варианты";
-  const results=$("purchase-results");
+  const header=$("heading");
+  if(header.textContent!==title)header.textContent=title;
+  const description=app.querySelector(".lead");
+  if(description.textContent!==lead)description.textContent=lead;
   results.setAttribute("aria-label",single?"Условия продукта":"Варианты");
   results.innerHTML=purchaseResults(options,settings);
-  return options;
+  const announcement=single?"Подходит "+title+".":options.fits.length?"Подходящих вариантов: "+options.fits.length+".":"Подходящих вариантов нет.";
+  if(status.textContent!==announcement)status.textContent=announcement;
 }
 
 function comparedRecommendations(source){
@@ -833,16 +853,8 @@ function comparisonQuote(id,criteria){
 }
 function compareRecommendations(){
   const source=state.page;
-  if(state.page==="purchase"){
-    const form=$("purchase-form");
-    if(!form.reportValidity())return;
-    updatePurchaseForm(form,false);
-  }
   const comparison=comparedRecommendations(source);
-  if(!comparison||comparison.matches.length<2){
-    if(state.page==="purchase")$("purchase-submit").focus({preventScroll:true});
-    return;
-  }
+  if(!comparison||comparison.matches.length<2)return;
   const {matches,criteria}=comparison;
   const duration=criteria.years?criteria.years+" г.":criteria.months?termText(criteria.months):"Не указан";
   const parameters='<section class="card stack"><h3>Ваши параметры</h3><dl class="breakdown">'+
@@ -852,7 +864,6 @@ function compareRecommendations(){
     (criteria.budget?breakdownRow("Комфортный платёж",money(criteria.budget)+" в месяц"):"")+'</dl></section>';
   const cards=matches.map(({id,reason,check})=>'<article class="card stack"><h3>'+pickerTitle(id)+'</h3>'+
     '<p>'+reason+'</p><p class="hint">'+check+'</p>'+comparisonQuote(id,criteria)+productButton(id,"Подробнее")+'</article>').join("");
-  if(state.page==="purchase")app.querySelector('[data-act="compare-products"]')?.focus({preventScroll:true});
   modal("Сравните варианты",parameters+cards);
 }
 
@@ -1209,6 +1220,10 @@ document.addEventListener("click",event=>{
 });
 app.addEventListener("input",event=>{
   const field=event.target;
+  if(state.page==="purchase"&&field.form?.id==="purchase-form"){
+    refreshPurchaseOptions();
+    return;
+  }
   if(state.page==="tune"&&field.form?.id==="tune-form"){
     if(field.type==="range")$(field.id.replace("-range","")).value=field.value;
     syncAdjustment();
@@ -1242,7 +1257,7 @@ document.addEventListener("submit",event=>{
   if(form.id==="ask-form")handleQuestion(form.elements.question.value.trim());
   if(form.id==="picker-form")handlePicker(form);
   if(form.id==="tune-form")handleAdjustment(form);
-  if(form.id==="purchase-form")updatePurchaseForm(form);
+  if(form.id==="purchase-form")refreshPurchaseOptions();
   if(form.id==="offers-form")showOfferComparison(form);
   if(form.id==="context-form")updateContext(form);
   if(form.id==="bank-form")compareBank(Number(form.elements.rate.value),Number(form.elements.fee.value));
