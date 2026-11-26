@@ -757,11 +757,11 @@ function purchaseScreen(){
   return heading(housing?"Ипотека для покупки жилья":"Кредит на покупку авто",
     housing?"Выберите программу под жильё, которое хотите купить.":"Выберите вариант по тому, у кого покупаете машину.")+
     '<div class="stack"><div class="tags purchase-filters" role="group" aria-label="'+(housing?"Тип жилья или программы":"Продавец автомобиля")+'">'+choices+'</div>'+
-    '<details class="details card" id="purchase-parameters"><summary>Уточнить сумму, срок и взнос</summary>'+
+    '<details class="details card" id="purchase-parameters" open><summary>Уточнить сумму, срок и взнос</summary>'+
     '<form class="stack" id="purchase-form">'+
     field("amount","Сумма кредита, ₽",p.amount||"",1,1000000000)+
-    field("years","Срок, лет",p.years||"",1,50)+
-    '<label class="field">Первоначальный взнос, %<input class="input" type="number" name="down" inputmode="decimal" step="0.1" min="0" max="99.9" value="'+down+'" placeholder="Например, 20,1"></label>'+
+    '<div class="cols">'+field("years","Срок, лет",p.years||"",1,50)+
+    '<label class="field">Взнос, %<input class="input" type="number" name="down" inputmode="decimal" step="0.1" min="0" max="99.9" value="'+down+'" placeholder="20,1"></label></div>'+
     (housing?"":'<label class="intent"><input type="checkbox" name="secured" '+(p.secured?"checked":"")+'><span>Готов рассмотреть залог недвижимости</span></label>')+
     '<button class="btn primary full" type="submit">Обновить варианты</button></form></details>'+
     '<section class="stack" id="purchase-results" tabindex="-1" aria-label="Рекомендации">'+purchaseResults(goal,p)+'</section>'+
@@ -774,7 +774,6 @@ function updatePurchaseForm(form){
   const current=purchaseSettings[profile.goal];
   const down=data.get("down");
   Object.assign(current,{amount:Number(data.get("amount")),years:Number(data.get("years")),down:down===""?null:Number(down),secured:data.has("secured")});
-  $("purchase-parameters").open=false;
   refreshPurchaseOptions();
   $("purchase-results").focus();
 }
