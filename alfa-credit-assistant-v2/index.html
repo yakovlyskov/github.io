@@ -48,6 +48,14 @@ a{color:var(--red);text-underline-offset:3px}
 .tag{min-height:44px;border:1px solid var(--line);background:white;color:var(--dark);border-radius:9px;font-size:13px;font-weight:690;padding:5px 8px}
 .tag[aria-pressed=true]{color:var(--red);border-color:#c56b88;background:var(--rose)}
 .full{width:100%}
+.catalog-entry,.catalog-item{width:100%;min-height:48px;display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:11px;padding:6px 9px;background:#fff;color:var(--ink);font:inherit;text-decoration:none;text-align:left}
+.catalog-entry{background:var(--pale);border-color:#e4d8e7}
+.catalog-entry:hover,.catalog-item:hover{background:var(--rose);border-color:#dca8b9}
+.catalog-text{display:grid;gap:1px;min-width:0;line-height:1.25}
+.catalog-text small{font-size:12px;color:var(--dim)}
+.catalog-arrow{flex:0 0 auto;color:var(--red);font-weight:750}
+.catalog-group{display:grid;gap:5px}
+.catalog-group h3{margin:4px 0 1px;color:var(--dim);font-size:13px}
 .quote{display:grid;gap:7px;border-color:#dcb6c4;background:#fff9fb}
 .quote-label{display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:wrap;color:var(--dim);font-size:12px}
 .payment{font-size:clamp(27px,8vw,35px);line-height:1.05;font-weight:820;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
@@ -147,6 +155,23 @@ function parseContext(text){
   return found;
 }
 
+const productGoals={cash:"Любая цель",auto:"Автомобиль",refi:"Погасить кредит"};
+const creditCatalog=[
+  {heading:"Посчитать платёж здесь",items:[
+    {id:"cash",name:products.cash.name,desc:"Деньги на любые цели"},
+    {id:"auto",name:products.auto.name,desc:"На покупку машины без залога авто"},
+    {id:"refi",name:products.refi.name,desc:"На погашение действующих кредитов"}
+  ]},
+  {heading:"Условия на сайте Альфа-Банка",items:[
+    {name:"Кредитные карты",desc:"Карты с кредитным лимитом и льготным периодом",url:"https://alfabank.ru/get-money/credit-cards/"},
+    {name:"Ипотека",desc:"Новостройка, готовое жильё и другие программы",url:"https://alfabank.ru/get-money/mortgage/"},
+    {name:"Автокредит у дилера",desc:"Покупка машины в автосалоне",url:"https://alfabank.ru/get-money/auto-loan/dealers/"},
+    {name:"Кредит под залог недвижимости",desc:"Деньги под залог имеющейся недвижимости",url:"https://alfabank.ru/get-money/credit/pod-zalog/"},
+    {name:"Рефинансирование под залог недвижимости",desc:"Погашение действующих кредитов с обеспечением",url:"https://alfabank.ru/get-money/credit/refinansirovanie-pod-zalog/"},
+    {name:"Кредит на обучение",desc:"Оплата учебы, курсов и повышения квалификации",url:"https://alfabank.ru/get-money/credit/na-obuchenie/"},
+    {name:"Кредит под залог автомобиля",desc:"Общие условия по кредиту под залог имеющегося авто",url:"https://alfabank.ru/retail/tariffs/tab3/"}
+  ]}
+];
 const app=$("app");
 const popup=$("modal");
 const maxAmount=7500000;
@@ -206,7 +231,7 @@ function result(){
 }
 function calculator(){
   return heading("Рассчитайте кредит","Измените сумму или срок. Платёж обновится сразу.")+
-    '<div class="stack">'+controls()+result()+
+    '<div class="stack">'+catalogEntry()+controls()+result()+
     '<div class="cols">'+btn("term","Снизить платёж в месяц")+btn("cost","Разобрать переплату")+'</div>'+
     '<details class="details card"><summary>Указать цель и пожелания</summary><div class="stack">'+
     '<fieldset><legend class="hint">Цель кредита</legend><div class="tags">'+
@@ -214,6 +239,30 @@ function calculator(){
     '<form id="context-form" class="help-form"><label class="field">Допишите своими словами<input class="input" name="context" maxlength="250" placeholder="До 8 000 ₽ в месяц, без страховки" required></label><button class="btn secondary" type="submit">Применить</button><p id="context-feedback" class="context-note" role="status"></p></form></div></details>'+
     '<details class="details card"><summary>Сравнить другие условия</summary><div class="stack">'+btn("insurance","Со страховкой и без")+btn("bank","С другим банком")+'</div></details>'+
     btn("apply","Продолжить к заявке","primary")+'<p class="hint">Сначала покажем, с какими условиями вы переходите. Ставка и расходы в расчёте условные, ПСК укажет банк в предложении.</p></div>';
+}
+function catalogEntry(){
+  return '<button class="catalog-entry" type="button" data-act="catalog" aria-haspopup="dialog">'+
+    '<span class="catalog-text"><strong>Кредитные продукты</strong><small>Карты, ипотека, авто и кредиты под залог</small></span><span class="catalog-arrow" aria-hidden="true">›</span></button>';
+}
+function catalogItem(item){
+  const text='<span class="catalog-text"><strong>'+item.name+'</strong><small>'+item.desc+'</small></span>';
+  const arrow='<span class="catalog-arrow" aria-hidden="true">'+(item.id?'›':'↗')+'</span>';
+  if(item.id)return '<button class="catalog-item" type="button" data-calc-product="'+item.id+'">'+text+arrow+'</button>';
+  return '<a class="catalog-item" href="'+item.url+'" target="_blank" rel="noopener">'+text+arrow+'</a>';
+}
+function openCatalog(){
+  modal("Кредитные продукты",creditCatalog.map(group=>
+    '<section class="catalog-group"><h3>'+group.heading+'</h3>'+group.items.map(catalogItem).join("")+'</section>'
+  ).join("")+'<a class="btn secondary full" href="https://alfabank.ru/get-money/" target="_blank" rel="noopener">Все потребительские кредиты банка ↗</a>');
+}
+function selectCatalogProduct(product){
+  state.product=product;
+  state.goal=productGoals[product];
+  for(const tag of app.querySelectorAll("[data-goal]")){
+    tag.setAttribute("aria-pressed",String(tag.dataset.goal===product));
+  }
+  popup.close();
+  sync();
 }
 function sync(){
   const q=estimate(state.months);
@@ -353,7 +402,7 @@ function updateContext(form){
 }
 const actions={
   calc:()=>show("calc"),loan:()=>show("loan"),apply:()=>show("apply"),
-  term:termComparison,cost,insurance,bank:otherBank,refinance:refinancing,
+  term:termComparison,cost,insurance,bank:otherBank,refinance:refinancing,catalog:openCatalog,
   "refi-to-calc":()=>{state.product="refi";state.goal="Погасить кредит";state.amount=state.loan.balance;state.insurance=false;show("calc")},
   pay:()=>modal("Пополнение кредитного счёта",'<p>Пополните счёт, с которого списывается платёж. Проверьте, что деньги поступили до даты платежа, указанной в графике.</p><p class="hint">Действие доступно в приложении банка.</p>'),
   close:()=>popup.close()
@@ -361,11 +410,12 @@ const actions={
 document.addEventListener("click",event=>{
   const button=event.target.closest("button");
   if(!button)return;
-  const {act,term,insurance,goal}=button.dataset;
+  const {act,term,insurance,goal,calcProduct}=button.dataset;
   if(act)actions[act]();
   if(term){state.months=Number(term);popup.close();sync()}
   if(insurance){state.insurance=insurance==="yes";popup.close();sync()}
   if(goal)updateGoal(button);
+  if(calcProduct)selectCatalogProduct(calcProduct);
 });
 app.addEventListener("input",event=>{
   const field=event.target;
