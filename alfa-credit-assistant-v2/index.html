@@ -288,14 +288,18 @@ function result(product=state.product){
     '<p class="signal" id="budget-note" hidden></p><p class="hint">Ориентир без дополнительных расходов. Индивидуальные условия и ПСК покажет банк. <a id="tariff-source" target="_blank" rel="noopener">Источник ставки ↗</a></p></section>';
 }
 function calculator(){
+  const fromRecommendations=calcReturn==="matches"||calcReturn==="purchase";
   return heading("Кредитный помощник","Подберите кредит по цели или рассчитайте платёж.")+
-    '<div class="stack">'+chooserEntry()+controls()+result()+(profile.goal?btn("matches","Вернуться к подбору"):"")+
-    '<div class="cols">'+btn("term","Снизить платёж в месяц")+btn("cost","Разобрать переплату")+'</div>'+
+    '<div class="stack">'+chooserEntry()+controls()+result()+
+    (fromRecommendations?btn("calc-back","Вернуться к подбору"):profile.goal?btn("matches","Вернуться к подбору"):"")+
+    (fromRecommendations?btn("cost","Разобрать переплату"):
+      '<div class="cols">'+btn("term","Снизить платёж в месяц")+btn("cost","Разобрать переплату")+'</div>')+
     '<details class="details card"><summary>Указать цель и пожелания</summary><div class="stack">'+
     '<fieldset><legend class="hint">Цель кредита</legend><div class="tags">'+
     [["cash","Любая цель"],["repair","Ремонт"],["refi","Погасить кредит"],["auto","Автомобиль"]].map(([id,label])=>'<button type="button" class="tag" data-goal="'+id+'" aria-pressed="'+(state.goal?state.goal===label:state.product===id)+'">'+label+'</button>').join("")+'</div></fieldset>'+
     '<form id="context-form" class="help-form"><label class="field">Допишите своими словами<input class="input" name="context" maxlength="250" placeholder="До 8 000 ₽ в месяц, без страховки" required></label><button class="btn secondary" type="submit">Применить</button><p id="context-feedback" class="context-note" role="status"></p></form></div></details>'+
-    '<details class="details card"><summary>Сравнить другие условия</summary><div class="stack">'+btn("insurance","Со страховкой и без")+btn("bank","С другим банком")+'</div></details>'+
+    (fromRecommendations?"":
+      '<details class="details card"><summary>Сравнить другие условия</summary><div class="stack">'+btn("insurance","Со страховкой и без")+btn("bank","С другим банком")+'</div></details>')+
     btn("apply","Продолжить к заявке","primary")+(new URLSearchParams(location.search).has("metrics")?btn("metrics","События сессии"):"")+'</div>';
 }
 function catalogEntry(){
@@ -323,7 +327,8 @@ function sync(){
   }
   slider.value=state.amount;
   $("months-range").value=state.months;
-app.querySelector('[data-act="term"]').textContent=state.months===60?"Сравнить сроки":"Снизить платёж в месяц";
+  const termButton=app.querySelector('[data-act="term"]');
+  if(termButton)termButton.textContent=state.months===60?"Сравнить сроки":"Снизить платёж в месяц";
   syncQuote(state.product,state.amount,state.months,state.budget);
 }
 function syncQuote(product,amount,months,budget){
@@ -440,7 +445,7 @@ function updateContext(form){
   }
   $("context-feedback").textContent=notes.length?"Учли: "+notes.join(", ")+".":"Можно указать сумму, срок, желаемый платёж или условие по страховке.";
   sync();
-  if(parsed.insurance===true)insurance();
+  if(parsed.insurance===true&&calcReturn!=="matches"&&calcReturn!=="purchase")insurance();
 }
 const intents={
   home:"Жильё",auto:"Автомобиль",shop:"Покупки",repair:"Ремонт",travel:"Путешествие",
@@ -584,17 +589,9 @@ function matchesScreen(){
     (profile.goal==="refi"?'<p class="signal">Проверьте, меняется ли общая сумма выплат. Более низкий платёж при длинном сроке может увеличить итоговые расходы.</p>':'')+
     (matches.length?matches.map(productCard).join(""):noProduct)+
     '<p class="hint">Доступную сумму, ставку и решение по заявке определяет банк. '+(profile.budget?'Сравнить с вашим ориентиром можно по условиям банка.':'')+'</p>'+
-    (matches.length>1?btn("compare-products","Сравнить","primary"):"")+
-    btn("offers","Сравнить два предложения")+btn("ask","Задать вопрос")+btn("support","Связаться с оператором")+
+    (matches.length>1?btn("compare-products","Сравнить варианты","primary"):"")+
+    btn("ask","Задать вопрос")+btn("support","Связаться с оператором")+
     rateAnswer("recommendation")+btn("tune","Изменить параметры")+btn("picker","Изменить ответы")+'</div>';
-}
-function compareProducts(){
-  const matches=chooseProducts(adjustedProfile());
-  if(matches.length<2)return;
-  const rows=matches.map(item=>'<article class="card stack"><h3>'+pickerTitle(item.id)+'</h3>'+
-    '<p>'+item.reason+'</p><p class="hint">'+item.check+'</p></article>').join("");
-  modal("Сравните варианты",rows+
-    '<p class="hint">Для сравнения стоимости возьмите из двух предложений банка полную сумму выплат.</p>'+btn("offers","Сравнить стоимость предложений"));
 }
 function pickerError(message){
   const error=$("picker-error");
@@ -744,7 +741,7 @@ function purchaseResults(goal,settings){
         "С текущими параметрами совпадений нет. Ниже видно, что нужно изменить для каждой программы.")+'</p>')+
     (others.length?'<details class="details purchase-other" '+(fits.length?"":"open")+'><summary>Варианты с другими условиями</summary><div class="stack">'+
       others.map(purchaseCard).join("")+'</div></details>':"")+
-    (fits.length>1?btn("compare-purchases","Сравнить варианты"):"")+
+    (fits.length>1?btn("compare-products","Сравнить варианты"):"")+
     '</div>';
 }
 function purchaseScreen(){
@@ -769,13 +766,13 @@ function purchaseScreen(){
     btn("ask","Задать вопрос")+btn("support","Связаться с оператором")+
     rateAnswer("recommendation")+'</div>';
 }
-function updatePurchaseForm(form){
+function updatePurchaseForm(form,focusResults=true){
   const data=new FormData(form);
   const current=purchaseSettings[profile.goal];
   const down=data.get("down");
   Object.assign(current,{amount:Number(data.get("amount")),years:Number(data.get("years")),down:down===""?null:Number(down),secured:data.has("secured")});
   refreshPurchaseOptions();
-  $("purchase-results").focus();
+  if(focusResults)$("purchase-results").focus();
 }
 function refreshPurchaseOptions(){
   const goal=profile.goal;
@@ -785,11 +782,59 @@ function refreshPurchaseOptions(){
   }
   $("purchase-results").innerHTML=purchaseResults(goal,settings);
 }
-function comparePurchases(){
-  const {fits}=purchaseOptions(profile.goal,purchaseSettings[profile.goal]);
-  const rows=fits.map(({id,reason,check})=>'<article class="card stack"><h3>'+pickerTitle(id)+'</h3>'+
-    '<p>'+reason+'</p><p class="hint">'+check+'</p>'+productButton(id,"Подробнее")+'</article>').join("");
-  modal("Сравните программы",rows+'<p class="hint">Для сравнения полной стоимости запросите расчёты по одной сумме и сроку.</p>');
+
+function comparedRecommendations(source){
+  if(source==="purchase"){
+    const settings=purchaseSettings[profile.goal];
+    return {matches:purchaseOptions(profile.goal,settings).fits,criteria:{...settings,months:settings.years*12}};
+  }
+  if(source==="matches"){
+    const criteria=adjustedProfile();
+    return {matches:chooseProducts(criteria),criteria:{...criteria,months:criteria.monthsExact}};
+  }
+  return null;
+}
+
+function comparisonQuote(id,criteria){
+  const {amount,months}=criteria;
+  if(!products[id]){
+    return '<p class="hint">Платёж и общую сумму выплат рассчитает банк.</p>';
+  }
+  if(!amount||!months){
+    return '<p class="hint">Укажите сумму и срок в подборе, чтобы увидеть ориентир по платежу.</p>';
+  }
+  if(!fitsPublished(id,amount,months)){
+    return '<p class="hint">Для указанных суммы и срока расчёт на сайте помощника недоступен.</p>';
+  }
+  const q=estimate(months,{amount,product:id});
+  return '<dl class="breakdown">'+breakdownRow("Платёж в месяц",money(q.payment))+
+    breakdownRow("Всего к выплате",money(q.total))+'</dl>'+
+    '<p class="hint">Ориентир по верхней опубликованной ставке '+percent(q.rate)+
+    ' без дополнительных расходов. <a href="'+products[id].tariff+'" target="_blank" rel="noopener">Источник ставки ↗</a></p>';
+}
+function compareRecommendations(){
+  const source=state.page;
+  if(state.page==="purchase"){
+    const form=$("purchase-form");
+    if(!form.reportValidity())return;
+    updatePurchaseForm(form,false);
+  }
+  const comparison=comparedRecommendations(source);
+  if(!comparison||comparison.matches.length<2){
+    if(state.page==="purchase")$("purchase-results").focus();
+    return;
+  }
+  const {matches,criteria}=comparison;
+  const duration=criteria.years?criteria.years+" г.":criteria.months?termText(criteria.months):"Не указан";
+  const parameters='<section class="card stack"><h3>Ваши параметры</h3><dl class="breakdown">'+
+    breakdownRow(criteria.usage==="repeat"?"Желаемый лимит":"Сумма кредита",criteria.amount?money(criteria.amount):"Не указана")+
+    (criteria.usage==="repeat"&&!criteria.months?"":breakdownRow("Срок",duration))+
+    (source==="purchase"?breakdownRow("Первоначальный взнос",criteria.down===null?"Не указан":percent(criteria.down)):"")+
+    (criteria.budget?breakdownRow("Комфортный платёж",money(criteria.budget)+" в месяц"):"")+'</dl></section>';
+  const cards=matches.map(({id,reason,check})=>'<article class="card stack"><h3>'+pickerTitle(id)+'</h3>'+
+    '<p>'+reason+'</p><p class="hint">'+check+'</p>'+comparisonQuote(id,criteria)+productButton(id,"Подробнее")+'</article>').join("");
+  if(state.page==="purchase")app.querySelector('[data-act="compare-products"]')?.focus({preventScroll:true});
+  modal("Сравните варианты",parameters+cards);
 }
 
 const adjustments={
@@ -965,7 +1010,8 @@ function productDetail(){
   const criteria=adjustedProfile();
   const fromPurchase=productReturn==="purchase";
   const purchase=fromPurchase?purchaseOptions(profile.goal,purchaseSettings[profile.goal]):null;
-  const match=(purchase?[...purchase.fits,...purchase.others]:chooseProducts(criteria)).find(product=>product.id===id);
+  const recommended=purchase?purchase.fits:chooseProducts(criteria);
+  const match=[...recommended,...(purchase?.others??[])].find(product=>product.id===id);
   const link=item.url??products[id]?.source;
   const available=!!(item.apply&&link);
   const restricted=fromPurchase&&match?.issues.length>0;
@@ -973,6 +1019,8 @@ function productDetail(){
   const canUseCalculator=criteria.amount>=minCalcAmount&&criteria.amount<=maxAmount&&
     (criteria.monthsExact||preferredMonths(criteria.requestedTerm))<=60;
   const calc=products[id]&&(fromPurchase?!restricted:productReturn!=="matches"||canUseCalculator);
+  const source=productReturn==="calc"?calcReturn:productReturn;
+  const refiComparison=id==="refi"&&(source==="matches"?recommended.length>1:source!=="purchase");
   return heading(item.name,item.desc)+'<div class="stack"><section class="card stack">'+
     (match?'<p>'+match.reason+'</p><p>'+match.check+'</p>':'')+
     (match?.issues?.length?'<p class="signal">Не совпадает с вашими параметрами: '+match.issues.join(", ")+'.</p>':'')+
@@ -980,7 +1028,7 @@ function productDetail(){
     '<p class="hint">'+(item.private?"Доступность предложения и условия проверьте в приложении или у оператора.":"Доступную сумму и условия банк определит при рассмотрении заявки.")+'</p></section>'+
     (available&&!restricted?'<a id="product-apply" class="btn primary full" data-apply-link="'+id+'" href="'+link+'" target="_blank" rel="noopener">Оформить на сайте банка ↗</a>':learnLink)+
     (calc?'<button class="btn secondary" type="button" data-detail-calc="'+id+'">Рассчитать платёж</button>':'')+
-    (id==="refi"?btn("loan","Сравнить с действующим кредитом"):"")+
+    (refiComparison?btn("loan","Сравнить с действующим кредитом"):"")+
     btn(item.specialist?"specialist":"support","Связаться с оператором")+btn("product-back","Вернуться к выбору")+'</div>';
 }
 
@@ -1069,7 +1117,7 @@ const actions={
   calc:()=>show("calc"),"calc-back":()=>show(calcReturn),loan:()=>show("loan"),apply:()=>openProduct(state.product,true),
   picker:()=>show("picker"),tune:()=>show(selection?"tune":"picker"),
   ask:()=>{unanswered=0;showAsk()},
-  matches:()=>show(selection?"matches":"picker"),offers:()=>compareOfferForm(),"compare-products":compareProducts,"compare-purchases":comparePurchases,metrics:showMetrics,
+  matches:()=>show(selection?"matches":"picker"),offers:()=>compareOfferForm(),"compare-products":compareRecommendations,metrics:showMetrics,
   support:()=>showSupport(),specialist:()=>showSupport("personal"),"support-unknown":()=>showSupport("unknown"),
   "support-back":()=>show(state.supportReturn),"product-back":()=>show(productReturn),
   term:termComparison,cost,insurance,bank:otherBank,refinance:refinancing,catalog:openCatalog,
