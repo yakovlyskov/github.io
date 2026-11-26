@@ -194,13 +194,13 @@ const creditCatalog=[
   {heading:"Разовая сумма или деньги на покупки",items:[
     {id:"cash",name:products.cash.name,desc:"Разовая сумма с графиком платежей",apply:true},
     {key:"payday",name:"Деньги до зарплаты",desc:"Кредит для небольшой суммы",url:"https://alfabank.ru/get-money/credit/do-zarplaty/",apply:true,note:"По опубликованным условиям срок начинается от года. Если деньги нужны на несколько дней, уточните порядок и расходы при досрочном погашении."},
-    {key:"on-hand",name:"Деньги под рукой",desc:"Проверьте предложение в приложении",private:true},
-    {key:"any-goal",name:"Деньги на любые цели",desc:"Проверьте предложение в приложении",private:true},
-    {key:"limit-cash",name:"Наличные из доступного лимита",desc:"Проверьте, можно ли использовать ваш лимит для получения наличных",private:true,note:"Уточните комиссию и условия начисления процентов до операции."},
-    {key:"better-cash",name:"Выгодные наличные",desc:"Проверьте предложение в приложении",private:true},
+    {key:"on-hand",name:"Деньги под рукой",desc:"Проверка предложения, которое вы видите в банке",private:true},
+    {key:"any-goal",name:"Деньги на любые цели",desc:"Проверка условий предложения на ваши цели",private:true},
+    {key:"limit-cash",name:"Наличные из доступного лимита",desc:"Проверка снятия наличных по действующему лимиту",private:true,url:"https://alfabank.ru/help/t/retail/creditcards/kreditnaya-karta-alfabanka/5-snyatie-i-popolnenie/kak-besplatno-snimat-nalichnie-s-kreditnoi-karti/"},
+    {key:"better-cash",name:"Выгодные наличные",desc:"Проверка стоимости персонального предложения",private:true},
     {key:"purchase-plan",name:"Рассрочка на покупки",desc:"Оплата покупки частями, если доступно по условиям карты",url:"https://alfabank.ru/help/articles/credit-cards/rassrochka-po-kreditnoj-karte-v-alfa-banke/",note:"Проверьте, какие покупки подходят, срок рассрочки и общую сумму выплат."},
     {key:"cards",name:"Кредитная карта",desc:"Возобновляемый лимит для повторных покупок",url:"https://alfabank.ru/get-money/credit-cards/",apply:true,note:"Лимитом можно пользоваться снова по мере погашения. Сверьте тариф карты и условия льготного периода."},
-    {key:"grace-150",name:"Карта с льготным периодом до 150 дней",desc:"Условия зависят от тарифа карты",url:"https://alfabank.ru/news/t/release/alfa-bank-vipustil-kreditnuyu-kartu-150-dnei-bez-protsentov/",private:true,note:"Проверьте в приложении, доступен ли переход по вашей карте и какие операции входят в льготный период."},
+    {key:"grace-150",name:"Переход на льготный период до 150 дней",desc:"Проверка перехода по действующей кредитной карте",url:"https://alfabank.ru/help/t/retail/creditcards/kreditnaya-karta-alfabanka/bezprotsentnii-period/skolko-dnei-dlitsya-lgotnii-period/",private:true},
     {key:"education",name:"Кредит на обучение",desc:"Оплата учёбы или курсов",url:"https://alfabank.ru/get-money/credit/na-obuchenie/",apply:true}
   ]},
   {heading:"Жильё, автомобиль и залог",items:[
@@ -454,7 +454,45 @@ const intents={
   refi:"Погасить кредиты",other:"Другая цель"
 };
 const pickerProducts=Object.fromEntries(creditCatalog.flatMap(group=>group.items.map(item=>[item.key??item.id,item])));
-const profile={goal:"",customGoal:"",amount:0,budget:0,requestedTerm:"",usage:"once",collateral:"",lender:"",debtType:"",difficulty:""};
+const profile={goal:"",customGoal:"",knownOffer:"",amount:0,budget:0,requestedTerm:"",usage:"once",collateral:"",lender:"",debtType:"",difficulty:""};
+const knownOfferRoutes={
+  "on-hand":{
+    label:"Деньги под рукой",
+    reason:"Проверьте, что именно доступно в вашем предложении: разовая сумма или лимит.",
+    check:"Сверьте сумму, порядок возврата и расходы при использовании денег."
+  },
+  "any-goal":{
+    label:"Деньги на любые цели",
+    reason:"Откройте предложение с таким названием в приложении или Альфа-Онлайн.",
+    check:"Сверьте сумму к выдаче, ежемесячный платёж и полную стоимость кредита."
+  },
+  "limit-cash":{
+    label:"Снять наличные из лимита",
+    reason:"Если у вас уже есть кредитный лимит, сначала проверьте условия снятия.",
+    check:"Уточните, сколько можно снять, будет ли комиссия и распространяется ли льготный период на снятие."
+  },
+  "better-cash":{
+    label:"Выгодные наличные",
+    reason:"На тех же сумме и сроке сравните условия этого предложения с обычным кредитом наличными.",
+    check:"Сверьте сумму на руки, все выплаты и расходы на дополнительные услуги."
+  },
+  "grace-150":{
+    label:"Перейти на льготный период до 150 дней",
+    reason:"Проверьте, предлагает ли банк переход именно по вашей действующей карте.",
+    check:"Уточните, какие операции и уже имеющийся долг войдут в новый период, когда он начнётся и во сколько обойдётся переход или продление."
+  }
+};
+function offerFromText(text){
+  const value=normalize(text).trim();
+  if(/деньги под рукой/.test(value))return "on-hand";
+  const named=/предлож|вижу|увид|одобр|в приложен|альфа.?онлайн|как работа|проверить условия/.test(value);
+  for(const [id,label] of [["any-goal","деньги на любые цели"],["better-cash","выгодные наличные"]]){
+    if(value.replace(/[«»"'!.?]/g,"")===label||named&&value.includes(label))return id;
+  }
+  if(/обналич.{0,20}лимит|наличн.{0,20}(?:из лимита|из доступного лимита|с кредитк|с кредитной карт)|снят.{0,30}(?:с кредитки|с кредитной карт|из лимита)/.test(value))return "limit-cash";
+  if(/переход|перейти|перевести|продлить|увеличить|действующ.{0,16}карт|мо[еяию].{0,16}карт/.test(value)&&/150.{0,4}дн|льгот|грейс/.test(value))return "grace-150";
+  return "";
+}
 const minCalcAmount=30000;
 const maxPickerAmount=100000000;
 const supportUrl="https://alfabank.ru/feedback/support/";
@@ -490,6 +528,9 @@ function pickerScreen(){
     '<label class="field">Допишите цель или важную деталь<input class="input" name="customGoal" maxlength="120" value="'+esc(profile.customGoal)+'" placeholder="Например, переезд"></label>'+
     '<details class="details extra-intents" '+(extra.includes(profile.goal)?"open":"")+'><summary>Ещё цели</summary><div class="cols" role="group" aria-label="Другие цели">'+
     extra.map(goalButton).join("")+'</div></details>'+
+    '<details class="details" '+(profile.knownOffer?"open":"")+'><summary>Проверить предложение или действующую карту</summary>'+
+    chooseField("knownOffer","Что хотите проверить?",[["","Выберите, если это ваш случай"],
+      ...Object.entries(knownOfferRoutes).map(([id,route])=>[id,route.label])])+'</details>'+
     '<fieldset id="debt-questions" class="stack" hidden><legend>Какой кредит хотите изменить?</legend>'+
     chooseField("lender","В каком банке?",[["","Выберите банк"],["alfa","В Альфа-Банке"],["other","В другом банке"],["mixed","В Альфа-Банке и других банках"]])+
     chooseField("debtType","Что хотите погасить?",[["","Выберите вид долга"],["loan","Потребительский кредит"],["card","Кредитную карту"],["mortgage","Ипотеку"]])+
@@ -500,14 +541,16 @@ function pickerScreen(){
     '<div id="usage-question">'+chooseField("usage","Как хотите пользоваться деньгами?",[["once","Нужна сумма один раз"],["repeat","Хочу пользоваться лимитом повторно"]])+'</div>'+
     chooseField("collateral","Готовы рассмотреть залог?",[["","Без залога"],["property","Есть недвижимость"],["car-pledge","Есть автомобиль"]])+
     field("comfort","Максимальный платёж в месяц, ₽",profile.budget||"",1,maxPickerAmount)+'</div></details>'+
-    '<p id="picker-error" class="error" role="alert" hidden></p><button class="btn primary full" type="submit">Уточнить параметры</button></form>'+
+    '<p id="picker-error" class="error" role="alert" hidden></p><button class="btn primary full" id="picker-continue" type="submit">Уточнить параметры</button></form>'+
     '<div class="flow-footer">'+btn("catalog","Все продукты")+btn("ask","Задать вопрос")+
     (new URLSearchParams(location.search).has("metrics")?btn("metrics","События сессии"):"")+'</div>'+
     '<button type="button" class="quiet" data-act="support">Связаться с оператором</button>';
 }
 function togglePickerQuestions(){
   const form=$("picker-form");
-  const goal=form.elements.intent.value;
+  const offer=form.elements.knownOffer.value;
+  const goal=offer?"":form.elements.intent.value;
+  $("picker-continue").textContent=offer?"Проверить условия":"Уточнить параметры";
   const visibility={"debt-questions":goal==="refi","usage-question":goal!=="refi"};
   for(const [id,visible] of Object.entries(visibility)){
     $(id).hidden=!visible;
@@ -522,6 +565,10 @@ function pick(id,reason,check,conditional=false){
   return {id,reason,check,conditional};
 }
 function chooseProducts(p){
+  if(p.difficulty==="yes"||supportReason(p.customGoal||"")==="hardship")return [];
+  const offer=Object.hasOwn(knownOfferRoutes,p.knownOffer)?knownOfferRoutes[p.knownOffer]:null;
+  if(offer)return [pick(p.knownOffer,offer.reason,offer.check,true)];
+
   const out=[];
   const {amount,goal}=p;
   const months=p.monthsExact||preferredMonths(p.requestedTerm);
@@ -536,8 +583,6 @@ function chooseProducts(p){
   const secured=p.collateral&&amount<=30000000&&months<=120&&(p.collateral==="property"||short)
     ?pick(p.collateral,"У вас уже есть имущество, которое вы готовы рассмотреть как залог.","Специалист уточнит, подходит ли имущество, и какие расходы появятся при оформлении.",true)
     :null;
-  if(p.difficulty==="yes"||supportReason(p.customGoal||"")==="hardship")return out;
-
   if(goal==="refi"){
     const debtCheck="Сравните остаток всех выплат сейчас с общей суммой выплат по новому предложению.";
     if(p.debtType==="mortgage"){
@@ -609,13 +654,16 @@ function handlePicker(form,directGoal=""){
     return;
   }
   const goal=directGoal||String(data.get("intent")??"");
-  if(!goal&&!customGoal){
+  const selectedOffer=String(data.get("knownOffer")??"");
+  const knownOffer=directGoal?"":Object.hasOwn(knownOfferRoutes,selectedOffer)?selectedOffer:offerFromText(customGoal);
+  if(!goal&&!customGoal&&!knownOffer){
     pickerError("Выберите цель или опишите её своими словами.");
     return;
   }
   selection=null;
   profile.goal=goal||"other";
   profile.customGoal=customGoal;
+  profile.knownOffer=knownOffer;
   profile.amount=Number(data.get("requested"));
   profile.budget=Number(data.get("comfort"));
   for(const key of ["requestedTerm","usage","collateral","lender","debtType","difficulty"]){
@@ -628,6 +676,10 @@ function handlePicker(form,directGoal=""){
   }
   if(concern){
     showSupport(concern);
+    return;
+  }
+  if(knownOffer){
+    openProduct(knownOffer);
     return;
   }
   if(profile.goal==="other"){
@@ -1063,6 +1115,7 @@ function productDetail(){
     (match?.issues?.length?'<p class="signal">Не совпадает с вашими параметрами: '+match.issues.join(", ")+'.</p>':'')+
     (item.note?'<p>'+item.note+'</p>':'')+
     '<p class="hint">'+(item.private?"Доступность предложения и условия проверьте в приложении или у оператора.":"Доступную сумму и условия банк определит при рассмотрении заявки.")+'</p></section>'+
+    (item.private?'<a class="btn primary full" href="https://web.alfabank.ru/" target="_blank" rel="noopener">Открыть Альфа-Онлайн ↗</a>':"")+
     (available&&!restricted?'<a id="product-apply" class="btn primary full" data-apply-link="'+id+'" href="'+link+'" target="_blank" rel="noopener">Оформить на сайте банка ↗</a>':learnLink)+
     (calc?'<button class="btn secondary" type="button" data-detail-calc="'+id+'">Рассчитать платёж</button>':'')+
     (refiComparison?btn("loan","Сравнить с действующим кредитом"):"")+
@@ -1241,7 +1294,11 @@ app.addEventListener("input",event=>{
 });
 app.addEventListener("change",event=>{
   const field=event.target;
-  if(field.name==="intent"&&state.page==="picker")togglePickerQuestions();
+  if(state.page==="picker"&&field.name==="intent"){
+    field.form.elements.knownOffer.value="";
+    togglePickerQuestions();
+  }
+  if(state.page==="picker"&&field.name==="knownOffer")togglePickerQuestions();
   if(state.page!=="calc"||!["amount","months"].includes(field.id))return;
   const value=Number(field.value);
   const min=field.id==="amount"?30000:12;
