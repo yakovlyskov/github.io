@@ -105,7 +105,7 @@ dl.breakdown{margin:0;display:grid;gap:6px}
 [hidden]{display:none!important}
 @media(max-width:360px){.shell{width:calc(100% - 20px)}main{margin-top:11px}.lead{font-size:13px;margin-bottom:9px}.card{padding:9px}.controls{gap:6px}.header-row{min-height:48px}}
 
-.flow-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;list-style:none;margin:0 0 10px;padding:0;color:var(--dim);font-size:12px;line-height:1.25}
+.flow-steps{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px;list-style:none;margin:0 0 10px;padding:0;color:var(--dim);font-size:12px;line-height:1.25}
 .flow-steps li{border-top:3px solid var(--line);padding-top:4px}
 .flow-steps [aria-current=step]{border-color:var(--red);color:var(--red);font-weight:750}
 .flow-footer{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
@@ -288,17 +288,17 @@ function result(product=state.product){
     '<p class="signal" id="budget-note" hidden></p><p class="hint">Ориентир без дополнительных расходов. Индивидуальные условия и ПСК покажет банк. <a id="tariff-source" target="_blank" rel="noopener">Источник ставки ↗</a></p></section>';
 }
 function calculator(){
-  const fromRecommendations=calcReturn==="matches"||calcReturn==="purchase";
+  const fromPickerFlow=isPickerResultPage(calcReturn);
   return heading("Кредитный помощник","Подберите кредит по цели или рассчитайте платёж.")+
     '<div class="stack">'+chooserEntry()+controls()+result()+
-    (fromRecommendations?btn("calc-back","Вернуться к подбору"):profile.goal?btn("matches","Вернуться к подбору"):"")+
-    (fromRecommendations?btn("cost","Разобрать переплату"):
+    (fromPickerFlow?btn("calc-back","Вернуться к подбору"):profile.goal?btn("matches","Вернуться к подбору"):"")+
+    (fromPickerFlow?btn("cost","Разобрать переплату"):
       '<div class="cols">'+btn("term","Снизить платёж в месяц")+btn("cost","Разобрать переплату")+'</div>')+
     '<details class="details card"><summary>Указать цель и пожелания</summary><div class="stack">'+
     '<fieldset><legend class="hint">Цель кредита</legend><div class="tags">'+
     [["cash","Любая цель"],["repair","Ремонт"],["refi","Погасить кредит"],["auto","Автомобиль"]].map(([id,label])=>'<button type="button" class="tag" data-goal="'+id+'" aria-pressed="'+(state.goal?state.goal===label:state.product===id)+'">'+label+'</button>').join("")+'</div></fieldset>'+
     '<form id="context-form" class="help-form"><label class="field">Допишите своими словами<input class="input" name="context" maxlength="250" placeholder="До 8 000 ₽ в месяц, без страховки" required></label><button class="btn secondary" type="submit">Применить</button><p id="context-feedback" class="context-note" role="status"></p></form></div></details>'+
-    (fromRecommendations?"":
+    (fromPickerFlow?"":
       '<details class="details card"><summary>Сравнить другие условия</summary><div class="stack">'+btn("insurance","Со страховкой и без")+btn("bank","С другим банком")+'</div></details>')+
     btn("apply","Продолжить к заявке","primary")+(new URLSearchParams(location.search).has("metrics")?btn("metrics","События сессии"):"")+'</div>';
 }
@@ -445,7 +445,7 @@ function updateContext(form){
   }
   $("context-feedback").textContent=notes.length?"Учли: "+notes.join(", ")+".":"Можно указать сумму, срок, желаемый платёж или условие по страховке.";
   sync();
-  if(parsed.insurance===true&&calcReturn!=="matches"&&calcReturn!=="purchase")insurance();
+  if(parsed.insurance===true&&!isPickerResultPage(calcReturn))insurance();
 }
 const intents={
   home:"Жильё",auto:"Автомобиль",shop:"Покупки",repair:"Ремонт",travel:"Путешествие",
@@ -461,6 +461,7 @@ const metrics=Object.fromEntries(["assistant_entered","answer_rated","product_op
 let unanswered=0;
 let offerScope;
 let productReturn="calc";
+const isPickerResultPage=page=>["tune","matches","purchase"].includes(page);
 
 function track(event,detail={}){
   metrics[event]++;
@@ -718,11 +719,11 @@ function purchaseOptions(goal,settings){
   const fits=variants.filter(variant=>!variant.issues.length);
   return {fits,others:variants.filter(variant=>variant.issues.length)};
 }
-function purchaseCard(item){
+function purchaseCard(item,showTitle=true){
   const product=pickerProducts[item.id];
   const blocked=item.issues.length>0;
   return '<article class="card stack purchase-card'+(blocked?' purchase-limited':'')+'">'+
-    '<h2>'+product.name+'</h2><p>'+item.reason+'</p>'+
+    (showTitle?'<h2>'+product.name+'</h2><p>'+item.reason+'</p>':"")+
     '<p class="hint purchase-terms">'+item.check+'</p>'+
     (blocked?'<p class="signal">Не совпадает с вашими параметрами: '+item.issues.join(", ")+'.</p>':"")+
     '<div class="cols">'+productButton(item.id,"Подробнее")+
@@ -730,8 +731,15 @@ function purchaseCard(item){
       '<a class="btn primary" data-bank-product="'+item.id+'" href="'+(product.url??products[item.id].source)+
       '" target="_blank" rel="noopener">Условия банка ↗</a>')+'</div></article>';
 }
-function purchaseResults(goal,settings){
-  const {fits,others}=purchaseOptions(goal,settings);
+function purchaseHeading(goal,options){
+  const [single]=options.fits;
+  if(options.fits.length===1)return [pickerTitle(single.id),single.reason];
+  return goal==="home"
+    ?["Ипотека для покупки жилья","Выберите программу под жильё, которое хотите купить."]
+    :["Кредит на покупку авто","Выберите вариант по тому, у кого покупаете машину."];
+}
+function purchaseResults({fits,others},settings){
+  if(fits.length===1)return purchaseCard(fits[0],false);
   const caption=[settings.amount?money(settings.amount):"",settings.years?settings.years+" лет":"",settings.down!==null?"взнос "+percent(settings.down):""]
     .filter(Boolean).join(" · ");
   const downNote=others.length&&others.every(item=>item.issues.some(issue=>issue.startsWith("взнос")));
@@ -751,8 +759,9 @@ function purchaseScreen(){
   const choices=purchaseFilters[goal].map(([value,label])=>'<button class="tag" type="button" data-purchase-filter="'+
     value+'" aria-pressed="'+(p.filter===value)+'">'+label+'</button>').join("");
   const down=p.down??"";
-  return heading(housing?"Ипотека для покупки жилья":"Кредит на покупку авто",
-    housing?"Выберите программу под жильё, которое хотите купить.":"Выберите вариант по тому, у кого покупаете машину.")+
+  const options=purchaseOptions(goal,p);
+  const single=options.fits.length===1;
+  return heading(...purchaseHeading(goal,options))+
     '<div class="stack"><div class="tags purchase-filters" role="group" aria-label="'+(housing?"Тип жилья или программы":"Продавец автомобиля")+'">'+choices+'</div>'+
     '<details class="details card" id="purchase-parameters" open><summary>Уточнить сумму, срок и взнос</summary>'+
     '<form class="stack" id="purchase-form">'+
@@ -760,8 +769,9 @@ function purchaseScreen(){
     '<div class="cols">'+field("years","Срок, лет",p.years||"",1,50)+
     '<label class="field">Взнос, %<input class="input" type="number" name="down" inputmode="decimal" step="0.1" min="0" max="99.9" value="'+down+'" placeholder="20,1"></label></div>'+
     (housing?"":'<label class="intent"><input type="checkbox" name="secured" '+(p.secured?"checked":"")+'><span>Готов рассмотреть залог недвижимости</span></label>')+
-    '<button class="btn primary full" type="submit">Обновить варианты</button></form></details>'+
-    '<section class="stack" id="purchase-results" tabindex="-1" aria-label="Рекомендации">'+purchaseResults(goal,p)+'</section>'+
+    '<button class="btn primary full" id="purchase-submit" type="submit">'+(single?"Применить параметры":"Обновить варианты")+'</button></form></details>'+
+    '<section class="stack" id="purchase-results" tabindex="-1" aria-label="'+(single?"Условия продукта":"Варианты")+'">'+
+    purchaseResults(options,p)+'</section>'+
     '<p class="hint">Банк уточнит условия по вашей заявке.</p>'+
     btn("ask","Задать вопрос")+btn("support","Связаться с оператором")+
     rateAnswer("recommendation")+'</div>';
@@ -771,8 +781,8 @@ function updatePurchaseForm(form,focusResults=true){
   const current=purchaseSettings[profile.goal];
   const down=data.get("down");
   Object.assign(current,{amount:Number(data.get("amount")),years:Number(data.get("years")),down:down===""?null:Number(down),secured:data.has("secured")});
-  refreshPurchaseOptions();
-  if(focusResults)$("purchase-results").focus();
+  const options=refreshPurchaseOptions();
+  if(focusResults&&options.fits.length!==1)$("purchase-results").focus();
 }
 function refreshPurchaseOptions(){
   const goal=profile.goal;
@@ -780,7 +790,16 @@ function refreshPurchaseOptions(){
   for(const button of app.querySelectorAll("[data-purchase-filter]")){
     button.setAttribute("aria-pressed",String(button.dataset.purchaseFilter===settings.filter));
   }
-  $("purchase-results").innerHTML=purchaseResults(goal,settings);
+  const options=purchaseOptions(goal,settings);
+  const [title,lead]=purchaseHeading(goal,options);
+  const single=options.fits.length===1;
+  $("heading").textContent=title;
+  app.querySelector(".lead").textContent=lead;
+  $("purchase-submit").textContent=single?"Применить параметры":"Обновить варианты";
+  const results=$("purchase-results");
+  results.setAttribute("aria-label",single?"Условия продукта":"Варианты");
+  results.innerHTML=purchaseResults(options,settings);
+  return options;
 }
 
 function comparedRecommendations(source){
@@ -821,7 +840,7 @@ function compareRecommendations(){
   }
   const comparison=comparedRecommendations(source);
   if(!comparison||comparison.matches.length<2){
-    if(state.page==="purchase")$("purchase-results").focus();
+    if(state.page==="purchase")$("purchase-submit").focus({preventScroll:true});
     return;
   }
   const {matches,criteria}=comparison;
@@ -851,7 +870,7 @@ let calcReturn="picker";
 
 function flowSteps(current){
   return '<ol class="flow-steps" aria-label="Этапы подбора">'+["Потребность","Параметры","Рекомендации"].map((name,index)=>
-    '<li'+(current===index?' aria-current="step"':"")+'>'+name+'</li>').join("")+'</ol>';
+    '<li'+(current===index?' aria-current="step"':"")+(index===2?' data-recommendation-step':"")+'>'+name+'</li>').join("")+'</ol>';
 }
 function preferredMonths(band){
   return ({"1":12,"5":36,"10":84,"30":240})[band]??24;
@@ -912,7 +931,7 @@ function adjustmentScreen(){
     '<p id="tune-limit-note" class="signal" aria-live="polite" hidden></p>'+
     '</section>'+
     (products[id]?result(id):'<p class="hint">'+(limits.kind==="limit"?"Банк определяет лимит индивидуально. Платёж зависит от того, сколько вы потратите и когда вернёте деньги.":"Проверьте доступную сумму и график в предложении банка.")+'</p>')+
-    '<button type="submit" class="btn primary full">Показать подходящие продукты</button></form>'+
+    '<button type="submit" id="tune-continue" class="btn primary full">Показать подходящие продукты</button></form>'+
     '<div class="flow-footer">'+btn("picker","Изменить ответы")+btn("ask","Задать вопрос")+'</div>';
 }
 function syncAdjustment(){
@@ -929,6 +948,10 @@ function syncAdjustment(){
   }
   if(amountValid)selection.amount=amount;
   if(monthsValid)selection.months=months;
+  const matches=amountValid&&monthsValid?chooseProducts(adjustedProfile()):[];
+  const onlyProduct=matches.length===1;
+  app.querySelector("[data-recommendation-step]").hidden=onlyProduct;
+  $("tune-continue").textContent=onlyProduct?"К условиям продукта":"Показать подходящие продукты";
   const within=amountValid&&monthsValid&&fitsPublished(id,amount,months);
   const note=$("tune-limit-note");
   note.hidden=!(limits?.maxAmount&&amountValid&&monthsValid&&!within);
@@ -944,8 +967,11 @@ function handleAdjustment(form){
   const months=form.elements.months?Number(form.elements.months.value):selection.months;
   if(!integer(amount,1,maxPickerAmount)||!integer(months,1,360))return;
   Object.assign(selection,{amount,months});
-  Object.assign(profile,{amount,requestedTerm:adjustedProfile().requestedTerm});
-  show("matches");
+  const criteria=adjustedProfile();
+  Object.assign(profile,{amount,requestedTerm:criteria.requestedTerm});
+  const matches=chooseProducts(criteria);
+  if(matches.length===1)openProduct(matches[0].id);
+  else show("matches");
 }
 
 const faq=[
@@ -1018,9 +1044,9 @@ function productDetail(){
   const learnLink=link&&(!available||restricted)?'<a class="btn secondary full" href="'+link+'" target="_blank" rel="noopener">Информация на сайте банка ↗</a>':"";
   const canUseCalculator=criteria.amount>=minCalcAmount&&criteria.amount<=maxAmount&&
     (criteria.monthsExact||preferredMonths(criteria.requestedTerm))<=60;
-  const calc=products[id]&&(fromPurchase?!restricted:productReturn!=="matches"||canUseCalculator);
+  const calc=products[id]&&(fromPurchase?!restricted:!isPickerResultPage(productReturn)||canUseCalculator);
   const source=productReturn==="calc"?calcReturn:productReturn;
-  const refiComparison=id==="refi"&&(source==="matches"?recommended.length>1:source!=="purchase");
+  const refiComparison=id==="refi"&&(!isPickerResultPage(source)||source==="matches"&&recommended.length>1);
   return heading(item.name,item.desc)+'<div class="stack"><section class="card stack">'+
     (match?'<p>'+match.reason+'</p><p>'+match.check+'</p>':'')+
     (match?.issues?.length?'<p class="signal">Не совпадает с вашими параметрами: '+match.issues.join(", ")+'.</p>':'')+
@@ -1029,7 +1055,8 @@ function productDetail(){
     (available&&!restricted?'<a id="product-apply" class="btn primary full" data-apply-link="'+id+'" href="'+link+'" target="_blank" rel="noopener">Оформить на сайте банка ↗</a>':learnLink)+
     (calc?'<button class="btn secondary" type="button" data-detail-calc="'+id+'">Рассчитать платёж</button>':'')+
     (refiComparison?btn("loan","Сравнить с действующим кредитом"):"")+
-    btn(item.specialist?"specialist":"support","Связаться с оператором")+btn("product-back","Вернуться к выбору")+'</div>';
+    btn(item.specialist?"specialist":"support","Связаться с оператором")+
+    btn("product-back",productReturn==="tune"?"Вернуться к параметрам":"Вернуться к выбору")+'</div>';
 }
 
 function showAsk(answer="",url="",feedback=false,offerSupport=false){
@@ -1117,7 +1144,7 @@ const actions={
   calc:()=>show("calc"),"calc-back":()=>show(calcReturn),loan:()=>show("loan"),apply:()=>openProduct(state.product,true),
   picker:()=>show("picker"),tune:()=>show(selection?"tune":"picker"),
   ask:()=>{unanswered=0;showAsk()},
-  matches:()=>show(selection?"matches":"picker"),offers:()=>compareOfferForm(),"compare-products":compareRecommendations,metrics:showMetrics,
+  matches:()=>show(!selection?"picker":chooseProducts(adjustedProfile()).length===1?"tune":"matches"),offers:()=>compareOfferForm(),"compare-products":compareRecommendations,metrics:showMetrics,
   support:()=>showSupport(),specialist:()=>showSupport("personal"),"support-unknown":()=>showSupport("unknown"),
   "support-back":()=>show(state.supportReturn),"product-back":()=>show(productReturn),
   term:termComparison,cost,insurance,bank:otherBank,refinance:refinancing,catalog:openCatalog,
@@ -1154,14 +1181,14 @@ document.addEventListener("click",event=>{
   if(detailCalc){
     state.product=detailCalc;
     state.goal=productGoals[detailCalc];
-    calcReturn=productReturn==="matches"||productReturn==="purchase"?productReturn:"picker";
+    if(productReturn!=="calc")calcReturn=isPickerResultPage(productReturn)?productReturn:"picker";
     if(productReturn==="purchase"){
       const p=purchaseSettings[profile.goal];
       state.amount=p.amount||150000;
       state.budget=0;
       state.months=p.years?p.years*12:24;
     }
-    if(productReturn==="matches"){
+    if(productReturn==="matches"||productReturn==="tune"){
       const criteria=adjustedProfile();
       state.amount=criteria.amount;
       state.budget=criteria.budget;
